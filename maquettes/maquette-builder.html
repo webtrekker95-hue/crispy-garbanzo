@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excellent Driving — Maquette Builder</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --navy: #0F1F3D;
+  --amber: #F5A623;
+  --amber-dark: #e09510;
+  --white: #fff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-600: #4b5563;
+  --green: #10b981;
+  --red: #ef4444;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:var(--gray-100); height:100vh; display:flex; flex-direction:column; overflow:hidden; user-select:none; }
+h1,h2,h3 { font-family:'Sora',sans-serif; }
+
+/* ── TOPBAR ── */
+.topbar {
+  background:var(--navy); color:var(--white);
+  height:54px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 16px; flex-shrink:0; z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,0.3);
+}
+.topbar-left { display:flex; align-items:center; gap:12px; }
+.logo-mark { width:32px; height:32px; background:var(--amber); border-radius:8px; display:flex; align-items:center; justify-content:center; }
+.logo-mark svg { width:16px; height:16px; fill:var(--navy); }
+.topbar h1 { font-size:1rem; font-weight:700; }
+.topbar-sub { font-size:0.72rem; color:rgba(255,255,255,0.45); margin-left:4px; }
+
+.layout-tabs { display:flex; gap:4px; }
+.layout-tab {
+  padding:6px 14px; border-radius:6px; font-size:0.78rem; font-weight:600;
+  cursor:pointer; border:none; background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.6);
+  transition:all 0.2s; font-family:'Sora',sans-serif;
+}
+.layout-tab:hover { background:rgba(255,255,255,0.14); color:var(--white); }
+.layout-tab.active { background:var(--amber); color:var(--navy); }
+
+.topbar-actions { display:flex; gap:8px; }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:7px; font-family:'Sora',sans-serif; font-weight:600; font-size:0.78rem; cursor:pointer; border:none; transition:all 0.2s; }
+.btn-ghost { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.7); }
+.btn-ghost:hover { background:rgba(255,255,255,0.15); color:var(--white); }
+.btn-amber { background:var(--amber); color:var(--navy); }
+.btn-amber:hover { background:var(--amber-dark); }
+.btn-danger { background:rgba(239,68,68,0.15); color:#fca5a5; }
+.btn-danger:hover { background:rgba(239,68,68,0.25); }
+
+/* ── MAIN LAYOUT ── */
+.app-body { display:flex; flex:1; overflow:hidden; }
+
+/* ── LEFT PALETTE ── */
+.palette {
+  width:176px; background:var(--white); border-right:1px solid var(--gray-200);
+  display:flex; flex-direction:column; overflow-y:auto; flex-shrink:0;
+}
+
+.palette-section { padding:10px 10px 4px; }
+.palette-label {
+  font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;
+  color:var(--gray-600); padding:0 4px 8px;
+}
+
+.palette-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+
+.palette-item {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:4px; padding:10px 6px; border-radius:8px;
+  border:1.5px solid var(--gray-200); cursor:grab; background:var(--gray-50);
+  transition:all 0.15s; font-size:0.65rem; color:var(--gray-600); font-weight:600;
+  text-align:center;
+}
+.palette-item:hover { border-color:var(--amber); background:rgba(245,166,35,0.06); color:var(--navy); transform:scale(1.03); }
+.palette-item:active { cursor:grabbing; }
+.palette-icon { font-size:1.6rem; line-height:1; }
+
+/* car color dot */
+.car-dot { width:10px; height:10px; border-radius:50%; border:2px solid rgba(0,0,0,0.15); }
+
+/* ── CANVAS AREA ── */
+.canvas-wrap {
+  flex:1; position:relative; overflow:hidden;
+  background:#4a7c59; /* grass */
+  cursor:default;
+}
+
+.canvas-wrap.drag-over { outline:3px dashed var(--amber); }
+
+/* SVG road canvas */
+#road-svg {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  pointer-events:none;
+}
+
+/* ── PLACED ELEMENTS ── */
+.placed {
+  position:absolute; transform-origin:center;
+  cursor:grab; display:flex; flex-direction:column; align-items:center;
+  transition:box-shadow 0.15s;
+  -webkit-user-drag:none;
+}
+.placed:hover { z-index:50; }
+.placed.selected { z-index:60; }
+.placed:active { cursor:grabbing; }
+
+/* top-down car: tall = front-to-back, narrow = side-to-side */
+.car-element {
+  display:flex; flex-direction:column; align-items:center; gap:0;
+  position:relative;
+}
+
+/* direction arrow pointing forward (always at top of element) */
+.dir-arrow {
+  width:0; height:0;
+  border-left:10px solid transparent;
+  border-right:10px solid transparent;
+  border-bottom:16px solid white;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,0.6));
+  flex-shrink:0;
+}
+
+/* car body — portrait top-down shape */
+.car-body {
+  width:30px; height:48px;
+  border-radius:5px 5px 4px 4px;
+  position:relative;
+  box-shadow:0 3px 8px rgba(0,0,0,0.5);
+  border:2px solid rgba(0,0,0,0.25);
+  overflow:hidden;
+  flex-shrink:0;
+}
+
+/* windshield at the front (top) */
+.car-windshield {
+  position:absolute; top:4px; left:3px; right:3px; height:10px;
+  background:rgba(180,220,255,0.75);
+  border-radius:3px 3px 1px 1px;
+}
+
+/* rear window at the back (bottom) */
+.car-rear {
+  position:absolute; bottom:4px; left:4px; right:4px; height:7px;
+  background:rgba(180,220,255,0.45);
+  border-radius:1px 1px 2px 2px;
+}
+
+/* left & right wheels */
+.car-wheels {
+  position:absolute; top:14px; bottom:14px; left:-4px; right:-4px;
+  pointer-events:none;
+}
+.car-wheels::before, .car-wheels::after {
+  content:'';
+  position:absolute; width:5px; top:4px; bottom:4px;
+  background:rgba(0,0,0,0.5); border-radius:2px;
+}
+.car-wheels::before { left:0; }
+.car-wheels::after  { right:0; }
+
+.sign-body {
+  width:34px; height:34px; display:flex; align-items:center; justify-content:center;
+  font-size:1.4rem;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+}
+
+.pedestrian-body {
+  width:28px; height:28px; display:flex; align-items:center; justify-content:center;
+  font-size:1.3rem;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+}
+
+/* priority badge */
+.priority-badge {
+  position:absolute; top:-10px; right:-10px;
+  width:22px; height:22px; border-radius:50%;
+  background:var(--amber); color:var(--navy);
+  font-family:'Sora',sans-serif; font-size:0.72rem; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  border:2px solid var(--white);
+  box-shadow:0 1px 4px rgba(0,0,0,0.3);
+  z-index:5;
+}
+
+/* note indicator */
+.note-dot {
+  position:absolute; bottom:-7px; left:50%; transform:translateX(-50%);
+  width:7px; height:7px; border-radius:50%;
+  background:#3b82f6; border:1.5px solid var(--white);
+}
+
+/* selection ring */
+.placed.selected .car-body,
+.placed.selected .sign-body,
+.placed.selected .pedestrian-body {
+  outline:3px solid var(--amber);
+  outline-offset:2px;
+}
+
+/* ── POPUP ── */
+.popup {
+  position:fixed; z-index:200;
+  background:var(--white); border-radius:14px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);
+  padding:16px; width:260px;
+  border:1px solid var(--gray-200);
+  display:none;
+}
+.popup.open { display:block; }
+.popup-title { font-family:'Sora',sans-serif; font-size:0.9rem; font-weight:700; color:var(--navy); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.popup-close { margin-left:auto; width:22px; height:22px; border-radius:50%; background:var(--gray-100); border:none; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center; }
+.popup-close:hover { background:var(--gray-200); }
+
+.field-label { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--gray-600); margin-bottom:5px; }
+
+.priority-btns { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:12px; }
+.prio-btn {
+  width:30px; height:30px; border-radius:50%; border:2px solid var(--gray-200);
+  font-family:'Sora',sans-serif; font-size:0.8rem; font-weight:700; cursor:pointer;
+  background:var(--white); color:var(--navy); transition:all 0.15s;
+  display:flex; align-items:center; justify-content:center;
+}
+.prio-btn:hover { border-color:var(--amber); background:rgba(245,166,35,0.08); }
+.prio-btn.active { background:var(--amber); border-color:var(--amber); color:var(--navy); }
+.prio-btn.none { font-size:0.65rem; }
+
+.rotate-btns { display:flex; gap:6px; margin-bottom:12px; }
+.rot-btn { flex:1; padding:7px; border-radius:7px; border:1.5px solid var(--gray-200); background:var(--white); cursor:pointer; font-size:1rem; transition:all 0.15s; }
+.rot-btn:hover { border-color:var(--amber); background:rgba(245,166,35,0.08); }
+
+textarea.note-input {
+  width:100%; resize:none; border:1.5px solid var(--gray-200); border-radius:8px;
+  padding:8px; font-family:'Inter',sans-serif; font-size:0.82rem; line-height:1.5;
+  color:var(--navy); outline:none; margin-bottom:12px;
+  transition:border-color 0.2s;
+}
+textarea.note-input:focus { border-color:var(--amber); }
+
+.popup-actions { display:flex; gap:8px; }
+.btn-sm { padding:6px 12px; font-size:0.75rem; border-radius:7px; }
+.btn-primary { background:var(--amber); color:var(--navy); font-family:'Sora',sans-serif; font-weight:700; border:none; cursor:pointer; }
+.btn-primary:hover { background:var(--amber-dark); }
+.btn-del { background:var(--red); color:var(--white); font-family:'Sora',sans-serif; font-weight:700; border:none; cursor:pointer; border-radius:7px; padding:6px 10px; font-size:0.75rem; }
+.btn-del:hover { background:#dc2626; }
+
+/* ── RIGHT PANEL ── */
+.notes-panel {
+  width:260px; background:var(--white); border-left:1px solid var(--gray-200);
+  display:flex; flex-direction:column; overflow:hidden; flex-shrink:0;
+}
+
+.panel-header {
+  padding:14px 16px; border-bottom:1px solid var(--gray-200);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.panel-title { font-family:'Sora',sans-serif; font-size:0.9rem; font-weight:700; color:var(--navy); }
+.panel-count { font-size:0.72rem; background:rgba(245,166,35,0.15); color:var(--amber-dark); font-weight:700; padding:2px 8px; border-radius:100px; }
+
+.notes-list { flex:1; overflow-y:auto; padding:10px; }
+
+.note-card {
+  background:var(--gray-50); border-radius:9px; border:1.5px solid var(--gray-200);
+  padding:10px 12px; margin-bottom:8px; cursor:pointer; transition:all 0.2s;
+}
+.note-card:hover { border-color:var(--amber); background:rgba(245,166,35,0.04); }
+.note-card-top { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.note-num { width:24px; height:24px; border-radius:50%; background:var(--amber); color:var(--navy); font-family:'Sora',sans-serif; font-size:0.72rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.note-num.no-prio { background:var(--gray-200); color:var(--gray-600); }
+.note-icon { font-size:1.1rem; }
+.note-label { font-size:0.78rem; font-weight:600; color:var(--navy); flex:1; }
+.note-text { font-size:0.78rem; color:var(--gray-600); line-height:1.5; padding-left:32px; }
+.note-text.empty { color:var(--gray-200); font-style:italic; }
+
+.empty-state { padding:24px 16px; text-align:center; }
+.empty-icon { font-size:2.5rem; margin-bottom:8px; opacity:0.4; }
+.empty-text { font-size:0.82rem; color:var(--gray-600); line-height:1.5; }
+
+.panel-footer { padding:12px; border-top:1px solid var(--gray-200); }
+.print-btn { width:100%; padding:10px; border-radius:8px; background:var(--navy); color:var(--white); font-family:'Sora',sans-serif; font-weight:700; font-size:0.82rem; border:none; cursor:pointer; transition:background 0.2s; }
+.print-btn:hover { background:#1a3060; }
+
+/* ── DEMO HINT ── */
+.hint {
+  position:absolute; bottom:16px; left:50%; transform:translateX(-50%);
+  background:rgba(15,31,61,0.75); backdrop-filter:blur(6px);
+  color:var(--white); font-size:0.75rem; padding:8px 16px; border-radius:100px;
+  pointer-events:none; white-space:nowrap;
+  animation:fadeHint 3s ease 2s forwards;
+}
+@keyframes fadeHint { to { opacity:0; } }
+
+/* ── PRINT ── */
+@media print {
+  .palette, .notes-panel, .topbar, .popup, .hint { display:none !important; }
+  .canvas-wrap { width:100vw; height:100vh; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+    <h1>Maquette Builder <span class="topbar-sub">Excellent Driving</span></h1>
+  </div>
+
+  <div class="layout-tabs">
+    <button class="layout-tab active" onclick="setLayout('cross')">✚ 4-Way</button>
+    <button class="layout-tab" onclick="setLayout('tjunction')">⊤ T-Junction</button>
+    <button class="layout-tab" onclick="setLayout('roundabout')">◎ Roundabout</button>
+    <button class="layout-tab" onclick="setLayout('straight')">― Straight</button>
+  </div>
+
+  <div class="topbar-actions">
+    <button class="btn btn-ghost" onclick="loadDemo()">📖 Load Example</button>
+    <button class="btn btn-ghost" onclick="window.print()">🖨 Print</button>
+    <button class="btn btn-danger" onclick="clearAll()">🗑 Clear All</button>
+    <a href="index.html" class="btn btn-ghost">← Back</a>
+  </div>
+</div>
+
+<!-- APP BODY -->
+<div class="app-body">
+
+  <!-- LEFT: PALETTE -->
+  <div class="palette">
+    <div class="palette-section">
+      <div class="palette-label">Cars</div>
+      <div class="palette-grid">
+        <div class="palette-item" draggable="true" data-type="car" data-color="#ef4444" data-label="Red Car" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🚗</div>
+          <div style="display:flex;align-items:center;gap:4px"><div class="car-dot" style="background:#ef4444"></div>Red</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="car" data-color="#3b82f6" data-label="Blue Car" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🚗</div>
+          <div style="display:flex;align-items:center;gap:4px"><div class="car-dot" style="background:#3b82f6"></div>Blue</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="car" data-color="#10b981" data-label="Green Car" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🚗</div>
+          <div style="display:flex;align-items:center;gap:4px"><div class="car-dot" style="background:#10b981"></div>Green</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="car" data-color="#f59e0b" data-label="Yellow Car" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🚗</div>
+          <div style="display:flex;align-items:center;gap:4px"><div class="car-dot" style="background:#f59e0b"></div>Yellow</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="car" data-color="#8b5cf6" data-label="Purple Car" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🚗</div>
+          <div style="display:flex;align-items:center;gap:4px"><div class="car-dot" style="background:#8b5cf6"></div>Purple</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="car" data-color="#1f2937" data-label="Black Car" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🚗</div>
+          <div style="display:flex;align-items:center;gap:4px"><div class="car-dot" style="background:#1f2937"></div>Black</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="palette-section">
+      <div class="palette-label">Vehicles</div>
+      <div class="palette-grid">
+        <div class="palette-item" draggable="true" data-type="truck" data-color="#6b7280" data-label="Truck" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🚛</div>
+          <div>Truck</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="bus" data-color="#f97316" data-label="Bus" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🚌</div>
+          <div>Bus</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="moto" data-color="#6b7280" data-label="Motorcycle" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🏍️</div>
+          <div>Moto</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="bike" data-color="#6b7280" data-label="Bicycle" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🚲</div>
+          <div>Bicycle</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="palette-section">
+      <div class="palette-label">Signs</div>
+      <div class="palette-grid">
+        <div class="palette-item" draggable="true" data-type="sign" data-sign="🛑" data-label="Stop Sign" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🛑</div>
+          <div>Stop</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="sign" data-sign="⚠️" data-label="Yield" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">⚠️</div>
+          <div>Yield</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="sign" data-sign="🚦" data-label="Traffic Light" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🚦</div>
+          <div>Lights</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="sign" data-sign="🚸" data-label="Pedestrian Crossing" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🚸</div>
+          <div>Crossing</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="sign" data-sign="⛔" data-label="No Entry" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">⛔</div>
+          <div>No Entry</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="sign" data-sign="🔵" data-label="Priority Road" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🔵</div>
+          <div>Priority</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="palette-section">
+      <div class="palette-label">People</div>
+      <div class="palette-grid">
+        <div class="palette-item" draggable="true" data-type="person" data-sign="🚶" data-label="Pedestrian" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">🚶</div>
+          <div>Walker</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="person" data-sign="👮" data-label="Police Officer" onmousedown="startPaletteDrag(event,this)">
+          <div class="palette-icon">👮</div>
+          <div>Police</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER: CANVAS -->
+  <div class="canvas-wrap" id="canvas"
+    onmouseup="onCanvasMouseUp(event)"
+    onmousemove="onMouseMove(event)"
+    onclick="onCanvasClick(event)">
+
+    <svg id="road-svg" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice"></svg>
+
+    <div class="hint" id="hint">Drag pieces from the left panel onto the road · Click a piece to add notes & priority</div>
+  </div>
+
+  <!-- RIGHT: NOTES PANEL -->
+  <div class="notes-panel">
+    <div class="panel-header">
+      <div class="panel-title">📋 Scenario Notes</div>
+      <div class="panel-count" id="note-count">0</div>
+    </div>
+
+    <div class="notes-list" id="notes-list">
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">🚗</div>
+        <div class="empty-text">Drag vehicles and signs onto the road, then click them to add notes and set priority order.</div>
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      <button class="print-btn" onclick="window.print()">🖨 Print Scenario</button>
+    </div>
+  </div>
+</div>
+
+<!-- ELEMENT POPUP -->
+<div class="popup" id="popup">
+  <div class="popup-title">
+    <span id="popup-icon"></span>
+    <span id="popup-label"></span>
+    <button class="popup-close" onclick="closePopup()">✕</button>
+  </div>
+
+  <div class="field-label">Direction</div>
+  <div class="rotate-btns" id="rotate-btns" style="margin-bottom:12px">
+    <button class="rot-btn" title="Face North" onclick="setRotation(0)">⬆</button>
+    <button class="rot-btn" title="Face East"  onclick="setRotation(90)">➡</button>
+    <button class="rot-btn" title="Face South" onclick="setRotation(180)">⬇</button>
+    <button class="rot-btn" title="Face West"  onclick="setRotation(270)">⬅</button>
+  </div>
+
+  <div class="field-label">Priority Order (who goes first?)</div>
+  <div class="priority-btns">
+    <button class="prio-btn none" onclick="setPriority(null)">—</button>
+    <button class="prio-btn" onclick="setPriority(1)">1</button>
+    <button class="prio-btn" onclick="setPriority(2)">2</button>
+    <button class="prio-btn" onclick="setPriority(3)">3</button>
+    <button class="prio-btn" onclick="setPriority(4)">4</button>
+    <button class="prio-btn" onclick="setPriority(5)">5</button>
+    <button class="prio-btn" onclick="setPriority(6)">6</button>
+  </div>
+
+  <div class="field-label">Note / Explanation</div>
+  <textarea class="note-input" id="note-input" rows="4"
+    placeholder="Why does this vehicle go in this order? e.g. 'Red car must yield — it is approaching from a secondary road.'"></textarea>
+
+  <div class="popup-actions">
+    <button class="btn-primary btn-sm" onclick="savePopup()" style="flex:1">Save</button>
+    <button class="btn-del" onclick="deleteSelected()">🗑</button>
+  </div>
+</div>
+
+
+<script>
+// ── STATE ──
+let elements = [];
+let nextId = 1;
+let selectedId = null;
+let dragging = null; // {id, offsetX, offsetY}
+let paletteGhost = null;
+let currentLayout = 'cross';
+
+// ── ROAD SVG LAYOUTS ──
+const ROADS = {
+  cross: `
+    <!-- grass already via body bg -->
+    <!-- horizontal road -->
+    <rect x="0" y="240" width="900" height="120" fill="#555"/>
+    <!-- vertical road -->
+    <rect x="380" y="0" width="140" height="600" fill="#555"/>
+    <!-- intersection fill -->
+    <rect x="380" y="240" width="140" height="120" fill="#555"/>
+    <!-- lane markings horizontal -->
+    <line x1="0" y1="300" x2="370" y2="300" stroke="white" stroke-width="2" stroke-dasharray="20,14" opacity="0.6"/>
+    <line x1="530" y1="300" x2="900" y2="300" stroke="white" stroke-width="2" stroke-dasharray="20,14" opacity="0.6"/>
+    <!-- lane markings vertical -->
+    <line x1="450" y1="0" x2="450" y2="230" stroke="white" stroke-width="2" stroke-dasharray="20,14" opacity="0.6"/>
+    <line x1="450" y1="370" x2="450" y2="600" stroke="white" stroke-width="2" stroke-dasharray="20,14" opacity="0.6"/>
+    <!-- edge lines horizontal -->
+    <line x1="0" y1="243" x2="380" y2="243" stroke="white" stroke-width="2" opacity="0.4"/>
+    <line x1="520" y1="243" x2="900" y2="243" stroke="white" stroke-width="2" opacity="0.4"/>
+    <line x1="0" y1="357" x2="380" y2="357" stroke="white" stroke-width="2" opacity="0.4"/>
+    <line x1="520" y1="357" x2="900" y2="357" stroke="white" stroke-width="2" opacity="0.4"/>
+    <!-- edge lines vertical -->
+    <line x1="383" y1="0" x2="383" y2="240" stroke="white" stroke-width="2" opacity="0.4"/>
+    <line x1="517" y1="0" x2="517" y2="240" stroke="white" stroke-width="2" opacity="0.4"/>
+    <line x1="383" y1="360" x2="383" y2="600" stroke="white" stroke-width="2" opacity="0.4"/>
+    <line x1="517" y1="360" x2="517" y2="600" stroke="white" stroke-width="2" opacity="0.4"/>
+    <!-- zebra crossings -->
+    ${zebraH(60, 243, 357)} ${zebraH(780, 243, 357)}
+    ${zebraV(450, 60, 370)} ${zebraV(450, 530, 380)}
+    <!-- compass labels -->
+    <text x="450" y="30" text-anchor="middle" font-family="Sora,sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)">NORTH</text>
+    <text x="450" y="585" text-anchor="middle" font-family="Sora,sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)">SOUTH</text>
+    <text x="30" y="304" text-anchor="middle" font-family="Sora,sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)">WEST</text>
+    <text x="870" y="304" text-anchor="middle" font-family="Sora,sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)">EAST</text>
+  `,
+  tjunction: `
+    <!-- horizontal road -->
+    <rect x="0" y="360" width="900" height="120" fill="#555"/>
+    <!-- vertical road going up -->
+    <rect x="380" y="0" width="140" height="370" fill="#555"/>
+    <!-- center lines -->
+    <line x1="0" y1="420" x2="370" y2="420" stroke="white" stroke-width="2" stroke-dasharray="20,14" opacity="0.6"/>
+    <line x1="530" y1="420" x2="900" y2="420" stroke="white" stroke-width="2" stroke-dasharray="20,14" opacity="0.6"/>
+    <line x1="450" y1="0" x2="450" y2="360" stroke="white" stroke-width="2" stroke-dasharray="20,14" opacity="0.6"/>
+    <!-- edge lines -->
+    <line x1="0" y1="363" x2="380" y2="363" stroke="white" stroke-width="2" opacity="0.4"/>
+    <line x1="520" y1="363" x2="900" y2="363" stroke="white" stroke-width="2" opacity="0.4"/>
+    <line x1="0" y1="477" x2="900" y2="477" stroke="white" stroke-width="2" opacity="0.4"/>
+    <line x1="383" y1="0" x2="383" y2="360" stroke="white" stroke-width="2" opacity="0.4"/>
+    <line x1="517" y1="0" x2="517" y2="360" stroke="white" stroke-width="2" opacity="0.4"/>
+    <!-- zebra -->
+    ${zebraH(60, 363, 477)} ${zebraH(830, 363, 477)}
+    ${zebraV(450, 60, 370)}
+    <!-- labels -->
+    <text x="450" y="30" text-anchor="middle" font-family="Sora,sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)">NORTH</text>
+    <text x="30" y="424" text-anchor="middle" font-family="Sora,sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)">WEST</text>
+    <text x="870" y="424" text-anchor="middle" font-family="Sora,sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)">EAST</text>
+  `,
+  roundabout: `
+    <!-- approach roads -->
+    <rect x="0" y="255" width="320" height="90" fill="#555"/>
+    <rect x="580" y="255" width="320" height="90" fill="#555"/>
+    <rect x="405" y="0" width="90" height="255" fill="#555"/>
+    <rect x="405" y="345" width="90" height="255" fill="#555"/>
+    <!-- roundabout outer -->
+    <circle cx="450" cy="300" r="150" fill="#555"/>
+    <circle cx="450" cy="300" r="100" fill="#4a7c59"/>
+    <!-- island center -->
+    <circle cx="450" cy="300" r="70" fill="#3d6b4c"/>
+    <!-- center markings -->
+    <circle cx="450" cy="300" r="125" fill="none" stroke="white" stroke-width="2" stroke-dasharray="15,12" opacity="0.5"/>
+    <!-- lane lines on approaches -->
+    <line x1="0" y1="300" x2="300" y2="300" stroke="white" stroke-width="1.5" stroke-dasharray="16,12" opacity="0.5"/>
+    <line x1="600" y1="300" x2="900" y2="300" stroke="white" stroke-width="1.5" stroke-dasharray="16,12" opacity="0.5"/>
+    <line x1="450" y1="0" x2="450" y2="150" stroke="white" stroke-width="1.5" stroke-dasharray="16,12" opacity="0.5"/>
+    <line x1="450" y1="450" x2="450" y2="600" stroke="white" stroke-width="1.5" stroke-dasharray="16,12" opacity="0.5"/>
+    <!-- arrows on roundabout -->
+    <text x="450" y="198" text-anchor="middle" font-size="18" fill="rgba(255,255,255,0.3)" transform="rotate(-45,450,300)">↻</text>
+    <text x="450" y="440" text-anchor="middle" font-size="28" fill="rgba(255,255,255,0.25)">↺</text>
+    <!-- labels -->
+    <text x="450" y="28" text-anchor="middle" font-family="Sora,sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)">NORTH</text>
+    <text x="450" y="586" text-anchor="middle" font-family="Sora,sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)">SOUTH</text>
+    <text x="30" y="304" text-anchor="middle" font-family="Sora,sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)">WEST</text>
+    <text x="870" y="304" text-anchor="middle" font-family="Sora,sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)">EAST</text>
+  `,
+  straight: `
+    <!-- road -->
+    <rect x="0" y="200" width="900" height="200" fill="#555"/>
+    <!-- center line -->
+    <line x1="0" y1="300" x2="900" y2="300" stroke="yellow" stroke-width="3" stroke-dasharray="30,20" opacity="0.7"/>
+    <!-- edge lines -->
+    <line x1="0" y1="204" x2="900" y2="204" stroke="white" stroke-width="2" opacity="0.5"/>
+    <line x1="0" y1="396" x2="900" y2="396" stroke="white" stroke-width="2" opacity="0.5"/>
+    <!-- lane lines -->
+    <line x1="0" y1="252" x2="900" y2="252" stroke="white" stroke-width="1.5" stroke-dasharray="20,14" opacity="0.3"/>
+    <line x1="0" y1="348" x2="900" y2="348" stroke="white" stroke-width="1.5" stroke-dasharray="20,14" opacity="0.3"/>
+    <!-- zebra crossings -->
+    ${zebraH(300, 204, 396)} ${zebraH(600, 204, 396)}
+    <!-- direction arrows -->
+    <text x="150" y="262" text-anchor="middle" font-size="24" fill="rgba(255,255,255,0.2)">→</text>
+    <text x="450" y="262" text-anchor="middle" font-size="24" fill="rgba(255,255,255,0.2)">→</text>
+    <text x="750" y="262" text-anchor="middle" font-size="24" fill="rgba(255,255,255,0.2)">→</text>
+    <text x="150" y="346" text-anchor="middle" font-size="24" fill="rgba(255,255,255,0.2)">←</text>
+    <text x="450" y="346" text-anchor="middle" font-size="24" fill="rgba(255,255,255,0.2)">←</text>
+    <text x="750" y="346" text-anchor="middle" font-size="24" fill="rgba(255,255,255,0.2)">←</text>
+    <!-- sidewalks -->
+    <rect x="0" y="200" width="900" height="12" fill="#888" opacity="0.5"/>
+    <rect x="0" y="388" width="900" height="12" fill="#888" opacity="0.5"/>
+    <!-- labels -->
+    <text x="30" y="254" font-family="Sora,sans-serif" font-size="12" fill="rgba(255,255,255,0.4)">→ NORTH LANE</text>
+    <text x="30" y="352" font-family="Sora,sans-serif" font-size="12" fill="rgba(255,255,255,0.4)">← SOUTH LANE</text>
+  `
+};
+
+function zebraH(x, y1, y2) {
+  let s = '';
+  for (let i = 0; i < 6; i++) {
+    const rx = x - 20 + i * 7;
+    s += `<rect x="${rx}" y="${y1}" width="5" height="${y2-y1}" fill="white" opacity="0.6"/>`;
+  }
+  return s;
+}
+
+function zebraV(cx, y, h) {
+  let s = '';
+  for (let i = 0; i < 6; i++) {
+    const ry = y + i * 7;
+    s += `<rect x="${cx-20}" y="${ry}" width="40" height="5" fill="white" opacity="0.6"/>`;
+  }
+  return s;
+}
+
+function setLayout(name) {
+  currentLayout = name;
+  document.querySelectorAll('.layout-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('road-svg').innerHTML = ROADS[name];
+}
+
+// init
+document.getElementById('road-svg').innerHTML = ROADS.cross;
+
+// ── ELEMENT ICONS ──
+function getIcon(el) {
+  if (el.type === 'car')    return '🚗';
+  if (el.type === 'truck')  return '🚛';
+  if (el.type === 'bus')    return '🚌';
+  if (el.type === 'moto')   return '🏍️';
+  if (el.type === 'bike')   return '🚲';
+  if (el.type === 'sign')   return el.sign;
+  if (el.type === 'person') return el.sign;
+  return '🚗';
+}
+
+function isCar(el) { return ['car','truck','bus','moto','bike'].includes(el.type); }
+
+// ── HELPERS ──
+function lighten(hex) {
+  // returns a lighter tint of the hex color for the direction arrow
+  const map = {
+    '#ef4444':'#fca5a5', '#3b82f6':'#93c5fd', '#10b981':'#6ee7b7',
+    '#f59e0b':'#fde68a', '#8b5cf6':'#c4b5fd', '#1f2937':'#9ca3af',
+    '#6b7280':'#d1d5db', '#f97316':'#fed7aa',
+  };
+  return map[hex] || '#ffffff';
+}
+
+// ── RENDER ELEMENT ──
+function renderElement(el) {
+  let existing = document.getElementById('el-' + el.id);
+  if (existing) existing.remove();
+
+  const div = document.createElement('div');
+  div.className = 'placed' + (el.id === selectedId ? ' selected' : '');
+  div.id = 'el-' + el.id;
+  div.style.left = el.x + 'px';
+  div.style.top  = el.y + 'px';
+  div.style.transform = `translate(-50%,-50%) rotate(${el.rotation}deg)`;
+
+  // body
+  let bodyHtml = '';
+  if (isCar(el)) {
+    const bg = el.color || '#6b7280';
+    bodyHtml = `<div class="car-element">
+      <div class="dir-arrow" style="border-bottom-color:${lighten(bg)}"></div>
+      <div class="car-body" style="background:${bg}">
+        <div class="car-windshield"></div>
+        <div class="car-wheels"></div>
+        <div class="car-rear"></div>
+      </div>
+    </div>`;
+  } else {
+    bodyHtml = `<div class="sign-body">${el.sign}</div>`;
+  }
+
+  // priority badge
+  const badge = el.priority != null
+    ? `<div class="priority-badge">${el.priority}</div>`
+    : '';
+
+  // note dot
+  const noteDot = el.note ? `<div class="note-dot"></div>` : '';
+
+  div.innerHTML = bodyHtml + badge + noteDot;
+
+  // events
+  div.addEventListener('mousedown', (e) => { e.stopPropagation(); startElementDrag(e, el.id); });
+  div.addEventListener('click', (e) => { e.stopPropagation(); selectElement(el.id, e); });
+
+  document.getElementById('canvas').appendChild(div);
+}
+
+function renderAll() {
+  // remove old
+  document.querySelectorAll('.placed').forEach(e => e.remove());
+  elements.forEach(renderElement);
+  updateNotes();
+}
+
+// ── DRAG FROM PALETTE ──
+let ghostEl = null;
+
+function startPaletteDrag(e, item) {
+  e.preventDefault();
+  const data = {
+    type:  item.dataset.type,
+    color: item.dataset.color || '#6b7280',
+    sign:  item.dataset.sign || '',
+    label: item.dataset.label
+  };
+
+  ghostEl = document.createElement('div');
+  ghostEl.className = 'placed';
+  ghostEl.style.pointerEvents = 'none';
+  ghostEl.style.position = 'fixed';
+  ghostEl.style.zIndex = 999;
+  ghostEl.style.opacity = '0.75';
+  ghostEl.style.transform = 'translate(-50%,-50%)';
+
+  if (isCar({type:data.type})) {
+    const bg = data.color || '#6b7280';
+    ghostEl.innerHTML = `<div class="car-element">
+      <div class="dir-arrow" style="border-bottom-color:${lighten(bg)}"></div>
+      <div class="car-body" style="background:${bg}">
+        <div class="car-windshield"></div>
+        <div class="car-wheels"></div>
+        <div class="car-rear"></div>
+      </div>
+    </div>`;
+  } else {
+    ghostEl.innerHTML = `<div class="sign-body">${data.sign}</div>`;
+  }
+
+  document.body.appendChild(ghostEl);
+  ghostEl._data = data;
+  ghostEl.style.left = e.clientX + 'px';
+  ghostEl.style.top  = e.clientY + 'px';
+
+  document.addEventListener('mousemove', movePaletteGhost);
+  document.addEventListener('mouseup', dropPaletteGhost);
+}
+
+function movePaletteGhost(e) {
+  if (!ghostEl) return;
+  ghostEl.style.left = e.clientX + 'px';
+  ghostEl.style.top  = e.clientY + 'px';
+}
+
+function dropPaletteGhost(e) {
+  document.removeEventListener('mousemove', movePaletteGhost);
+  document.removeEventListener('mouseup', dropPaletteGhost);
+  if (!ghostEl) return;
+
+  const canvas = document.getElementById('canvas');
+  const rect = canvas.getBoundingClientRect();
+
+  if (e.clientX >= rect.left && e.clientX <= rect.right &&
+      e.clientY >= rect.top  && e.clientY <= rect.bottom) {
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const data = ghostEl._data;
+    placeElement(data.type, data.color, data.sign, data.label, x, y);
+  }
+
+  ghostEl.remove();
+  ghostEl = null;
+}
+
+function placeElement(type, color, sign, label, x, y) {
+  const el = { id: nextId++, type, color, sign, label, x, y, rotation: 0, priority: null, note: '' };
+  elements.push(el);
+  renderElement(el);
+  updateNotes();
+  document.getElementById('hint').style.display = 'none';
+}
+
+// ── DRAG PLACED ELEMENTS ──
+function startElementDrag(e, id) {
+  e.preventDefault();
+  selectedId = id;
+  const el = elements.find(x => x.id === id);
+  const canvas = document.getElementById('canvas');
+  const rect = canvas.getBoundingClientRect();
+  dragging = { id, startX: e.clientX, startY: e.clientY, origX: el.x, origY: el.y };
+  renderAll();
+  closePopup();
+}
+
+document.addEventListener('mousemove', (e) => {
+  if (!dragging) return;
+  const canvas = document.getElementById('canvas');
+  const rect = canvas.getBoundingClientRect();
+  const el = elements.find(x => x.id === dragging.id);
+  if (!el) return;
+  el.x = dragging.origX + (e.clientX - dragging.startX);
+  el.y = dragging.origY + (e.clientY - dragging.startY);
+  const div = document.getElementById('el-' + el.id);
+  if (div) { div.style.left = el.x + 'px'; div.style.top = el.y + 'px'; }
+});
+
+document.addEventListener('mouseup', (e) => {
+  if (dragging) { dragging = null; }
+});
+
+// ── SELECT & POPUP ──
+function selectElement(id, e) {
+  const moved = dragging === null;
+  selectedId = id;
+  renderAll();
+  openPopup(id, e);
+}
+
+function openPopup(id, e) {
+  const el = elements.find(x => x.id === id);
+  if (!el) return;
+
+  document.getElementById('popup-icon').textContent = getIcon(el);
+  document.getElementById('popup-label').textContent = el.label;
+  document.getElementById('note-input').value = el.note || '';
+
+  // priority buttons
+  document.querySelectorAll('.prio-btn').forEach(b => {
+    b.classList.remove('active');
+    const v = b.textContent === '—' ? null : parseInt(b.textContent);
+    if ((v === null && el.priority === null) || (v === el.priority)) b.classList.add('active');
+  });
+
+  // show/hide rotate for signs
+  document.getElementById('rotate-btns').style.display = isCar(el) ? '' : 'none';
+
+  const popup = document.getElementById('popup');
+  popup.classList.add('open');
+
+  // position popup near click but keep on screen
+  const px = Math.min(e.clientX + 10, window.innerWidth - 280);
+  const py = Math.min(e.clientY + 10, window.innerHeight - 320);
+  popup.style.left = px + 'px';
+  popup.style.top  = py + 'px';
+}
+
+function closePopup() {
+  document.getElementById('popup').classList.remove('open');
+}
+
+function onCanvasClick(e) {
+  if (e.target === document.getElementById('canvas') || e.target === document.getElementById('road-svg')) {
+    selectedId = null;
+    closePopup();
+    renderAll();
+  }
+}
+
+function setPriority(v) {
+  const el = elements.find(x => x.id === selectedId);
+  if (!el) return;
+  el.priority = v;
+  document.querySelectorAll('.prio-btn').forEach(b => {
+    b.classList.remove('active');
+    const bv = b.textContent === '—' ? null : parseInt(b.textContent);
+    if ((bv === null && v === null) || bv === v) b.classList.add('active');
+  });
+  renderAll();
+}
+
+function setRotation(deg) {
+  const el = elements.find(x => x.id === selectedId);
+  if (!el) return;
+  el.rotation = deg;
+  const div = document.getElementById('el-' + el.id);
+  if (div) div.style.transform = `translate(-50%,-50%) rotate(${deg}deg)`;
+}
+
+function savePopup() {
+  const el = elements.find(x => x.id === selectedId);
+  if (!el) return;
+  el.note = document.getElementById('note-input').value;
+  closePopup();
+  renderAll();
+}
+
+function deleteSelected() {
+  elements = elements.filter(x => x.id !== selectedId);
+  const div = document.getElementById('el-' + selectedId);
+  if (div) div.remove();
+  selectedId = null;
+  closePopup();
+  updateNotes();
+}
+
+function onCanvasMouseUp(e) { /* handled globally */ }
+function onMouseMove(e) { /* handled globally */ }
+
+// ── NOTES PANEL ──
+function updateNotes() {
+  const sorted = [...elements].sort((a, b) => {
+    if (a.priority == null && b.priority == null) return 0;
+    if (a.priority == null) return 1;
+    if (b.priority == null) return -1;
+    return a.priority - b.priority;
+  });
+
+  const count = elements.length;
+  document.getElementById('note-count').textContent = count;
+  document.getElementById('empty-state').style.display = count === 0 ? '' : 'none';
+
+  const list = document.getElementById('notes-list');
+  // remove old cards
+  list.querySelectorAll('.note-card').forEach(c => c.remove());
+
+  sorted.forEach(el => {
+    const card = document.createElement('div');
+    card.className = 'note-card';
+    card.onclick = () => {
+      selectedId = el.id;
+      renderAll();
+      const div = document.getElementById('el-' + el.id);
+      if (div) openPopup(el.id, { clientX: div.getBoundingClientRect().right, clientY: div.getBoundingClientRect().top });
+    };
+
+    card.innerHTML = `
+      <div class="note-card-top">
+        <div class="note-num ${el.priority == null ? 'no-prio' : ''}">${el.priority != null ? el.priority : '·'}</div>
+        <span class="note-icon">${getIcon(el)}</span>
+        <span class="note-label">${el.label}</span>
+      </div>
+      <div class="note-text ${!el.note ? 'empty' : ''}">${el.note || 'No note yet — click to add'}</div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+// ── CLEAR ──
+function clearAll() {
+  if (!confirm('Clear all elements from the canvas?')) return;
+  elements = [];
+  document.querySelectorAll('.placed').forEach(e => e.remove());
+  selectedId = null;
+  closePopup();
+  updateNotes();
+}
+
+// ── DEMO SCENARIO ──
+function loadDemo() {
+  clearAll();
+  // 4-way right-of-way scenario
+  const scenario = [
+    { type:'car', color:'#ef4444', sign:'',   label:'Red Car',    x:200, y:280, rotation:90,  priority:2, note:'Comes from the left. Red car must give way to blue car which comes from its right.' },
+    { type:'car', color:'#3b82f6', sign:'',   label:'Blue Car',   x:450, y:160, rotation:180, priority:1, note:'Blue car goes first — it is approaching from the priority road and has right of way over all others.' },
+    { type:'car', color:'#10b981', sign:'',   label:'Green Car',  x:680, y:320, rotation:270, priority:3, note:'Green car waits for red and blue. Although it is on the main road, it must yield because it is turning left.' },
+    { type:'car', color:'#f59e0b', sign:'',   label:'Yellow Car', x:450, y:450, rotation:0,   priority:4, note:'Yellow car goes last — it is on a secondary road and must give way to all vehicles on the main road.' },
+    { type:'sign', sign:'⚠️', label:'Yield', x:340, y:450, rotation:0, priority:null, note:'Yield sign — yellow car must stop and give way before entering.' },
+    { type:'sign', sign:'⚠️', label:'Yield', x:220, y:350, rotation:0, priority:null, note:'Yield sign — red car must also yield before entering the intersection.' },
+  ];
+  scenario.forEach(s => {
+    const el = { id:nextId++, ...s, note: s.note || '' };
+    elements.push(el);
+  });
+  renderAll();
+  document.getElementById('hint').style.display = 'none';
+}
+
+// close popup on Escape
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closePopup(); selectedId = null; renderAll(); }});
+
+// save note with Ctrl+Enter
+document.getElementById('note-input').addEventListener('keydown', e => { if (e.key === 'Enter' && e.ctrlKey) savePopup(); });
+</script>
+</body>
+</html>

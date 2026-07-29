@@ -1,0 +1,100 @@
+You are fixing the JavaScript of a driving-school booking maquette. Below is the CURRENT script. Rewrite it to fix these bugs, then return ONLY the corrected JavaScript (the raw code that goes between <script> and </script>). Do NOT include <script> tags, markdown code fences, or any explanation. Start with `let currentStep = 2;` and end with the final initialization call.
+
+BUGS TO FIX:
+1. The calendar is hardcoded to May 2025 (`let calYear = 2025, calMonth = 4;`). Initialize it to the CURRENT real month and year using `new Date()` so it never shows an all-disabled past month.
+2. Remove the hardcoded pre-selected day (`const isSel = d === 22;`). No day should be pre-selected on load.
+3. The booking summary sidebar does not update when the user changes selections. Fix `selectOption(el, group)` so that AFTER updating the `.selected` class it also updates the summary:
+   - group 'pkg': set `#sum-pkg` textContent to `el.dataset.name`, and set `#sum-total` textContent to `el.dataset.price`.
+   - group 'inst': set `#sum-inst` textContent to `el.dataset.name`, and update `#slot-subtitle` to `"Available slots for " + el.dataset.name + "."` (preserve any chosen date if one is already shown — optional).
+   - group 'pay': set `#sum-pay` textContent to `el.dataset.name`.
+4. When a day is selected in `selectDay`, also update `#slot-subtitle` so it reads `"Available slots for {currently selected instructor name} on {selected date}."`. Read the currently selected instructor from the element `.instructor-option.selected` via its `data-name` (fallback to "your instructor" if none).
+
+CONSTRAINTS:
+- Keep ALL existing function names and signatures exactly: renderCal, selectDay, changeMonth, goStep, updateProgress, selectOption, selectSlot.
+- Keep the `months` array and `currentStep` variable.
+- Keep all existing DOM ids and class names already referenced.
+- Vanilla JS only, no libraries. Keep it clean and consistent with the existing style.
+- The HTML provides these hooks: `.pkg-option[data-name][data-price]`, `.instructor-option[data-name]`, `.pay-option[data-name]`; summary ids `#sum-pkg #sum-inst #sum-date #sum-time #sum-pay #sum-total`; and `#slot-subtitle`.
+
+CURRENT SCRIPT:
+let currentStep = 2;
+
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let calYear = 2025, calMonth = 4; // May 2025
+
+function renderCal() {
+  const grid = document.getElementById('cal-grid');
+  document.getElementById('cal-month-label').textContent = months[calMonth] + ' ' + calYear;
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = days.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const total = new Date(calYear, calMonth + 1, 0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i = 0; i < first; i++) html += `<div class="cal-day empty"></div>`;
+  for (let d = 1; d <= total; d++) {
+    const date = new Date(calYear, calMonth, d);
+    const isSun = date.getDay() === 0;
+    const isPast = date < today;
+    const isSel = d === 22;
+    let cls = 'cal-day';
+    if (isSun) cls += ' sunday';
+    else if (isPast) cls += ' past';
+    else { cls += ' available'; if (isSel) cls += ' selected'; }
+    if (d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear()) cls += ' today';
+    const click = (!isSun && !isPast) ? `onclick="selectDay(this, ${d})"` : '';
+    html += `<div class="${cls}" ${click}>${d}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function selectDay(el, d) {
+  document.querySelectorAll('.cal-day.selected').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  const months_short = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const days_full = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const date = new Date(calYear, calMonth, d);
+  document.getElementById('sum-date').textContent = `${days_full[date.getDay()]}, ${months_short[calMonth]} ${d}`;
+  document.getElementById('sum-date').classList.remove('empty');
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCal();
+}
+
+function goStep(n) {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  currentStep = n;
+  updateProgress(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress(n) {
+  for (let i = 1; i <= 5; i++) {
+    const si = document.getElementById('si-' + i);
+    si.className = 'step-item';
+    if (i < n) { si.className += ' done'; si.querySelector('.step-circle').textContent = '✓'; }
+    else if (i === n) { si.className += ' active'; si.querySelector('.step-circle').textContent = i; }
+    else { si.className += ' pending'; si.querySelector('.step-circle').textContent = i; }
+    if (i < 5) {
+      const sc = document.getElementById('sc-' + i);
+      sc.className = 'step-connector ' + (i < n ? 'done' : 'pending');
+    }
+  }
+}
+
+function selectOption(el, group) {
+  el.closest('[class$="-options"], .pkg-options, .instructor-options, .payment-options').querySelectorAll('[class$="-option"]').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectSlot(btn) {
+  document.querySelectorAll('.time-slot.selected').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('sum-time').textContent = btn.textContent;
+}
+
+renderCal();

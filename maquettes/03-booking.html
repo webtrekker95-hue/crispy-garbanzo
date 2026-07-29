@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excellent Driving — Book a Lesson</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1a2f54;
+  --amber: #F5A623;
+  --amber-dark: #e09510;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-600: #4b5563;
+  --gray-800: #1f2937;
+  --green: #10b981;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(15,31,61,0.10);
+  --shadow-lg: 0 8px 40px rgba(15,31,61,0.18);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; color: var(--gray-800); background: var(--gray-50); min-height: 100vh; }
+h1,h2,h3,h4,h5 { font-family: 'Sora', sans-serif; }
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  box-shadow: 0 2px 12px rgba(15,31,61,0.06);
+}
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; justify-content: space-between; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo-icon { width: 40px; height: 40px; background: var(--navy); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.logo-icon svg { width: 22px; height: 22px; fill: var(--amber); }
+.logo-text { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--navy); line-height: 1.1; }
+.logo-text span { color: var(--amber); display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-family: 'Sora', sans-serif; font-weight: 600; font-size: 0.875rem; cursor: pointer; text-decoration: none; border: none; transition: all 0.2s; }
+.btn-outline { background: transparent; border: 2px solid var(--navy); color: var(--navy); }
+.btn-outline:hover { background: var(--navy); color: var(--white); }
+.btn-primary { background: var(--amber); color: var(--navy); }
+.btn-primary:hover { background: var(--amber-dark); transform: translateY(-1px); }
+.btn-lg { padding: 14px 28px; font-size: 1rem; border-radius: 10px; }
+
+/* BOOKING LAYOUT */
+.booking-wrap { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+.booking-header { text-align: center; margin-bottom: 40px; }
+.booking-header h1 { font-size: 2rem; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+.booking-header p { color: var(--gray-600); font-size: 0.95rem; }
+
+/* PROGRESS BAR */
+.progress-bar {
+  display: flex; align-items: center;
+  background: var(--white); border-radius: 16px;
+  padding: 20px 28px; margin-bottom: 32px;
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+.step-item {
+  display: flex; flex-direction: column; align-items: center;
+  flex: 1; position: relative; z-index: 1;
+}
+
+.step-circle {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700; font-size: 0.9rem;
+  margin-bottom: 8px;
+  transition: all 0.3s;
+}
+
+.step-item.done .step-circle { background: var(--green); color: var(--white); }
+.step-item.active .step-circle { background: var(--amber); color: var(--navy); box-shadow: 0 0 0 4px rgba(245,166,35,0.25); }
+.step-item.pending .step-circle { background: var(--gray-100); color: var(--gray-600); }
+
+.step-label { font-size: 0.72rem; font-weight: 600; text-align: center; line-height: 1.3; }
+.step-item.done .step-label { color: var(--green); }
+.step-item.active .step-label { color: var(--navy); font-weight: 700; }
+.step-item.pending .step-label { color: var(--gray-600); }
+
+.step-connector {
+  flex: 1; height: 2px;
+  margin: 0 8px;
+  margin-bottom: 24px;
+  position: relative; z-index: 0;
+}
+
+.step-connector.done { background: var(--green); }
+.step-connector.pending { background: var(--gray-200); }
+
+/* STEP PANELS */
+.step-panel { display: none; animation: slideIn 0.3s ease; }
+.step-panel.active { display: block; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.step-card {
+  background: var(--white);
+  border-radius: 16px;
+  border: 1px solid var(--gray-200);
+  padding: 32px;
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+}
+
+.step-card-title {
+  font-size: 1.2rem; font-weight: 700; color: var(--navy);
+  margin-bottom: 6px;
+}
+.step-card-sub { font-size: 0.875rem; color: var(--gray-600); margin-bottom: 28px; }
+
+/* PACKAGE SELECTION */
+.pkg-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+.pkg-option {
+  border: 2px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.pkg-option:hover { border-color: var(--amber); }
+.pkg-option.selected { border-color: var(--amber); background: rgba(245,166,35,0.04); }
+.pkg-option.selected::after {
+  content: '✓';
+  position: absolute; top: 12px; right: 12px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--amber); color: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 800;
+}
+
+.pkg-opt-name { font-family: 'Sora', sans-serif; font-weight: 700; color: var(--navy); font-size: 1rem; margin-bottom: 4px; }
+.pkg-opt-lessons { font-size: 0.8rem; color: var(--gray-600); margin-bottom: 10px; }
+.pkg-opt-price { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--navy); }
+.pkg-opt-price span { font-size: 0.8rem; font-weight: 500; color: var(--gray-600); }
+.featured-tag { display: inline-block; background: var(--amber); color: var(--navy); font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 100px; margin-left: 8px; vertical-align: middle; }
+
+/* INSTRUCTOR SELECTION */
+.instructor-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+.instructor-option {
+  border: 2px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 20px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  position: relative;
+}
+
+.instructor-option:hover { border-color: var(--amber); transform: translateY(-2px); }
+.instructor-option.selected { border-color: var(--amber); background: rgba(245,166,35,0.04); }
+.instructor-option.selected::after {
+  content: '✓';
+  position: absolute; top: 10px; right: 10px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--amber); color: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 800;
+}
+
+.inst-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; margin: 0 auto 12px;
+  border: 3px solid var(--gray-200);
+  transition: border-color 0.2s;
+}
+
+.instructor-option.selected .inst-avatar, .instructor-option:hover .inst-avatar { border-color: var(--amber); }
+
+.inst-name { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 0.9rem; color: var(--navy); margin-bottom: 4px; }
+.inst-exp { font-size: 0.72rem; color: var(--amber-dark); font-weight: 600; margin-bottom: 6px; }
+.inst-avail { font-size: 0.72rem; color: var(--gray-600); }
+
+/* CALENDAR */
+.calendar-wrap { user-select: none; }
+.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.cal-header h3 { font-size: 1rem; font-weight: 700; color: var(--navy); }
+.cal-nav { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--navy); transition: all 0.2s; }
+.cal-nav:hover { background: var(--navy); color: var(--white); }
+
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-day-name { text-align: center; font-size: 0.72rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase; padding: 8px 0; }
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.cal-day.empty { cursor: default; }
+.cal-day.sunday { color: var(--gray-200); cursor: not-allowed; background: var(--gray-50); }
+.cal-day.past { color: var(--gray-200); cursor: not-allowed; }
+.cal-day.available:hover { background: rgba(245,166,35,0.12); border-color: var(--amber); color: var(--navy); }
+.cal-day.selected { background: var(--amber); color: var(--navy); font-weight: 700; border-color: var(--amber); }
+.cal-day.today { font-weight: 700; border-color: var(--navy); }
+
+/* TIME SLOTS */
+.time-groups { display: flex; flex-direction: column; gap: 20px; }
+.time-group-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-600); margin-bottom: 10px; }
+.time-slots { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.time-slot {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 2px solid var(--gray-200);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.875rem; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--white);
+  color: var(--navy);
+}
+
+.time-slot:hover { border-color: var(--amber); background: rgba(245,166,35,0.06); }
+.time-slot.selected { background: var(--amber); border-color: var(--amber); color: var(--navy); }
+.time-slot.booked { background: var(--gray-100); border-color: var(--gray-200); color: var(--gray-200); cursor: not-allowed; text-decoration: line-through; }
+
+/* PAYMENT */
+.payment-options { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.pay-option {
+  border: 2px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.pay-option:hover { border-color: var(--amber); }
+.pay-option.selected { border-color: var(--amber); background: rgba(245,166,35,0.04); }
+.pay-option.selected::after {
+  content: '✓';
+  position: absolute; top: 12px; right: 12px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--amber); color: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 800;
+}
+
+.pay-icon { font-size: 2rem; margin-bottom: 12px; }
+.pay-name { font-family: 'Sora', sans-serif; font-weight: 700; color: var(--navy); font-size: 1rem; margin-bottom: 6px; }
+.pay-desc { font-size: 0.82rem; color: var(--gray-600); line-height: 1.5; }
+
+/* CONFIRMATION */
+.confirm-header {
+  background: linear-gradient(135deg, var(--navy), #1a3060);
+  border-radius: 16px;
+  padding: 32px;
+  color: var(--white);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.confirm-check {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(16,185,129,0.2);
+  border: 3px solid var(--green);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; margin: 0 auto 20px;
+}
+
+.confirm-header h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
+.confirm-header p { color: rgba(255,255,255,0.65); font-size: 0.9rem; }
+
+.confirm-details {
+  background: var(--white);
+  border-radius: 16px;
+  border: 1px solid var(--gray-200);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.confirm-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.confirm-row:last-child { border-bottom: none; }
+.confirm-key { font-size: 0.82rem; color: var(--gray-600); display: flex; align-items: center; gap: 8px; }
+.confirm-val { font-weight: 600; color: var(--navy); font-size: 0.9rem; }
+
+.wa-notice {
+  background: rgba(37,211,102,0.08);
+  border: 1px solid rgba(37,211,102,0.25);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-bottom: 24px;
+}
+.wa-notice-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+.wa-notice p { font-size: 0.875rem; color: var(--gray-800); line-height: 1.5; }
+.wa-notice strong { color: #16a34a; }
+
+/* NAV BUTTONS */
+.nav-btns { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+
+/* SUMMARY SIDEBAR */
+.booking-layout { display: grid; grid-template-columns: 1fr 300px; gap: 28px; }
+.main-col {}
+.sidebar { }
+
+.summary-card {
+  background: var(--white);
+  border-radius: 16px;
+  border: 1px solid var(--gray-200);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 90px;
+}
+
+.summary-title { font-family: 'Sora', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--navy); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-200); }
+
+.summary-item { display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-bottom: 1px solid var(--gray-100); }
+.summary-item:last-of-type { border-bottom: none; }
+.summary-key { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--gray-600); }
+.summary-val { font-size: 0.9rem; font-weight: 600; color: var(--navy); }
+.summary-val.empty { color: var(--gray-200); font-style: italic; font-weight: 400; }
+
+.summary-total { margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--navy); display: flex; justify-content: space-between; align-items: center; }
+.summary-total-label { font-size: 0.82rem; font-weight: 700; color: var(--navy); }
+.summary-total-price { font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--amber); }
+
+@media (max-width: 700px) {
+  .booking-layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .pkg-options, .payment-options { grid-template-columns: 1fr; }
+  .instructor-options { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="01-homepage.html" class="logo">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <div class="logo-text">Excellent Driving <span>Rijschool · Suriname</span></div>
+    </a>
+    <a href="01-homepage.html" class="btn btn-outline" style="font-size:0.82rem;padding:8px 16px;">← Back to Home</a>
+  </div>
+</nav>
+
+<div class="booking-wrap">
+  <div class="booking-header">
+    <h1>Book Your Driving Lesson</h1>
+    <p>Complete the steps below to reserve your slot. Takes less than 2 minutes.</p>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-bar">
+    <div class="step-item done" id="si-1">
+      <div class="step-circle">✓</div>
+      <div class="step-label">Package</div>
+    </div>
+    <div class="step-connector done" id="sc-1"></div>
+    <div class="step-item active" id="si-2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Instructor</div>
+    </div>
+    <div class="step-connector pending" id="sc-2"></div>
+    <div class="step-item pending" id="si-3">
+      <div class="step-circle">3</div>
+      <div class="step-label">Date</div>
+    </div>
+    <div class="step-connector pending" id="sc-3"></div>
+    <div class="step-item pending" id="si-4">
+      <div class="step-circle">4</div>
+      <div class="step-label">Time Slot</div>
+    </div>
+    <div class="step-connector pending" id="sc-4"></div>
+    <div class="step-item pending" id="si-5">
+      <div class="step-circle">5</div>
+      <div class="step-label">Payment</div>
+    </div>
+  </div>
+
+  <div class="booking-layout">
+    <div class="main-col">
+
+      <!-- STEP 1: PACKAGE -->
+      <div class="step-panel" id="step-1">
+        <div class="step-card">
+          <div class="step-card-title">Choose a Package</div>
+          <div class="step-card-sub">Select the driving package you'd like to enroll in.</div>
+          <div class="pkg-options">
+            <div class="pkg-option" onclick="selectOption(this, 'pkg')" data-name="Starter" data-price="SRD 1,200">
+              <div class="pkg-opt-name">🚀 Starter</div>
+              <div class="pkg-opt-lessons">10 lessons · 50 min each</div>
+              <div class="pkg-opt-price">SRD 1,200 <span>/ package</span></div>
+            </div>
+            <div class="pkg-option selected" onclick="selectOption(this, 'pkg')" data-name="Standard" data-price="SRD 2,000">
+              <div class="pkg-opt-name">🎯 Standard <span class="featured-tag">Popular</span></div>
+              <div class="pkg-opt-lessons">20 lessons · 50 min each</div>
+              <div class="pkg-opt-price">SRD 2,000 <span>/ package</span></div>
+            </div>
+            <div class="pkg-option" onclick="selectOption(this, 'pkg')" data-name="Premium" data-price="SRD 3,200">
+              <div class="pkg-opt-name">💎 Premium</div>
+              <div class="pkg-opt-lessons">30 lessons · 50 min each</div>
+              <div class="pkg-opt-price">SRD 3,200 <span>/ package</span></div>
+            </div>
+            <div class="pkg-option" onclick="selectOption(this, 'pkg')" data-name="Refresher" data-price="SRD 650">
+              <div class="pkg-opt-name">🔄 Refresher</div>
+              <div class="pkg-opt-lessons">5 lessons · 50 min each</div>
+              <div class="pkg-opt-price">SRD 650 <span>/ package</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-btns">
+          <span></span>
+          <button class="btn btn-primary btn-lg" onclick="goStep(2)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: INSTRUCTOR -->
+      <div class="step-panel active" id="step-2">
+        <div class="step-card">
+          <div class="step-card-title">Choose an Instructor</div>
+          <div class="step-card-sub">All instructors are certified. Pick the one that suits your preference.</div>
+          <div class="instructor-options">
+            <div class="instructor-option selected" onclick="selectOption(this, 'inst')" data-name="Carlos Martinus">
+              <div class="inst-avatar">👨‍🏫</div>
+              <div class="inst-name">Carlos Martinus</div>
+              <div class="inst-exp">12 years exp.</div>
+              <div class="inst-avail">Mon–Sat available</div>
+            </div>
+            <div class="instructor-option" onclick="selectOption(this, 'inst')" data-name="Sandra Pengel">
+              <div class="inst-avatar">👩‍🏫</div>
+              <div class="inst-name">Sandra Pengel</div>
+              <div class="inst-exp">8 years exp.</div>
+              <div class="inst-avail">Mon–Fri available</div>
+            </div>
+            <div class="instructor-option" onclick="selectOption(this, 'inst')" data-name="Roy Apensa">
+              <div class="inst-avatar">👨‍🏫</div>
+              <div class="inst-name">Roy Apensa</div>
+              <div class="inst-exp">15 years exp.</div>
+              <div class="inst-avail">Mon–Sat available</div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-btns">
+          <button class="btn btn-outline" onclick="goStep(1)">← Back</button>
+          <button class="btn btn-primary btn-lg" onclick="goStep(3)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: DATE -->
+      <div class="step-panel" id="step-3">
+        <div class="step-card">
+          <div class="step-card-title">Choose a Date</div>
+          <div class="step-card-sub">Pick a date for your lesson. Sundays are unavailable.</div>
+          <div class="calendar-wrap">
+            <div class="cal-header">
+              <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+              <h3 id="cal-month-label">May 2025</h3>
+              <button class="cal-nav" onclick="changeMonth(1)">›</button>
+            </div>
+            <div class="cal-grid" id="cal-grid">
+              <!-- generated by JS -->
+            </div>
+          </div>
+        </div>
+        <div class="nav-btns">
+          <button class="btn btn-outline" onclick="goStep(2)">← Back</button>
+          <button class="btn btn-primary btn-lg" onclick="goStep(4)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: TIME SLOT -->
+      <div class="step-panel" id="step-4">
+        <div class="step-card">
+          <div class="step-card-title">Choose a Time Slot</div>
+          <div class="step-card-sub" id="slot-subtitle">Available slots for Carlos Martinus.</div>
+          <div class="time-groups">
+            <div>
+              <div class="time-group-label">🌅 Morning</div>
+              <div class="time-slots">
+                <button class="time-slot booked">7:00 AM</button>
+                <button class="time-slot booked">8:00 AM</button>
+                <button class="time-slot" onclick="selectSlot(this)">9:00 AM</button>
+                <button class="time-slot selected" onclick="selectSlot(this)">10:00 AM</button>
+                <button class="time-slot" onclick="selectSlot(this)">11:00 AM</button>
+              </div>
+            </div>
+            <div>
+              <div class="time-group-label">☀️ Afternoon</div>
+              <div class="time-slots">
+                <button class="time-slot" onclick="selectSlot(this)">1:00 PM</button>
+                <button class="time-slot" onclick="selectSlot(this)">2:00 PM</button>
+                <button class="time-slot booked">3:00 PM</button>
+                <button class="time-slot" onclick="selectSlot(this)">4:00 PM</button>
+                <button class="time-slot" onclick="selectSlot(this)">5:00 PM</button>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding:12px 16px;background:var(--gray-50);border-radius:8px;font-size:0.78rem;color:var(--gray-600)">
+            <strong style="color:var(--navy)">Strikethrough slots</strong> are already booked. Each lesson is 50 minutes.
+          </div>
+        </div>
+        <div class="nav-btns">
+          <button class="btn btn-outline" onclick="goStep(3)">← Back</button>
+          <button class="btn btn-primary btn-lg" onclick="goStep(5)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 5: PAYMENT -->
+      <div class="step-panel" id="step-5">
+        <div class="step-card">
+          <div class="step-card-title">Choose Payment Method</div>
+          <div class="step-card-sub">Select how you'd like to pay for your package.</div>
+          <div class="payment-options">
+            <div class="pay-option selected" onclick="selectOption(this, 'pay')" data-name="Cash">
+              <div class="pay-icon">💵</div>
+              <div class="pay-name">Cash Payment</div>
+              <div class="pay-desc">Pay in person at our school, Bonistraat 44. Bring exact amount.</div>
+            </div>
+            <div class="pay-option" onclick="selectOption(this, 'pay')" data-name="Bank Transfer">
+              <div class="pay-icon">🏦</div>
+              <div class="pay-name">Bank Transfer</div>
+              <div class="pay-desc">Transfer to our account. Admin will confirm after receipt of payment.</div>
+            </div>
+          </div>
+          <div style="margin-top:20px;padding:16px;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.25);border-radius:10px">
+            <div style="font-size:0.82rem;font-weight:700;color:var(--navy);margin-bottom:4px">💡 Payment Note</div>
+            <div style="font-size:0.82rem;color:var(--gray-600);line-height:1.5">Your booking will be marked <strong>Pending</strong> until payment is confirmed. You'll receive a WhatsApp message when your booking is confirmed.</div>
+          </div>
+        </div>
+        <div class="nav-btns">
+          <button class="btn btn-outline" onclick="goStep(4)">← Back</button>
+          <button class="btn btn-primary btn-lg" onclick="goStep(6)">Confirm Booking →</button>
+        </div>
+      </div>
+
+      <!-- STEP 6: CONFIRMATION -->
+      <div class="step-panel" id="step-6">
+        <div class="confirm-header">
+          <div class="confirm-check">✅</div>
+          <h2>Booking Confirmed!</h2>
+          <p>Your lesson has been booked. Check your WhatsApp for details.</p>
+        </div>
+
+        <div class="confirm-details">
+          <div class="confirm-row">
+            <div class="confirm-key">📦 Package</div>
+            <div class="confirm-val">Standard (20 lessons)</div>
+          </div>
+          <div class="confirm-row">
+            <div class="confirm-key">👨‍🏫 Instructor</div>
+            <div class="confirm-val">Carlos Martinus</div>
+          </div>
+          <div class="confirm-row">
+            <div class="confirm-key">📅 Date</div>
+            <div class="confirm-val">Monday, May 19, 2025</div>
+          </div>
+          <div class="confirm-row">
+            <div class="confirm-key">⏰ Time</div>
+            <div class="confirm-val">10:00 AM – 10:50 AM</div>
+          </div>
+          <div class="confirm-row">
+            <div class="confirm-key">💵 Payment</div>
+            <div class="confirm-val">Cash · SRD 2,000</div>
+          </div>
+          <div class="confirm-row">
+            <div class="confirm-key">🔖 Status</div>
+            <div class="confirm-val"><span style="background:rgba(245,166,35,0.15);color:#b45309;padding:4px 10px;border-radius:100px;font-size:0.8rem">Pending Payment</span></div>
+          </div>
+        </div>
+
+        <div class="wa-notice">
+          <div class="wa-notice-icon">📱</div>
+          <p>A <strong>WhatsApp confirmation</strong> has been sent to your number with your booking details and payment instructions. Reply to that message if you need help.</p>
+        </div>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a href="04-student-dashboard.html" class="btn btn-primary btn-lg" style="flex:1;justify-content:center">Go to Dashboard</a>
+          <a href="01-homepage.html" class="btn btn-outline btn-lg" style="flex:1;justify-content:center">Back to Home</a>
+        </div>
+      </div>
+
+    </div><!-- /main-col -->
+
+    <!-- SIDEBAR SUMMARY -->
+    <div class="sidebar">
+      <div class="summary-card">
+        <div class="summary-title">Booking Summary</div>
+        <div class="summary-item">
+          <div class="summary-key">Package</div>
+          <div class="summary-val" id="sum-pkg">Standard</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-key">Instructor</div>
+          <div class="summary-val" id="sum-inst">Carlos Martinus</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-key">Date</div>
+          <div class="summary-val empty" id="sum-date">Not selected</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-key">Time</div>
+          <div class="summary-val" id="sum-time">10:00 AM</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-key">Payment</div>
+          <div class="summary-val" id="sum-pay">Cash</div>
+        </div>
+        <div class="summary-total">
+          <div class="summary-total-label">Total</div>
+          <div class="summary-total-price" id="sum-total">SRD 2,000</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentStep = 2;
+
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
+
+function renderCal() {
+  const grid = document.getElementById('cal-grid');
+  document.getElementById('cal-month-label').textContent = months[calMonth] + ' ' + calYear;
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = days.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const total = new Date(calYear, calMonth + 1, 0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i = 0; i < first; i++) html += `<div class="cal-day empty"></div>`;
+  for (let d = 1; d <= total; d++) {
+    const date = new Date(calYear, calMonth, d);
+    const isSun = date.getDay() === 0;
+    const isPast = date < today;
+    let cls = 'cal-day';
+    if (isSun) cls += ' sunday';
+    else if (isPast) cls += ' past';
+    else { cls += ' available'; }
+    if (d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear()) cls += ' today';
+    const click = (!isSun && !isPast) ? `onclick="selectDay(this, ${d})" tabindex="0" role="button"` : '';
+    html += `<div class="${cls}" ${click}>${d}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function selectDay(el, d) {
+  document.querySelectorAll('.cal-day.selected').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  const months_short = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const days_full = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const date = new Date(calYear, calMonth, d);
+  const dateStr = `${days_full[date.getDay()]}, ${months_short[calMonth]} ${d}`;
+  document.getElementById('sum-date').textContent = dateStr;
+  document.getElementById('sum-date').classList.remove('empty');
+  const instEl = document.querySelector('.instructor-option.selected');
+  const instName = instEl ? instEl.dataset.name : 'your instructor';
+  document.getElementById('slot-subtitle').textContent = `Available slots for ${instName} on ${dateStr}.`;
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCal();
+}
+
+function goStep(n) {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  currentStep = n;
+  updateProgress(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress(n) {
+  for (let i = 1; i <= 5; i++) {
+    const si = document.getElementById('si-' + i);
+    si.className = 'step-item';
+    if (i < n) { si.className += ' done'; si.querySelector('.step-circle').textContent = '✓'; }
+    else if (i === n) { si.className += ' active'; si.querySelector('.step-circle').textContent = i; }
+    else { si.className += ' pending'; si.querySelector('.step-circle').textContent = i; }
+    if (i < 5) {
+      const sc = document.getElementById('sc-' + i);
+      sc.className = 'step-connector ' + (i < n ? 'done' : 'pending');
+    }
+  }
+}
+
+function selectOption(el, group) {
+  el.closest('.pkg-options, .instructor-options, .payment-options').querySelectorAll('.selected').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  if (group === 'pkg') {
+    document.getElementById('sum-pkg').textContent = el.dataset.name;
+    document.getElementById('sum-total').textContent = el.dataset.price;
+  } else if (group === 'inst') {
+    document.getElementById('sum-inst').textContent = el.dataset.name;
+    const dateEl = document.getElementById('sum-date');
+    if (dateEl && !dateEl.classList.contains('empty')) {
+      document.getElementById('slot-subtitle').textContent = `Available slots for ${el.dataset.name} on ${dateEl.textContent}.`;
+    } else {
+      document.getElementById('slot-subtitle').textContent = `Available slots for ${el.dataset.name}.`;
+    }
+  } else if (group === 'pay') {
+    document.getElementById('sum-pay').textContent = el.dataset.name;
+  }
+}
+
+function selectSlot(btn) {
+  document.querySelectorAll('.time-slot.selected').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('sum-time').textContent = btn.textContent;
+}
+
+renderCal();
+
+// a11y: make custom button-like controls keyboard-operable
+document.querySelectorAll('.pkg-option, .instructor-option, .pay-option').forEach(el => {
+  el.setAttribute('role', 'button');
+  el.setAttribute('tabindex', '0');
+});
+document.addEventListener('keydown', function(e) {
+  const el = document.activeElement;
+  if ((e.key === 'Enter' || e.key === ' ') && el && el.getAttribute('role') === 'button') {
+    e.preventDefault();
+    el.click();
+  }
+});
+</script>
+</body>
+</html>

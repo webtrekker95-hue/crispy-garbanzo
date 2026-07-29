@@ -1,0 +1,15 @@
+You are fixing JavaScript in a quiz maquette. Return ONLY raw JavaScript — no <script> tags, no markdown fences, no explanation.
+
+Produce TWO things, in this order:
+
+1. A corrected version of the `submitQuiz` function below. BUG: it stops showing the timer but never stops the running interval, so the countdown keeps ticking in the background. Add `clearInterval(timerInterval);` (timerInterval is an existing global variable declared elsewhere). Keep all existing behavior otherwise.
+
+2. After the function, ONE initialization statement that hides the demo button on load unless the page URL contains the query parameter `demo`. The button's container has id `demo-toggle`. Use: if the URL search string does NOT include 'demo', set document.getElementById('demo-toggle').style.display = 'none'. Guard against the element being missing.
+
+CURRENT FUNCTION:
+function submitQuiz() {
+  document.getElementById('screen-quiz').classList.remove('active');
+  document.getElementById('screen-score').classList.add('active');
+  document.getElementById('timer').textContent = '⏱ Done';
+  document.getElementById('topbar-center').innerHTML = '<div class="quiz-title">Quiz Complete</div>';
+}

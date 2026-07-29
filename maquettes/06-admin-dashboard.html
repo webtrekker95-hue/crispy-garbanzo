@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excellent Driving — Admin Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1a2f54;
+  --navy-dark: #08121f;
+  --amber: #F5A623;
+  --amber-dark: #e09510;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --green: #10b981;
+  --green-light: rgba(16,185,129,0.1);
+  --red: #ef4444;
+  --red-light: rgba(239,68,68,0.08);
+  --blue: #3b82f6;
+  --blue-light: rgba(59,130,246,0.1);
+  --sidebar-w: 220px;
+  --radius: 10px;
+  --shadow: 0 2px 12px rgba(15,31,61,0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; color: var(--gray-800); background: var(--gray-50); display: flex; min-height: 100vh; }
+h1,h2,h3,h4 { font-family: 'Sora', sans-serif; }
+
+/* SIDEBAR */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy-dark);
+  min-height: 100vh;
+  position: fixed; top: 0; left: 0;
+  display: flex; flex-direction: column;
+  z-index: 50;
+  transition: transform 0.25s ease;
+}
+
+.sidebar-logo {
+  padding: 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+
+.logo-mark {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: var(--amber);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.logo-mark svg { width: 16px; height: 16px; fill: var(--navy); }
+.logo-text { font-family: 'Sora', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--white); line-height: 1.2; }
+.logo-sub { font-size: 0.62rem; color: rgba(255,255,255,0.35); font-weight: 500; }
+
+.nav-group { padding: 12px 10px 4px; }
+.nav-group-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.25); padding: 0 6px 6px; }
+
+.nav-link {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 10px; border-radius: 7px;
+  font-size: 0.82rem; font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none; cursor: pointer;
+  transition: all 0.15s; margin-bottom: 1px;
+}
+
+.nav-link:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+.nav-link.active { background: rgba(245,166,35,0.14); color: var(--amber); font-weight: 600; }
+.nav-icon { font-size: 0.95rem; width: 16px; text-align: center; flex-shrink: 0; }
+.nav-badge { margin-left: auto; background: var(--red); color: var(--white); font-size: 0.6rem; font-weight: 700; padding: 2px 5px; border-radius: 100px; min-width: 16px; text-align: center; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.admin-chip {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 10px; border-radius: 7px;
+  background: rgba(255,255,255,0.05);
+}
+
+.admin-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--amber);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 800; color: var(--navy);
+  flex-shrink: 0;
+}
+
+.admin-name { font-size: 0.78rem; font-weight: 600; color: var(--white); }
+.admin-role { font-size: 0.62rem; color: rgba(255,255,255,0.35); }
+
+/* MAIN */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+
+/* TOPBAR */
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  padding: 0 28px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 40;
+  box-shadow: 0 1px 0 var(--gray-200);
+}
+
+.topbar-title { font-size: 1rem; font-weight: 700; color: var(--navy); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.sidebar-toggle { display: none; background: none; border: none; cursor: pointer; flex-direction: column; gap: 5px; padding: 4px; }
+.sidebar-toggle span { width: 22px; height: 2px; background: var(--navy); border-radius: 2px; }
+.sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(15,31,61,0.5); z-index: 49; }
+
+.search-bar {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--gray-100); border-radius: 8px;
+  padding: 7px 14px; font-size: 0.82rem; color: var(--gray-600);
+  width: 200px; cursor: text;
+}
+
+.notif-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--gray-100); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 0.9rem; transition: background 0.2s; }
+.notif-btn:hover { background: var(--gray-200); }
+.notif-dot { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--red); border: 2px solid var(--white); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px; border-radius: 7px; font-family: 'Sora', sans-serif; font-weight: 600; font-size: 0.8rem; cursor: pointer; text-decoration: none; border: none; transition: all 0.2s; }
+.btn-primary { background: var(--amber); color: var(--navy); }
+.btn-primary:hover { background: var(--amber-dark); }
+.btn-outline { background: transparent; border: 1.5px solid var(--gray-200); color: var(--navy); }
+.btn-outline:hover { border-color: var(--navy); background: var(--gray-50); }
+.btn-sm { padding: 5px 12px; font-size: 0.75rem; }
+.btn-danger { background: var(--red-light); color: var(--red); border: 1.5px solid rgba(239,68,68,0.2); }
+.btn-danger:hover { background: rgba(239,68,68,0.15); }
+.btn-success { background: var(--green-light); color: #059669; border: 1.5px solid rgba(16,185,129,0.2); }
+.btn-success:hover { background: rgba(16,185,129,0.18); }
+
+/* CONTENT AREA */
+.content { padding: 24px 28px; flex: 1; }
+
+/* TABS */
+.tabs { display: flex; gap: 4px; background: var(--gray-100); padding: 4px; border-radius: 10px; width: fit-content; margin-bottom: 24px; }
+.tab { padding: 7px 16px; border-radius: 7px; font-size: 0.82rem; font-weight: 600; cursor: pointer; color: var(--gray-600); transition: all 0.2s; border: none; background: transparent; }
+.tab.active { background: var(--white); color: var(--navy); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+/* STATS ROW */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 18px;
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow);
+}
+
+.stat-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+.stat-icon { width: 40px; height: 40px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+.stat-trend { font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+.trend-up { background: var(--green-light); color: #059669; }
+.trend-down { background: var(--red-light); color: var(--red); }
+.trend-neutral { background: var(--gray-100); color: var(--gray-600); }
+
+.stat-num { font-family: 'Sora', sans-serif; font-size: 1.7rem; font-weight: 800; color: var(--navy); line-height: 1; margin-bottom: 3px; }
+.stat-label { font-size: 0.75rem; color: var(--gray-600); }
+.stat-sub { font-size: 0.7rem; color: var(--gray-600); margin-top: 6px; }
+
+/* GRID */
+.grid-3-1 { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* CARDS */
+.card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-200); box-shadow: var(--shadow); }
+.card-header { padding: 14px 18px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-size: 0.88rem; font-weight: 700; color: var(--navy); }
+.card-body { padding: 16px 18px; }
+.card-action { font-size: 0.75rem; color: var(--amber-dark); font-weight: 600; cursor: pointer; text-decoration: none; }
+.card-action:hover { text-decoration: underline; }
+
+/* TABLE */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--gray-600); background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  white-space: nowrap;
+}
+tbody td { padding: 11px 14px; font-size: 0.82rem; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: rgba(245,166,35,0.03); }
+
+.student-cell { display: flex; align-items: center; gap: 10px; }
+.student-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: var(--white); flex-shrink: 0; }
+
+.badge { font-size: 0.68rem; font-weight: 700; padding: 3px 9px; border-radius: 100px; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
+.badge-pending { background: rgba(245,166,35,0.12); color: #b45309; }
+.badge-confirmed { background: var(--green-light); color: #059669; }
+.badge-cancelled { background: var(--gray-100); color: var(--gray-600); }
+.badge-cash { background: var(--blue-light); color: #1d4ed8; }
+.badge-transfer { background: rgba(139,92,246,0.1); color: #7c3aed; }
+
+.action-btns { display: flex; gap: 6px; }
+
+/* QUICK ACTIONS */
+.quick-actions { display: flex; flex-direction: column; gap: 10px; }
+.qa-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: 9px;
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  font-size: 0.82rem; font-weight: 600; color: var(--navy);
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+}
+.qa-btn:hover { background: rgba(245,166,35,0.06); border-color: var(--amber); }
+.qa-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+
+/* PENDING PAYMENTS */
+.payment-item { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--gray-100); }
+.payment-item:last-child { border-bottom: none; }
+.pay-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; color: var(--white); flex-shrink: 0; }
+.pay-info { flex: 1; min-width: 0; }
+.pay-name { font-size: 0.82rem; font-weight: 600; color: var(--navy); margin-bottom: 1px; }
+.pay-detail { font-size: 0.72rem; color: var(--gray-600); }
+.pay-amount { font-family: 'Sora', sans-serif; font-size: 0.875rem; font-weight: 700; color: var(--navy); margin-right: 8px; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(15,31,61,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--white); border-radius: 16px;
+  padding: 28px; max-width: 440px; width: 100%;
+  transform: scale(0.95); transition: transform 0.2s;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.modal-overlay.open .modal { transform: scale(1); }
+.modal-title { font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.modal-sub { font-size: 0.875rem; color: var(--gray-600); margin-bottom: 20px; line-height: 1.5; }
+.modal-detail { background: var(--gray-50); border-radius: 8px; padding: 14px; margin-bottom: 20px; font-size: 0.82rem; color: var(--gray-700); line-height: 1.7; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+/* MINI CHART */
+.mini-chart { display: flex; align-items: flex-end; gap: 6px; height: 60px; padding: 0 4px; }
+.bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; }
+.bar { background: var(--amber); border-radius: 4px 4px 0 0; width: 100%; transition: height 0.5s ease; opacity: 0.7; }
+.bar.active { opacity: 1; }
+.bar-label { font-size: 0.6rem; color: var(--gray-600); margin-top: 4px; }
+
+@media (max-width: 1100px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .grid-3-1 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 1024px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); box-shadow: 0 0 40px rgba(15,31,61,0.4); }
+  .sidebar.open ~ .sidebar-backdrop { display: block; }
+  .sidebar-toggle { display: flex; }
+  .main { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+    <div>
+      <div class="logo-text">Excellent Driving</div>
+      <div class="logo-sub">Admin Panel</div>
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Overview</div>
+    <a class="nav-link active" onclick="setNav(this)"><span class="nav-icon">📊</span> Dashboard</a>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">📅</span> Bookings <span class="nav-badge">5</span></a>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">👥</span> Students</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">School</div>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">📦</span> Packages</a>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">👨‍🏫</span> Instructors</a>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">📚</span> Course Content</a>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">❓</span> FAQ</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">System</div>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">⚙️</span> Settings</a>
+    <a class="nav-link" onclick="setNav(this); window.location='01-homepage.html'"><span class="nav-icon">🌐</span> View Website</a>
+    <a class="nav-link" style="color:rgba(239,68,68,0.6)" onclick="setNav(this)"><span class="nav-icon">🚪</span> Log Out</a>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="admin-chip">
+      <div class="admin-avatar">AD</div>
+      <div>
+        <div class="admin-name">Admin</div>
+        <div class="admin-role">School Owner</div>
+      </div>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar" aria-expanded="false" aria-controls="sidebar" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-title">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div class="search-bar">🔍 Search students, bookings…</div>
+      <button class="btn btn-primary" onclick="openModal()">+ New Booking</button>
+      <button class="notif-btn">🔔<div class="notif-dot"></div></button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(this)">Overview</button>
+      <button class="tab" onclick="switchTab(this)">Bookings</button>
+      <button class="tab" onclick="switchTab(this)">Students</button>
+      <button class="tab" onclick="switchTab(this)">Revenue</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon" style="background:rgba(59,130,246,0.1)">👥</div>
+          <div class="stat-trend trend-up">↑ 12%</div>
+        </div>
+        <div class="stat-num">247</div>
+        <div class="stat-label">Total Students</div>
+        <div class="stat-sub">+8 this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon" style="background:rgba(16,185,129,0.1)">📅</div>
+          <div class="stat-trend trend-up">↑ 6%</div>
+        </div>
+        <div class="stat-num">34</div>
+        <div class="stat-label">Bookings This Week</div>
+        <div class="stat-sub">14 today</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon" style="background:rgba(245,166,35,0.12)">💰</div>
+          <div class="stat-trend trend-neutral">5 pending</div>
+        </div>
+        <div class="stat-num">SRD 9,400</div>
+        <div class="stat-label">Pending Payments</div>
+        <div class="stat-sub">3 bank transfers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon" style="background:rgba(245,166,35,0.12)">📦</div>
+          <div class="stat-trend trend-up">↑ 3</div>
+        </div>
+        <div class="stat-num">4</div>
+        <div class="stat-label">Active Packages</div>
+        <div class="stat-sub">1 draft</div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="grid-3-1" style="margin-bottom:20px">
+      <!-- BOOKINGS TABLE -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Recent Bookings</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select style="font-size:0.75rem;border:1px solid var(--gray-200);border-radius:6px;padding:4px 8px;color:var(--navy);background:var(--white);cursor:pointer">
+              <option>All statuses</option>
+              <option>Pending</option>
+              <option>Confirmed</option>
+            </select>
+            <a class="card-action">Export CSV</a>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Package</th>
+                <th>Date & Time</th>
+                <th>Instructor</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#6366f1">AM</div><div><div style="font-weight:600;font-size:0.82rem">Aisha Mijnals</div><div style="font-size:0.7rem;color:var(--gray-600)">Standard</div></div></div></td>
+                <td>Standard</td>
+                <td><div style="font-size:0.82rem;font-weight:600">May 22</div><div style="font-size:0.7rem;color:var(--gray-600)">10:00 AM</div></td>
+                <td>Carlos M.</td>
+                <td><span class="badge badge-cash">💵 Cash</span></td>
+                <td><span class="badge badge-confirmed">✓ Confirmed</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-outline">View</button><button class="btn btn-sm btn-danger" onclick="openCancel('Aisha Mijnals','May 22 · 10:00 AM','Carlos Martinus','Standard')">Cancel</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#f59e0b">KJ</div><div><div style="font-weight:600;font-size:0.82rem">Kevin Jansen</div><div style="font-size:0.7rem;color:var(--gray-600)">Starter</div></div></div></td>
+                <td>Starter</td>
+                <td><div style="font-size:0.82rem;font-weight:600">May 23</div><div style="font-size:0.7rem;color:var(--gray-600)">2:00 PM</div></td>
+                <td>Sandra P.</td>
+                <td><span class="badge badge-transfer">🏦 Transfer</span></td>
+                <td><span class="badge badge-pending">⏳ Pending</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-success" onclick="openConfirmPay('Kevin Jansen','Starter (10 lessons)','SRD 1,200','Bank Transfer','May 23 · 2:00 PM · Sandra Pengel')">Confirm Pay</button><button class="btn btn-sm btn-danger" onclick="openCancel('Kevin Jansen','May 23 · 2:00 PM','Sandra Pengel','Starter')">Cancel</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#10b981">RP</div><div><div style="font-weight:600;font-size:0.82rem">Reina Pansa</div><div style="font-size:0.7rem;color:var(--gray-600)">Premium</div></div></div></td>
+                <td>Premium</td>
+                <td><div style="font-size:0.82rem;font-weight:600">May 23</div><div style="font-size:0.7rem;color:var(--gray-600)">9:00 AM</div></td>
+                <td>Roy A.</td>
+                <td><span class="badge badge-cash">💵 Cash</span></td>
+                <td><span class="badge badge-confirmed">✓ Confirmed</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-outline">View</button><button class="btn btn-sm btn-danger" onclick="openCancel('Reina Pansa','May 23 · 9:00 AM','Roy Apensa','Premium')">Cancel</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#ef4444">SB</div><div><div style="font-weight:600;font-size:0.82rem">Stefan Bakker</div><div style="font-size:0.7rem;color:var(--gray-600)">Standard</div></div></div></td>
+                <td>Standard</td>
+                <td><div style="font-size:0.82rem;font-weight:600">May 24</div><div style="font-size:0.7rem;color:var(--gray-600)">11:00 AM</div></td>
+                <td>Carlos M.</td>
+                <td><span class="badge badge-transfer">🏦 Transfer</span></td>
+                <td><span class="badge badge-pending">⏳ Pending</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-success" onclick="openConfirmPay('Stefan Bakker','Standard (20 lessons)','SRD 2,000','Bank Transfer','May 24 · 11:00 AM · Carlos Martinus')">Confirm Pay</button><button class="btn btn-sm btn-danger" onclick="openCancel('Stefan Bakker','May 24 · 11:00 AM','Carlos Martinus','Standard')">Cancel</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#8b5cf6">LT</div><div><div style="font-weight:600;font-size:0.82rem">Lisa Thomas</div><div style="font-size:0.7rem;color:var(--gray-600)">Starter</div></div></div></td>
+                <td>Starter</td>
+                <td><div style="font-size:0.82rem;font-weight:600">May 25</div><div style="font-size:0.7rem;color:var(--gray-600)">3:00 PM</div></td>
+                <td>Sandra P.</td>
+                <td><span class="badge badge-cash">💵 Cash</span></td>
+                <td><span class="badge badge-cancelled">✗ Cancelled</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-outline">View</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- QUICK ACTIONS -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Quick Actions</div></div>
+          <div class="card-body">
+            <div class="quick-actions">
+              <a class="qa-btn" onclick="openModal()">
+                <div class="qa-icon" style="background:rgba(245,166,35,0.12)">📦</div>
+                Add Package
+              </a>
+              <a class="qa-btn">
+                <div class="qa-icon" style="background:rgba(59,130,246,0.1)">👨‍🏫</div>
+                Add Instructor
+              </a>
+              <a class="qa-btn">
+                <div class="qa-icon" style="background:var(--green-light)">📚</div>
+                Add Lesson
+              </a>
+              <a class="qa-btn">
+                <div class="qa-icon" style="background:rgba(139,92,246,0.1)">❓</div>
+                Add FAQ Entry
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- PENDING PAYMENTS -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Pending Payments</div>
+            <span style="background:rgba(245,166,35,0.12);color:#b45309;font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:100px">3</span>
+          </div>
+          <div class="card-body">
+            <div class="payment-item">
+              <div class="pay-avatar" style="background:#f59e0b">KJ</div>
+              <div class="pay-info">
+                <div class="pay-name">Kevin Jansen</div>
+                <div class="pay-detail">Starter · Bank Transfer</div>
+              </div>
+              <div class="pay-amount">SRD 1,200</div>
+              <button class="btn btn-sm btn-success" onclick="openConfirmPay('Kevin Jansen','Starter (10 lessons)','SRD 1,200','Bank Transfer','May 23 · 2:00 PM · Sandra Pengel')">✓</button>
+            </div>
+            <div class="payment-item">
+              <div class="pay-avatar" style="background:#ef4444">SB</div>
+              <div class="pay-info">
+                <div class="pay-name">Stefan Bakker</div>
+                <div class="pay-detail">Standard · Bank Transfer</div>
+              </div>
+              <div class="pay-amount">SRD 2,000</div>
+              <button class="btn btn-sm btn-success" onclick="openConfirmPay('Stefan Bakker','Standard (20 lessons)','SRD 2,000','Bank Transfer','May 24 · 11:00 AM · Carlos Martinus')">✓</button>
+            </div>
+            <div class="payment-item">
+              <div class="pay-avatar" style="background:#8b5cf6">MF</div>
+              <div class="pay-info">
+                <div class="pay-name">Marco Fong</div>
+                <div class="pay-detail">Premium · Bank Transfer</div>
+              </div>
+              <div class="pay-amount">SRD 3,200</div>
+              <button class="btn btn-sm btn-success" onclick="openConfirmPay('Marco Fong','Premium (30 lessons)','SRD 3,200','Bank Transfer','—')">✓</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- WEEKLY CHART -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Bookings This Week</div></div>
+          <div class="card-body">
+            <div style="font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:800;color:var(--navy);margin-bottom:4px">34</div>
+            <div style="font-size:0.72rem;color:var(--gray-600);margin-bottom:12px">↑ 6% vs last week</div>
+            <div class="mini-chart">
+              <div class="bar-col"><div class="bar" style="height:30px"></div><div class="bar-label">Mon</div></div>
+              <div class="bar-col"><div class="bar" style="height:45px"></div><div class="bar-label">Tue</div></div>
+              <div class="bar-col"><div class="bar" style="height:38px"></div><div class="bar-label">Wed</div></div>
+              <div class="bar-col"><div class="bar active" style="height:54px"></div><div class="bar-label">Thu</div></div>
+              <div class="bar-col"><div class="bar" style="height:20px;opacity:0.3"></div><div class="bar-label">Fri</div></div>
+              <div class="bar-col"><div class="bar" style="height:8px;opacity:0.2"></div><div class="bar-label">Sat</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CONFIRM PAYMENT MODAL -->
+<div class="modal-overlay" id="modal-confirm" onclick="closeModals(event)">
+  <div class="modal">
+    <div style="font-size:2rem;margin-bottom:12px">💰</div>
+    <div class="modal-title">Confirm Payment Received</div>
+    <div class="modal-sub">Mark this booking's bank transfer as received and confirm the student's access.</div>
+    <div class="modal-detail">
+      <strong>Student:</strong> <span id="cf-student">Kevin Jansen</span><br>
+      <strong>Package:</strong> <span id="cf-package">Starter (10 lessons)</span><br>
+      <strong>Amount:</strong> <span id="cf-amount">SRD 1,200</span><br>
+      <strong>Method:</strong> <span id="cf-method">Bank Transfer</span><br>
+      <strong>Booking:</strong> <span id="cf-booking">May 23 · 2:00 PM · Sandra Pengel</span>
+    </div>
+    <div style="font-size:0.8rem;color:var(--gray-600);margin-bottom:20px;padding:10px 14px;background:rgba(16,185,129,0.06);border-radius:8px;border:1px solid rgba(16,185,129,0.2)">
+      ✓ Upon confirmation, the student will receive a WhatsApp message and their course access will be activated.
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="document.getElementById('modal-confirm').classList.remove('open')">Cancel</button>
+      <button class="btn btn-success" onclick="document.getElementById('modal-confirm').classList.remove('open')">✓ Confirm Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- CANCEL MODAL -->
+<div class="modal-overlay" id="modal-cancel" onclick="closeModals(event)">
+  <div class="modal">
+    <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
+    <div class="modal-title">Cancel This Booking?</div>
+    <div class="modal-sub">This will cancel the booking and send a WhatsApp notification to the student and instructor.</div>
+    <div class="modal-detail">
+      <strong>Student:</strong> <span id="cx-student">Aisha Mijnals</span><br>
+      <strong>Date:</strong> <span id="cx-date">May 22 · 10:00 AM</span><br>
+      <strong>Instructor:</strong> <span id="cx-inst">Carlos Martinus</span><br>
+      <strong>Package:</strong> <span id="cx-pkg">Standard</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="document.getElementById('modal-cancel').classList.remove('open')">Keep Booking</button>
+      <button class="btn btn-danger" onclick="document.getElementById('modal-cancel').classList.remove('open')">✗ Cancel Booking</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PACKAGE MODAL -->
+<div class="modal-overlay" id="modal-add" onclick="closeModals(event)">
+  <div class="modal">
+    <div class="modal-title">Add New Package</div>
+    <div class="modal-sub">Create a new driving package. It will be saved as a draft until you publish it.</div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
+      <div>
+        <label style="font-size:0.75rem;font-weight:600;color:var(--gray-700);display:block;margin-bottom:4px">Package Name (EN)</label>
+        <input type="text" placeholder="e.g. Premium Package" style="width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:0.875rem;outline:none;font-family:'Inter',sans-serif">
+      </div>
+      <div>
+        <label style="font-size:0.75rem;font-weight:600;color:var(--gray-700);display:block;margin-bottom:4px">Package Name (NL)</label>
+        <input type="text" placeholder="b.v. Premium Pakket" style="width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:0.875rem;outline:none;font-family:'Inter',sans-serif">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <label style="font-size:0.75rem;font-weight:600;color:var(--gray-700);display:block;margin-bottom:4px">Price (SRD)</label>
+          <input type="number" placeholder="2000" style="width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:0.875rem;outline:none">
+        </div>
+        <div>
+          <label style="font-size:0.75rem;font-weight:600;color:var(--gray-700);display:block;margin-bottom:4px">No. of Lessons</label>
+          <input type="number" placeholder="20" style="width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:0.875rem;outline:none">
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="document.getElementById('modal-add').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="document.getElementById('modal-add').classList.remove('open')">Save as Draft</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if (!sidebar) return;
+  const isOpen = sidebar.classList.toggle('open');
+  const toggle = document.getElementById('sidebar-toggle');
+  if (toggle) {
+    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+}
+
+function setNav(el) {
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// a11y: keyboard-operable nav links + hide decorative emoji from screen readers
+document.querySelectorAll('.nav-link').forEach(el => {
+  el.setAttribute('role', 'button');
+  el.setAttribute('tabindex', '0');
+});
+document.querySelectorAll('.nav-icon').forEach(el => el.setAttribute('aria-hidden', 'true'));
+document.addEventListener('keydown', function(e) {
+  const el = document.activeElement;
+  if ((e.key === 'Enter' || e.key === ' ') && el && el.getAttribute('role') === 'button') {
+    e.preventDefault();
+    el.click();
+  }
+});
+
+function switchTab(el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function openConfirmPay(student, pkg, amount, method, booking) {
+  document.getElementById('cf-student').textContent = student;
+  document.getElementById('cf-package').textContent = pkg;
+  document.getElementById('cf-amount').textContent = amount;
+  document.getElementById('cf-method').textContent = method;
+  document.getElementById('cf-booking').textContent = booking;
+  document.getElementById('modal-confirm').classList.add('open');
+}
+
+function openCancel(student, date, inst, pkg) {
+  document.getElementById('cx-student').textContent = student;
+  document.getElementById('cx-date').textContent = date;
+  document.getElementById('cx-inst').textContent = inst;
+  document.getElementById('cx-pkg').textContent = pkg;
+  document.getElementById('modal-cancel').classList.add('open');
+}
+
+function openModal() {
+  document.getElementById('modal-add').classList.add('open');
+}
+
+function closeModals(e) {
+  if (e.target.classList.contains('modal-overlay')) {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+  }
+}
+</script>
+</body>
+</html>

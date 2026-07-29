@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excellent Driving — Prototype Overview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1a2f54;
+  --amber: #F5A623;
+  --amber-dark: #e09510;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-600: #4b5563;
+  --gray-800: #1f2937;
+  --green: #10b981;
+  --radius: 14px;
+  --shadow: 0 4px 24px rgba(15,31,61,0.10);
+  --shadow-lg: 0 12px 48px rgba(15,31,61,0.18);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; color: var(--gray-800); background: var(--gray-50); }
+h1,h2,h3,h4 { font-family: 'Sora', sans-serif; }
+
+/* HEADER */
+header {
+  background: linear-gradient(135deg, var(--navy) 0%, #1a3060 100%);
+  padding: 60px 24px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(245,166,35,0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 30%, rgba(245,166,35,0.07) 0%, transparent 40%);
+}
+
+header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(to bottom right, transparent 49%, var(--gray-50) 50%);
+}
+
+.header-inner { position: relative; z-index: 1; }
+
+.logo-row {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  margin-bottom: 28px;
+}
+
+.logo-icon {
+  width: 56px; height: 56px; background: var(--amber);
+  border-radius: 14px; display: flex; align-items: center; justify-content: center;
+}
+.logo-icon svg { width: 28px; height: 28px; fill: var(--navy); }
+
+.logo-name { font-size: 1.8rem; font-weight: 800; color: var(--white); }
+
+.proto-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(245,166,35,0.15); border: 1px solid rgba(245,166,35,0.3);
+  color: var(--amber); padding: 6px 16px; border-radius: 100px;
+  font-size: 0.8rem; font-weight: 700; margin-bottom: 16px;
+}
+
+header h1 { font-size: 2.8rem; font-weight: 800; color: var(--white); line-height: 1.15; margin-bottom: 12px; }
+header h1 span { color: var(--amber); }
+header p { font-size: 1rem; color: rgba(255,255,255,0.65); max-width: 520px; margin: 0 auto 28px; line-height: 1.6; }
+
+.header-stats {
+  display: inline-flex; gap: 32px;
+  background: rgba(255,255,255,0.07); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 100px; padding: 12px 28px;
+}
+
+.hstat { text-align: center; }
+.hstat-num { font-family: 'Sora', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--amber); }
+.hstat-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
+
+/* MAIN CONTENT */
+main { max-width: 1200px; margin: 0 auto; padding: 60px 24px 80px; }
+
+/* SECTION HEADER */
+.section-header { margin-bottom: 32px; }
+.section-tag {
+  display: inline-block; background: rgba(245,166,35,0.12);
+  color: var(--amber-dark); padding: 4px 14px; border-radius: 100px;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.section-title { font-size: 1.8rem; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+.section-sub { font-size: 0.9rem; color: var(--gray-600); }
+
+/* FLOW DIAGRAM */
+.flow { display: flex; align-items: center; gap: 0; margin-bottom: 56px; overflow-x: auto; padding: 4px 0; }
+
+.flow-node {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 16px 20px;
+  background: var(--white); border-radius: var(--radius);
+  border: 2px solid var(--gray-200);
+  min-width: 120px; text-align: center;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s;
+}
+
+.flow-node:hover { border-color: var(--amber); transform: translateY(-2px); box-shadow: var(--shadow); }
+.flow-node.public { border-top: 3px solid var(--navy); }
+.flow-node.student { border-top: 3px solid var(--green); }
+.flow-node.admin { border-top: 3px solid var(--amber); }
+
+.flow-emoji { font-size: 1.6rem; margin-bottom: 6px; }
+.flow-label { font-family: 'Sora', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--navy); }
+.flow-sub { font-size: 0.65rem; color: var(--gray-600); margin-top: 2px; }
+
+.flow-arrow {
+  font-size: 1.2rem; color: var(--gray-200); padding: 0 4px;
+  flex-shrink: 0;
+}
+
+/* SCREENS GRID */
+.screens-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-bottom: 60px;
+}
+
+.screen-card {
+  background: var(--white);
+  border-radius: 16px;
+  border: 2px solid var(--gray-200);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s;
+  display: flex; flex-direction: column;
+}
+
+.screen-card:hover {
+  border-color: var(--amber);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+
+.screen-preview {
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.screen-thumb {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 4rem;
+}
+
+/* Color themes per screen */
+.theme-home { background: linear-gradient(135deg, var(--navy) 0%, #1a3060 100%); }
+.theme-packages { background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%); }
+.theme-booking { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); }
+.theme-dashboard { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); }
+.theme-quiz { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
+.theme-admin { background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%); }
+
+.screen-label {
+  position: absolute; top: 12px; left: 12px;
+  background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+  color: var(--white); font-size: 0.65rem; font-weight: 700;
+  padding: 3px 10px; border-radius: 100px;
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+
+.screen-num {
+  position: absolute; top: 12px; right: 12px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700; color: var(--white);
+}
+
+.open-btn {
+  position: absolute; bottom: 12px; right: 12px;
+  background: var(--amber); color: var(--navy);
+  font-size: 0.72rem; font-weight: 700;
+  padding: 5px 12px; border-radius: 100px;
+  opacity: 0; transform: translateY(4px);
+  transition: all 0.2s;
+}
+
+.screen-card:hover .open-btn { opacity: 1; transform: translateY(0); }
+
+.screen-info { padding: 20px; flex: 1; }
+.screen-name { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.screen-desc { font-size: 0.82rem; color: var(--gray-600); line-height: 1.5; margin-bottom: 14px; }
+
+.screen-features { display: flex; flex-wrap: wrap; gap: 6px; }
+.feature-tag {
+  font-size: 0.68rem; font-weight: 600; padding: 3px 9px;
+  border-radius: 100px; background: var(--gray-100); color: var(--gray-600);
+}
+
+/* PHASE PLAN */
+.phase-section { margin-bottom: 60px; }
+
+.phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+.phase-card {
+  background: var(--white); border-radius: var(--radius);
+  border: 1px solid var(--gray-200); padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.phase-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 12px;
+}
+
+.phase-0 .phase-num { background: rgba(245,166,35,0.15); color: var(--amber-dark); }
+.phase-1 .phase-num { background: rgba(15,31,61,0.1); color: var(--navy); }
+.phase-2 .phase-num { background: rgba(16,185,129,0.1); color: #059669; }
+.phase-3 .phase-num { background: rgba(59,130,246,0.1); color: #1d4ed8; }
+
+.phase-title { font-family: 'Sora', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.phase-sub { font-size: 0.75rem; color: var(--gray-600); margin-bottom: 12px; }
+.phase-items { display: flex; flex-direction: column; gap: 6px; }
+.phase-item { font-size: 0.75rem; color: var(--gray-700); display: flex; align-items: center; gap: 6px; }
+.phase-item::before { content: '→'; color: var(--amber); font-weight: 700; }
+
+.phase-card.current {
+  border-color: var(--amber);
+  background: linear-gradient(135deg, #fffbeb 0%, #fff 100%);
+}
+
+.current-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--amber); color: var(--navy);
+  font-size: 0.68rem; font-weight: 700; padding: 3px 10px;
+  border-radius: 100px; margin-bottom: 10px;
+}
+
+/* TECH STACK */
+.tech-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+
+.tech-item {
+  background: var(--white); border-radius: 10px;
+  border: 1px solid var(--gray-200);
+  padding: 14px; text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.tech-icon { font-size: 1.6rem; margin-bottom: 6px; }
+.tech-name { font-family: 'Sora', sans-serif; font-size: 0.72rem; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+.tech-role { font-size: 0.62rem; color: var(--gray-600); }
+
+/* CTA */
+.cta-box {
+  background: linear-gradient(135deg, var(--navy), #1a3060);
+  border-radius: 20px; padding: 48px; text-align: center; color: var(--white);
+}
+
+.cta-box h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; }
+.cta-box p { color: rgba(255,255,255,0.65); font-size: 0.95rem; max-width: 440px; margin: 0 auto 28px; line-height: 1.6; }
+.cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 10px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 0.875rem; cursor: pointer; text-decoration: none; border: none; transition: all 0.2s; }
+.btn-amber { background: var(--amber); color: var(--navy); }
+.btn-amber:hover { background: var(--amber-dark); transform: translateY(-1px); }
+.btn-outline-white { background: transparent; border: 2px solid rgba(255,255,255,0.3); color: var(--white); }
+.btn-outline-white:hover { background: rgba(255,255,255,0.1); }
+
+@media (max-width: 900px) {
+  .screens-grid, .phases { grid-template-columns: 1fr 1fr; }
+  .tech-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .screens-grid, .phases, .tech-grid { grid-template-columns: 1fr; }
+  header h1 { font-size: 1.8rem; }
+  .header-stats { flex-wrap: wrap; gap: 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-row">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="logo-name">Excellent Driving</div>
+    </div>
+    <div class="proto-badge">🎨 Phase 0 — Interactive Prototype</div>
+    <h1>Design <span>Maquettes</span><br>for Owner Review</h1>
+    <p>6 fully interactive screens. Click through to explore every page before development begins. Approve these designs to unlock Phase 1.</p>
+    <div class="header-stats">
+      <div class="hstat"><div class="hstat-num">6</div><div class="hstat-label">Screens</div></div>
+      <div class="hstat"><div class="hstat-num">100%</div><div class="hstat-label">Clickable</div></div>
+      <div class="hstat"><div class="hstat-num">EN/NL</div><div class="hstat-label">Languages</div></div>
+      <div class="hstat"><div class="hstat-num">Mobile</div><div class="hstat-label">Responsive</div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- USER JOURNEY FLOW -->
+  <div class="section-header">
+    <div class="section-tag">User Flow</div>
+    <div class="section-title">Clickable Prototype Flow</div>
+    <div class="section-sub">Follow this path to experience the full student journey end-to-end.</div>
+  </div>
+
+  <div class="flow" style="margin-bottom:48px">
+    <a href="01-homepage.html" class="flow-node public">
+      <div class="flow-emoji">🏠</div>
+      <div class="flow-label">Homepage</div>
+      <div class="flow-sub">Public</div>
+    </a>
+    <div class="flow-arrow">→</div>
+    <a href="02-packages.html" class="flow-node public">
+      <div class="flow-emoji">📦</div>
+      <div class="flow-label">Packages</div>
+      <div class="flow-sub">Public</div>
+    </a>
+    <div class="flow-arrow">→</div>
+    <a href="03-booking.html" class="flow-node student">
+      <div class="flow-emoji">📅</div>
+      <div class="flow-label">Booking</div>
+      <div class="flow-sub">Student</div>
+    </a>
+    <div class="flow-arrow">→</div>
+    <a href="04-student-dashboard.html" class="flow-node student">
+      <div class="flow-emoji">🎓</div>
+      <div class="flow-label">Dashboard</div>
+      <div class="flow-sub">Student</div>
+    </a>
+    <div class="flow-arrow">→</div>
+    <a href="05-quiz.html" class="flow-node student">
+      <div class="flow-emoji">🧠</div>
+      <div class="flow-label">Quiz</div>
+      <div class="flow-sub">Student</div>
+    </a>
+    <div class="flow-arrow">·····</div>
+    <a href="06-admin-dashboard.html" class="flow-node admin">
+      <div class="flow-emoji">⚙️</div>
+      <div class="flow-label">Admin</div>
+      <div class="flow-sub">Owner Only</div>
+    </a>
+  </div>
+
+  <!-- SCREENS GRID -->
+  <div class="section-header">
+    <div class="section-tag">All Screens</div>
+    <div class="section-title">6 Interactive Maquettes</div>
+    <div class="section-sub">Click any card to open the full interactive prototype for that screen.</div>
+  </div>
+
+  <div class="screens-grid">
+
+    <a href="01-homepage.html" class="screen-card">
+      <div class="screen-preview theme-home">
+        <div class="screen-thumb">🏠</div>
+        <div class="screen-label">Public</div>
+        <div class="screen-num">01</div>
+        <div class="open-btn">Open →</div>
+      </div>
+      <div class="screen-info">
+        <div class="screen-name">Homepage</div>
+        <div class="screen-desc">Hero section, packages preview, how-it-works, instructor cards, FAQ accordion, and footer.</div>
+        <div class="screen-features">
+          <span class="feature-tag">Sticky Nav</span>
+          <span class="feature-tag">FAQ Accordion</span>
+          <span class="feature-tag">WhatsApp Float</span>
+          <span class="feature-tag">Lang Switcher</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="02-packages.html" class="screen-card">
+      <div class="screen-preview theme-packages">
+        <div class="screen-thumb">📦</div>
+        <div class="screen-label">Public</div>
+        <div class="screen-num">02</div>
+        <div class="open-btn" style="color:var(--navy)">Open →</div>
+      </div>
+      <div class="screen-info">
+        <div class="screen-name">Packages</div>
+        <div class="screen-desc">All packages with filter tabs, detailed cards, and a side-by-side comparison table.</div>
+        <div class="screen-features">
+          <span class="feature-tag">Filter Tabs</span>
+          <span class="feature-tag">Comparison Table</span>
+          <span class="feature-tag">Hover Effects</span>
+          <span class="feature-tag">4 Packages</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="03-booking.html" class="screen-card">
+      <div class="screen-preview theme-booking">
+        <div class="screen-thumb">📅</div>
+        <div class="screen-label">Student</div>
+        <div class="screen-num">03</div>
+        <div class="open-btn" style="color:var(--navy)">Open →</div>
+      </div>
+      <div class="screen-info">
+        <div class="screen-name">Booking Flow</div>
+        <div class="screen-desc">5-step wizard: package → instructor → date picker → time slot → payment → confirmation.</div>
+        <div class="screen-features">
+          <span class="feature-tag">5-Step Form</span>
+          <span class="feature-tag">Calendar</span>
+          <span class="feature-tag">Time Slots</span>
+          <span class="feature-tag">Animated</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="04-student-dashboard.html" class="screen-card">
+      <div class="screen-preview theme-dashboard">
+        <div class="screen-thumb">🎓</div>
+        <div class="screen-label">Student</div>
+        <div class="screen-num">04</div>
+        <div class="open-btn" style="color:var(--navy)">Open →</div>
+      </div>
+      <div class="screen-info">
+        <div class="screen-name">Student Dashboard</div>
+        <div class="screen-desc">Welcome banner, stat cards, module progress bars, upcoming booking, and activity feed.</div>
+        <div class="screen-features">
+          <span class="feature-tag">Sidebar Nav</span>
+          <span class="feature-tag">Progress Bars</span>
+          <span class="feature-tag">Activity Feed</span>
+          <span class="feature-tag">Stats Cards</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="05-quiz.html" class="screen-card">
+      <div class="screen-preview theme-quiz">
+        <div class="screen-thumb">🧠</div>
+        <div class="screen-label">Student</div>
+        <div class="screen-num">05</div>
+        <div class="open-btn" style="color:var(--navy)">Open →</div>
+      </div>
+      <div class="screen-info">
+        <div class="screen-name">Quiz & Lessons</div>
+        <div class="screen-desc">Module list, live quiz with answer checking, pass/fail score screen with retry or continue.</div>
+        <div class="screen-features">
+          <span class="feature-tag">Live Quiz</span>
+          <span class="feature-tag">Pass/Fail</span>
+          <span class="feature-tag">Answer Reveal</span>
+          <span class="feature-tag">Timer</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="06-admin-dashboard.html" class="screen-card">
+      <div class="screen-preview theme-admin">
+        <div class="screen-thumb">⚙️</div>
+        <div class="screen-label">Admin</div>
+        <div class="screen-num">06</div>
+        <div class="open-btn">Open →</div>
+      </div>
+      <div class="screen-info">
+        <div class="screen-name">Admin Dashboard</div>
+        <div class="screen-desc">Stats overview, bookings table, pending payments queue, quick actions, and confirmation modals.</div>
+        <div class="screen-features">
+          <span class="feature-tag">Dark Sidebar</span>
+          <span class="feature-tag">Data Table</span>
+          <span class="feature-tag">Modals</span>
+          <span class="feature-tag">Mini Chart</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- BUILD PHASES -->
+  <div class="phase-section">
+    <div class="section-header">
+      <div class="section-tag">Build Plan</div>
+      <div class="section-title">Development Phases</div>
+      <div class="section-sub">After owner approval of these maquettes, development follows this order.</div>
+    </div>
+
+    <div class="phases">
+      <div class="phase-card phase-0 current">
+        <div class="current-badge">📍 You Are Here</div>
+        <div class="phase-num">0</div>
+        <div class="phase-title">Design</div>
+        <div class="phase-sub">Maquettes for approval</div>
+        <div class="phase-items">
+          <div class="phase-item">Agent 11 — Maquettes ✓</div>
+          <div class="phase-item">Owner review & approval</div>
+          <div class="phase-item">Design changes if needed</div>
+        </div>
+      </div>
+
+      <div class="phase-card phase-1">
+        <div class="phase-num">1</div>
+        <div class="phase-title">Foundation</div>
+        <div class="phase-sub">Project setup & database</div>
+        <div class="phase-items">
+          <div class="phase-item">Agent 1 — Next.js scaffold</div>
+          <div class="phase-item">Agent 2 — Prisma schema</div>
+          <div class="phase-item">Agent 3 — Authentication</div>
+        </div>
+      </div>
+
+      <div class="phase-card phase-2">
+        <div class="phase-num">2</div>
+        <div class="phase-title">Core Features</div>
+        <div class="phase-sub">All student-facing pages</div>
+        <div class="phase-items">
+          <div class="phase-item">Agent 4 — Public website</div>
+          <div class="phase-item">Agent 5 — Booking system</div>
+          <div class="phase-item">Agent 6 — Student portal</div>
+        </div>
+      </div>
+
+      <div class="phase-card phase-3">
+        <div class="phase-num">3</div>
+        <div class="phase-title">Admin & Launch</div>
+        <div class="phase-sub">Admin panel, i18n, testing</div>
+        <div class="phase-items">
+          <div class="phase-item">Agent 7 — Admin dashboard</div>
+          <div class="phase-item">Agent 8 — EN/NL i18n</div>
+          <div class="phase-item">Agent 9 — WhatsApp bot</div>
+          <div class="phase-item">Agent 10 — QA & testing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TECH STACK -->
+  <div style="margin-bottom:56px">
+    <div class="section-header">
+      <div class="section-tag">Technology</div>
+      <div class="section-title">Tech Stack</div>
+      <div class="section-sub">The technologies used to build the full application.</div>
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-item"><div class="tech-icon">⚛️</div><div class="tech-name">Next.js 14</div><div class="tech-role">Frontend Framework</div></div>
+      <div class="tech-item"><div class="tech-icon">🎨</div><div class="tech-name">Tailwind CSS</div><div class="tech-role">Styling</div></div>
+      <div class="tech-item"><div class="tech-icon">🐘</div><div class="tech-name">PostgreSQL</div><div class="tech-role">Database</div></div>
+      <div class="tech-item"><div class="tech-icon">🔷</div><div class="tech-name">Prisma</div><div class="tech-role">ORM</div></div>
+      <div class="tech-item"><div class="tech-icon">🔐</div><div class="tech-name">NextAuth</div><div class="tech-role">Authentication</div></div>
+      <div class="tech-item"><div class="tech-icon">📱</div><div class="tech-name">WhatsApp API</div><div class="tech-role">Notifications</div></div>
+    </div>
+  </div>
+
+  <!-- OWNER CTA -->
+  <div class="cta-box">
+    <h2>Ready to Approve?</h2>
+    <p>Review all 6 screens above. If the design looks good, give the go-ahead and development begins immediately with Phase 1.</p>
+    <div class="cta-btns">
+      <a href="01-homepage.html" class="btn btn-amber">Start Review — Homepage →</a>
+      <a href="06-admin-dashboard.html" class="btn btn-outline-white">View Admin Panel →</a>
+    </div>
+    <div style="margin-top:20px;font-size:0.78rem;color:rgba(255,255,255,0.35)">Bonistraat 44, Paramaribo, Suriname · Excellent Driving Rijschool</div>
+  </div>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excellent Driving — Home</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1a2f54;
+  --amber: #F5A623;
+  --amber-dark: #e09510;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-600: #4b5563;
+  --gray-800: #1f2937;
+  --green: #10b981;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(15,31,61,0.10);
+  --shadow-lg: 0 8px 40px rgba(15,31,61,0.18);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--gray-800);
+  background: var(--white);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5 { font-family: 'Sora', sans-serif; }
+
+/* NAV */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  box-shadow: 0 2px 12px rgba(15,31,61,0.06);
+}
+
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--navy);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-icon svg { width: 22px; height: 22px; fill: var(--amber); }
+
+.logo-text { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--navy); line-height: 1.1; }
+.logo-text span { color: var(--amber); display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--navy); }
+
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: 'Sora', sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--navy);
+  color: var(--navy);
+}
+
+.btn-outline:hover { background: var(--navy); color: var(--white); }
+
+.btn-primary {
+  background: var(--amber);
+  color: var(--navy);
+}
+
+.btn-primary:hover { background: var(--amber-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(245,166,35,0.4); }
+
+.btn-lg { padding: 14px 28px; font-size: 1rem; border-radius: 10px; }
+
+.lang-switch {
+  display: flex;
+  gap: 4px;
+  background: var(--gray-100);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.lang-btn {
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--gray-600);
+  transition: all 0.2s;
+}
+
+.lang-btn.active { background: var(--white); color: var(--navy); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, #1a3060 60%, #0d2448 100%);
+  color: var(--white);
+  padding: 100px 24px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom right, transparent 49%, var(--white) 50%);
+}
+
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(245,166,35,0.15);
+  border: 1px solid rgba(245,166,35,0.3);
+  color: var(--amber);
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.hero h1 span { color: var(--amber); }
+
+.hero p {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.7;
+  margin-bottom: 36px;
+  max-width: 480px;
+}
+
+.hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+
+.btn-white {
+  background: var(--white);
+  color: var(--navy);
+}
+
+.btn-white:hover { background: var(--gray-100); transform: translateY(-1px); }
+
+.hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-card {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+  padding: 32px;
+  width: 340px;
+}
+
+.hero-card-title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  color: var(--white);
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.cert-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.cert-item:last-child { border-bottom: none; }
+
+.cert-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(245,166,35,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.cert-label { font-size: 0.875rem; color: rgba(255,255,255,0.8); font-weight: 500; }
+.cert-sub { font-size: 0.75rem; color: rgba(255,255,255,0.45); }
+
+/* STATS BAR */
+.stats-bar {
+  background: var(--navy);
+  color: var(--white);
+  padding: 28px 24px;
+}
+
+.stats-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+}
+
+.stat { text-align: center; }
+.stat-number { font-family: 'Sora', sans-serif; font-size: 2.2rem; font-weight: 800; color: var(--amber); line-height: 1; }
+.stat-label { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 4px; }
+
+/* SECTIONS */
+section { padding: 80px 24px; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+
+.section-tag {
+  display: inline-block;
+  background: rgba(245,166,35,0.12);
+  color: var(--amber-dark);
+  padding: 4px 14px;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.section-sub {
+  font-size: 1rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+  max-width: 520px;
+}
+
+/* PACKAGES PREVIEW */
+.packages-section { background: var(--gray-50); }
+
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.package-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 32px;
+  border: 2px solid var(--gray-200);
+  transition: all 0.3s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.package-card:hover {
+  border-color: var(--amber);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.package-card.featured {
+  border-color: var(--amber);
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: var(--white);
+}
+
+.package-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--amber);
+  color: var(--navy);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.05em;
+}
+
+.package-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: rgba(245,166,35,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+}
+
+.featured .package-icon { background: rgba(245,166,35,0.2); }
+
+.package-name {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.package-desc { font-size: 0.875rem; color: var(--gray-600); line-height: 1.5; margin-bottom: 20px; }
+.featured .package-desc { color: rgba(255,255,255,0.65); }
+
+.package-price { font-family: 'Sora', sans-serif; font-size: 2rem; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+.package-price span { font-size: 1rem; font-weight: 500; color: var(--gray-600); }
+.featured .package-price { color: var(--amber); }
+
+.package-includes { margin: 16px 0 24px; display: flex; flex-direction: column; gap: 8px; }
+
+.include-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--gray-600); }
+.featured .include-item { color: rgba(255,255,255,0.75); }
+.include-item::before { content: '✓'; color: var(--green); font-weight: 700; }
+.featured .include-item::before { color: var(--amber); }
+
+/* HOW IT WORKS */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-top: 56px;
+  position: relative;
+}
+
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 16.66%;
+  right: 16.66%;
+  height: 2px;
+  background: linear-gradient(to right, var(--amber), var(--amber));
+  z-index: 0;
+}
+
+.step { text-align: center; position: relative; z-index: 1; }
+
+.step-num {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--amber);
+  color: var(--navy);
+  font-family: 'Sora', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 4px 20px rgba(245,166,35,0.35);
+}
+
+.step h3 { font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.step p { font-size: 0.875rem; color: var(--gray-600); line-height: 1.6; }
+
+/* INSTRUCTORS */
+.instructors-scroll {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.instructor-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+  transition: all 0.3s;
+}
+
+.instructor-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+.instructor-photo {
+  height: 220px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 0;
+  position: relative;
+}
+
+.instructor-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(245,166,35,0.2);
+  border: 4px solid var(--amber);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  margin-bottom: -20px;
+}
+
+.instructor-info { padding: 32px 24px 24px; text-align: center; }
+.instructor-name { font-family: 'Sora', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.instructor-years { font-size: 0.8rem; color: var(--amber-dark); font-weight: 600; margin-bottom: 10px; }
+.instructor-bio { font-size: 0.85rem; color: var(--gray-600); line-height: 1.5; }
+
+/* FAQ */
+.faq-section { background: var(--gray-50); }
+.faq-list { margin-top: 48px; max-width: 720px; }
+
+.faq-item {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-200);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.faq-q {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--navy);
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.faq-q:hover { background: var(--gray-50); }
+
+.faq-chevron {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s;
+  font-size: 0.75rem;
+}
+
+.faq-item.open .faq-chevron { background: var(--amber); transform: rotate(180deg); }
+
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  line-height: 1.7;
+  padding: 0 24px;
+}
+
+.faq-item.open .faq-a { max-height: 200px; padding: 0 24px 20px; }
+
+/* FOOTER */
+footer {
+  background: var(--navy);
+  color: var(--white);
+  padding: 60px 24px 32px;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.footer-brand p { font-size: 0.875rem; color: rgba(255,255,255,0.55); line-height: 1.7; margin-top: 16px; max-width: 280px; }
+
+.footer-col h4 { font-family: 'Sora', sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 16px; }
+
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a { color: rgba(255,255,255,0.65); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+.footer-col a:hover { color: var(--amber); }
+
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+.footer-bottom p { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+
+.whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #25D366;
+  color: var(--white);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.whatsapp-btn:hover { background: #1ebe5c; transform: translateY(-1px); }
+
+/* FLOATING WHATSAPP */
+.wa-float {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 200;
+}
+
+.wa-float-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #25D366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+  transition: transform 0.2s;
+  text-decoration: none;
+}
+
+.wa-float-btn:hover { transform: scale(1.1); }
+.wa-float-btn svg { width: 30px; height: 30px; fill: var(--white); }
+
+.wa-pulse {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  border-radius: 50%;
+  background: #25D366;
+  animation: pulse 2s infinite;
+  z-index: -1;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  70% { transform: scale(1.5); opacity: 0; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* HAMBURGER - mobile menu toggle */
+.hamburger { display: none; background: none; border: none; padding: 4px; }
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 24px; height: 2px; background: var(--navy); border-radius: 2px; transition: all 0.25s; }
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    padding: 18px 24px;
+    gap: 16px;
+    box-shadow: 0 10px 28px rgba(15,31,61,0.12);
+    border-top: 1px solid var(--gray-100);
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-visual { display: none; }
+  .hero h1 { font-size: 2.2rem; }
+  .packages-grid, .steps-grid, .instructors-scroll { grid-template-columns: 1fr; }
+  .steps-grid::before { display: none; }
+  .stats-inner { gap: 32px; flex-wrap: wrap; }
+  .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="logo-text">
+        Excellent Driving
+        <span>Rijschool · Suriname</span>
+      </div>
+    </a>
+
+    <ul class="nav-links" id="primary-menu">
+      <li><a href="01-homepage.html">Home</a></li>
+      <li><a href="02-packages.html">Packages</a></li>
+      <li><a href="#">Instructors</a></li>
+      <li><a href="#">FAQ</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <div class="lang-switch">
+        <button class="lang-btn active">EN</button>
+        <button class="lang-btn">NL</button>
+      </div>
+      <a href="#" class="btn btn-outline">Login</a>
+      <a href="03-booking.html" class="btn btn-primary">Book Now</a>
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="primary-menu" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span>🏆</span> Suriname's #1 Driving School
+      </div>
+      <h1>Learn to Drive<br>with <span>Confidence</span></h1>
+      <p>Professional driving lessons in Paramaribo. Certified instructors, flexible schedules Monday through Saturday, and a complete online learning platform.</p>
+      <div class="hero-ctas">
+        <a href="03-booking.html" class="btn btn-primary btn-lg">Book a Lesson</a>
+        <a href="02-packages.html" class="btn btn-white btn-lg">View Packages</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="hero-card-title">Your Learning Journey</div>
+        <div class="cert-item">
+          <div class="cert-icon">📚</div>
+          <div>
+            <div class="cert-label">Theory Lessons</div>
+            <div class="cert-sub">Online at your own pace</div>
+          </div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-icon">🚗</div>
+          <div>
+            <div class="cert-label">Practical Training</div>
+            <div class="cert-sub">With certified instructors</div>
+          </div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-icon">🎓</div>
+          <div>
+            <div class="cert-label">Exam Preparation</div>
+            <div class="cert-sub">Pass on your first try</div>
+          </div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-icon">📱</div>
+          <div>
+            <div class="cert-label">WhatsApp Updates</div>
+            <div class="cert-sub">Instant confirmations</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat">
+      <div class="stat-number">500+</div>
+      <div class="stat-label">Students Trained</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">8</div>
+      <div class="stat-label">Expert Instructors</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">Mon–Sat</div>
+      <div class="stat-label">Available 7am–6pm</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">95%</div>
+      <div class="stat-label">Pass Rate</div>
+    </div>
+  </div>
+</div>
+
+<!-- PACKAGES PREVIEW -->
+<section class="packages-section">
+  <div class="section-inner">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div class="section-tag">Packages</div>
+        <h2 class="section-title">Choose Your<br>Learning Package</h2>
+        <p class="section-sub">All packages include access to our online theory platform with quizzes and study materials.</p>
+      </div>
+      <a href="02-packages.html" class="btn btn-outline">See All Packages →</a>
+    </div>
+
+    <div class="packages-grid">
+      <div class="package-card">
+        <div class="package-icon">🚀</div>
+        <div class="package-name">Starter</div>
+        <div class="package-desc">Perfect for beginners with no prior driving experience.</div>
+        <div class="package-price">SRD 1,200 <span>/ package</span></div>
+        <div class="package-includes">
+          <div class="include-item">10 practical lessons (50 min each)</div>
+          <div class="include-item">Theory access included</div>
+          <div class="include-item">WhatsApp support</div>
+          <div class="include-item">Certificate upon completion</div>
+        </div>
+        <a href="03-booking.html" class="btn btn-outline" style="width:100%;justify-content:center;">Book This Package</a>
+      </div>
+
+      <div class="package-card featured">
+        <div class="package-badge">Most Popular</div>
+        <div class="package-icon">⭐</div>
+        <div class="package-name" style="color:var(--white)">Standard</div>
+        <div class="package-desc">Our most popular package — comprehensive training for confident drivers.</div>
+        <div class="package-price">SRD 2,000 <span style="color:rgba(255,255,255,0.5)">/ package</span></div>
+        <div class="package-includes">
+          <div class="include-item">20 practical lessons (50 min each)</div>
+          <div class="include-item">Full theory course</div>
+          <div class="include-item">2 mock exams</div>
+          <div class="include-item">Priority booking</div>
+        </div>
+        <a href="03-booking.html" class="btn btn-primary" style="width:100%;justify-content:center;">Book This Package</a>
+      </div>
+
+      <div class="package-card">
+        <div class="package-icon">💎</div>
+        <div class="package-name">Premium</div>
+        <div class="package-desc">Intensive program designed to get you exam-ready in minimum time.</div>
+        <div class="package-price">SRD 3,200 <span>/ package</span></div>
+        <div class="package-includes">
+          <div class="include-item">30 practical lessons (50 min each)</div>
+          <div class="include-item">Full theory + video lessons</div>
+          <div class="include-item">Unlimited mock exams</div>
+          <div class="include-item">Exam day accompaniment</div>
+        </div>
+        <a href="03-booking.html" class="btn btn-outline" style="width:100%;justify-content:center;">Book This Package</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="section-inner" style="text-align:center;">
+    <div class="section-tag">Process</div>
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-sub" style="margin:0 auto;">Three simple steps to get your driver's license.</p>
+
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Register & Choose a Package</h3>
+        <p>Create your free account, pick the package that fits your needs and budget, and pay via cash or bank transfer.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Book Your Lessons</h3>
+        <p>Select your preferred instructor, pick your days and time slots, and receive instant WhatsApp confirmation.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Learn & Get Licensed</h3>
+        <p>Complete your online theory modules, attend practical lessons, and pass your exam with confidence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTRUCTORS -->
+<section style="background:var(--gray-50)">
+  <div class="section-inner">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:0;">
+      <div>
+        <div class="section-tag">Instructors</div>
+        <h2 class="section-title">Meet Our Team</h2>
+        <p class="section-sub">Experienced, patient, and certified professionals dedicated to your success.</p>
+      </div>
+      <a href="#" class="btn btn-outline">View All Instructors →</a>
+    </div>
+
+    <div class="instructors-scroll">
+      <div class="instructor-card">
+        <div class="instructor-photo">
+          <div class="instructor-avatar">👨‍🏫</div>
+        </div>
+        <div class="instructor-info">
+          <div class="instructor-name">Carlos Martinus</div>
+          <div class="instructor-years">12 years experience</div>
+          <div class="instructor-bio">Specializes in nervous beginners. Calm, patient teaching style with focus on road safety.</div>
+        </div>
+      </div>
+      <div class="instructor-card">
+        <div class="instructor-photo" style="background:linear-gradient(135deg,#1a3060,#2a4a7f)">
+          <div class="instructor-avatar">👩‍🏫</div>
+        </div>
+        <div class="instructor-info">
+          <div class="instructor-name">Sandra Pengel</div>
+          <div class="instructor-years">8 years experience</div>
+          <div class="instructor-bio">Expert in city driving and parking techniques. Available Monday through Friday.</div>
+        </div>
+      </div>
+      <div class="instructor-card">
+        <div class="instructor-photo" style="background:linear-gradient(135deg,#0d2448,#163366)">
+          <div class="instructor-avatar">👨‍🏫</div>
+        </div>
+        <div class="instructor-info">
+          <div class="instructor-name">Roy Apensa</div>
+          <div class="instructor-years">15 years experience</div>
+          <div class="instructor-bio">Former driving examiner. Knows exactly what examiners look for. 97% pass rate.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="section-inner">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;">
+      <div>
+        <div class="section-tag">FAQ</div>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-sub">Everything you need to know about starting your driving lessons.</p>
+        <br>
+        <a href="#" class="btn btn-primary" style="margin-top:8px">View All Questions →</a>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item open">
+          <div class="faq-q" onclick="toggleFAQ(this)">
+            How many lessons do I need to pass my exam?
+            <div class="faq-chevron">▼</div>
+          </div>
+          <div class="faq-a">Most students pass after 15–20 lessons, depending on their prior experience. Our instructors will guide you and let you know when you're ready for the exam.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFAQ(this)">
+            What payment methods do you accept?
+            <div class="faq-chevron">▼</div>
+          </div>
+          <div class="faq-a">We accept cash payments at our location (Bonistraat 44) and bank transfers. After payment is confirmed by our admin, you'll receive a WhatsApp message with your course access details.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFAQ(this)">
+            Can I cancel or reschedule a lesson?
+            <div class="faq-chevron">▼</div>
+          </div>
+          <div class="faq-a">Yes! You can cancel or reschedule a lesson up to 24 hours before the scheduled time, directly from your student dashboard.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFAQ(this)">
+            Is the theory course available in Dutch?
+            <div class="faq-chevron">▼</div>
+          </div>
+          <div class="faq-a">Yes! Our full platform is available in both English and Dutch. You can switch languages at any time from your profile settings.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFAQ(this)">
+            Where are lessons conducted?
+            <div class="faq-chevron">▼</div>
+          </div>
+          <div class="faq-a">Lessons start and end at our school at Bonistraat 44, Paramaribo. Your instructor will drive through various routes around the city.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo" style="margin-bottom:0">
+        <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+        <div class="logo-text" style="color:var(--white)">Excellent Driving <span style="color:rgba(255,255,255,0.4)">Rijschool · Suriname</span></div>
+      </div>
+      <p>Professional driving education in Paramaribo, Suriname. Learn to drive safely and confidently with our experienced instructors.</p>
+      <a href="#" class="whatsapp-btn" style="margin-top:16px;display:inline-flex">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Chat on WhatsApp
+      </a>
+    </div>
+
+    <div class="footer-col">
+      <h4>School</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Packages</a></li>
+        <li><a href="#">Instructors</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Students</h4>
+      <ul>
+        <li><a href="#">Login</a></li>
+        <li><a href="#">Register</a></li>
+        <li><a href="04-student-dashboard.html">Dashboard</a></li>
+        <li><a href="#">My Bookings</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="#">Bonistraat 44, Paramaribo</a></li>
+        <li><a href="#">+597 XXX XXXX</a></li>
+        <li><a href="#">info@excellentdriving.sr</a></li>
+        <li><a href="#">Mon–Sat: 7am–6pm</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom" style="max-width:1200px;margin:0 auto;">
+    <p>© 2025 Excellent Driving. All rights reserved.</p>
+    <p style="color:rgba(255,255,255,0.35);font-size:0.78rem">Privacy Policy · Terms of Service</p>
+  </div>
+</footer>
+
+<!-- FLOATING WHATSAPP -->
+<div class="wa-float">
+  <a href="#" class="wa-float-btn" title="Chat on WhatsApp">
+    <div class="wa-pulse"></div>
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+</div>
+
+<script>
+function toggleMenu() {
+  const menu = document.getElementById('primary-menu');
+  if (!menu) return;
+  const isOpen = menu.classList.toggle('open');
+  const hamburger = document.getElementById('hamburger');
+  if (hamburger) {
+    hamburger.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+}
+
+function toggleFAQ(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// a11y: make FAQ questions keyboard-operable
+document.querySelectorAll('.faq-q').forEach(el => {
+  el.setAttribute('role', 'button');
+  el.setAttribute('tabindex', '0');
+});
+document.addEventListener('keydown', function(e) {
+  const el = document.activeElement;
+  if ((e.key === 'Enter' || e.key === ' ') && el && el.getAttribute('role') === 'button') {
+    e.preventDefault();
+    el.click();
+  }
+});
+
+// Lang switch
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

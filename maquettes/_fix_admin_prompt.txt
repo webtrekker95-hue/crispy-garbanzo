@@ -1,0 +1,20 @@
+You are fixing JavaScript in an admin-dashboard maquette. Two modal-opener functions currently ignore which row was clicked and always show hardcoded data. Rewrite ONLY these two functions so they accept parameters and populate the modal before opening it. Return ONLY the two corrected functions as raw JavaScript — no <script> tags, no markdown fences, no explanation.
+
+The HTML now provides these span ids inside the modals:
+- Confirm-payment modal (#modal-confirm): #cf-student, #cf-package, #cf-amount, #cf-method, #cf-booking
+- Cancel modal (#modal-cancel): #cx-student, #cx-date, #cx-inst, #cx-pkg
+
+Required signatures and behavior:
+- openConfirmPay(student, pkg, amount, method, booking): set #cf-student=student, #cf-package=pkg, #cf-amount=amount, #cf-method=method, #cf-booking=booking (all via textContent), then add the 'open' class to #modal-confirm.
+- openCancel(student, date, inst, pkg): set #cx-student=student, #cx-date=date, #cx-inst=inst, #cx-pkg=pkg (via textContent), then add the 'open' class to #modal-cancel.
+
+Use textContent (not innerHTML) for safety. Keep the existing style (plain functions, document.getElementById). Do not change any other functions.
+
+CURRENT FUNCTIONS:
+function openConfirmPay() {
+  document.getElementById('modal-confirm').classList.add('open');
+}
+
+function openCancel() {
+  document.getElementById('modal-cancel').classList.add('open');
+}

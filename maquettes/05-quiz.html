@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excellent Driving — Quiz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1a2f54;
+  --amber: #F5A623;
+  --amber-dark: #e09510;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-600: #4b5563;
+  --gray-800: #1f2937;
+  --green: #10b981;
+  --green-light: rgba(16,185,129,0.1);
+  --red: #ef4444;
+  --red-light: rgba(239,68,68,0.08);
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(15,31,61,0.10);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; color: var(--gray-800); background: var(--gray-50); min-height: 100vh; }
+h1,h2,h3,h4,h5 { font-family: 'Sora', sans-serif; }
+
+/* TOP BAR */
+.quiz-topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  padding: 0 24px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+}
+
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo-icon { width: 36px; height: 36px; background: var(--navy); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.logo-icon svg { width: 18px; height: 18px; fill: var(--amber); }
+.logo-text { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--navy); }
+
+.topbar-center { text-align: center; }
+.quiz-title { font-family: 'Sora', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--navy); }
+.quiz-module { font-size: 0.75rem; color: var(--gray-600); }
+
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.timer {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--gray-100); padding: 6px 14px; border-radius: 8px;
+  font-family: 'Sora', sans-serif; font-size: 0.875rem; font-weight: 700; color: var(--navy);
+}
+.timer.warning { background: rgba(239,68,68,0.1); color: var(--red); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-family: 'Sora', sans-serif; font-weight: 600; font-size: 0.875rem; cursor: pointer; text-decoration: none; border: none; transition: all 0.2s; }
+.btn-outline { background: transparent; border: 2px solid var(--gray-200); color: var(--navy); }
+.btn-outline:hover { border-color: var(--navy); }
+.btn-primary { background: var(--amber); color: var(--navy); }
+.btn-primary:hover { background: var(--amber-dark); }
+.btn-lg { padding: 14px 32px; font-size: 1rem; border-radius: 12px; }
+.btn-green { background: var(--green); color: var(--white); }
+.btn-green:hover { background: #059669; }
+.btn-navy { background: var(--navy); color: var(--white); }
+.btn-navy:hover { background: var(--navy-light); }
+
+/* QUIZ BODY */
+.quiz-body { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* QUESTION PROGRESS */
+.q-progress-wrap { margin-bottom: 32px; }
+.q-progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.q-progress-label { font-size: 0.82rem; font-weight: 600; color: var(--gray-600); }
+.q-progress-count { font-family: 'Sora', sans-serif; font-size: 0.875rem; font-weight: 700; color: var(--navy); }
+
+.q-progress-dots { display: flex; gap: 6px; }
+.q-dot {
+  flex: 1; height: 6px; border-radius: 100px;
+  transition: all 0.3s;
+}
+.q-dot.done { background: var(--green); }
+.q-dot.active { background: var(--amber); }
+.q-dot.pending { background: var(--gray-200); }
+
+/* SCREEN PANELS */
+.screen { display: none; }
+.screen.active { display: block; animation: fadeIn 0.3s ease; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* QUESTION CARD */
+.question-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 36px;
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.q-number {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(245,166,35,0.1); color: var(--amber-dark);
+  font-size: 0.75rem; font-weight: 700; padding: 4px 12px;
+  border-radius: 100px; margin-bottom: 16px;
+}
+
+.q-text {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.25rem; font-weight: 700;
+  color: var(--navy); line-height: 1.4;
+  margin-bottom: 28px;
+}
+
+/* ANSWER OPTIONS */
+.answers { display: flex; flex-direction: column; gap: 12px; }
+
+.answer-opt {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 20px;
+  border: 2px solid var(--gray-200);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--white);
+}
+
+.answer-opt:hover:not(.revealed) { border-color: var(--amber); background: rgba(245,166,35,0.03); }
+.answer-opt.selected:not(.revealed) { border-color: var(--amber); background: rgba(245,166,35,0.06); }
+
+.answer-opt.correct { border-color: var(--green); background: rgba(16,185,129,0.06); }
+.answer-opt.wrong { border-color: var(--red); background: var(--red-light); }
+
+.opt-letter {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--gray-100); color: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Sora', sans-serif; font-weight: 700; font-size: 0.875rem;
+  flex-shrink: 0; transition: all 0.2s;
+}
+
+.answer-opt.selected:not(.revealed) .opt-letter { background: var(--amber); color: var(--navy); }
+.answer-opt.correct .opt-letter { background: var(--green); color: var(--white); }
+.answer-opt.wrong .opt-letter { background: var(--red); color: var(--white); }
+
+.opt-text { font-size: 0.95rem; color: var(--gray-800); line-height: 1.4; flex: 1; }
+.answer-opt.correct .opt-text { color: #065f46; font-weight: 600; }
+.answer-opt.wrong .opt-text { color: #991b1b; }
+
+.opt-badge {
+  font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 100px;
+  flex-shrink: 0; opacity: 0; transition: opacity 0.3s;
+}
+.revealed .opt-badge { opacity: 1; }
+.answer-opt.correct .opt-badge { background: rgba(16,185,129,0.15); color: #065f46; }
+.answer-opt.wrong .opt-badge { background: rgba(239,68,68,0.12); color: #991b1b; }
+
+/* EXPLANATION */
+.explanation {
+  margin-top: 16px; padding: 16px 20px;
+  background: rgba(16,185,129,0.06);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: 12px;
+  font-size: 0.875rem; color: #065f46; line-height: 1.6;
+  display: none;
+}
+.explanation.show { display: block; animation: fadeIn 0.3s ease; }
+.explanation strong { color: #064e3b; }
+
+/* NAV BUTTONS */
+.q-nav { display: flex; justify-content: space-between; align-items: center; }
+
+/* SCORE SCREEN */
+.score-screen {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 48px 36px;
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.score-badge {
+  width: 120px; height: 120px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+  font-family: 'Sora', sans-serif;
+  font-size: 2.2rem; font-weight: 800;
+  position: relative;
+}
+
+.score-badge.pass { background: var(--green-light); color: var(--green); border: 4px solid var(--green); }
+.score-badge.fail { background: var(--red-light); color: var(--red); border: 4px solid var(--red); }
+
+.score-result {
+  font-size: 1rem; font-weight: 700; padding: 6px 20px;
+  border-radius: 100px; display: inline-block; margin-bottom: 12px;
+}
+
+.score-result.pass { background: var(--green-light); color: #059669; }
+.score-result.fail { background: var(--red-light); color: var(--red); }
+
+.score-title { font-size: 1.8rem; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+.score-sub { font-size: 0.95rem; color: var(--gray-600); margin-bottom: 32px; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+.score-breakdown {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-bottom: 32px;
+  background: var(--gray-50); border-radius: 12px; padding: 20px;
+}
+
+.breakdown-item { text-align: center; }
+.breakdown-num { font-family: 'Sora', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }
+.breakdown-label { font-size: 0.75rem; color: var(--gray-600); }
+
+.score-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* MODULES LIST SCREEN */
+.modules-screen {}
+
+.back-bar {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.875rem; font-weight: 600; color: var(--navy);
+  cursor: pointer; text-decoration: none;
+  background: var(--white); border: 1px solid var(--gray-200);
+  padding: 8px 14px; border-radius: 8px; transition: all 0.2s;
+}
+.back-btn:hover { background: var(--gray-50); }
+.back-title { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; color: var(--navy); }
+
+.module-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-200);
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.module-card:hover { box-shadow: var(--shadow); }
+
+.module-card-header {
+  padding: 20px 24px;
+  display: flex; align-items: center; gap: 16px;
+  cursor: pointer;
+}
+
+.mod-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+.mod-info { flex: 1; }
+.mod-name { font-family: 'Sora', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.mod-progress-wrap { display: flex; align-items: center; gap: 10px; }
+.mod-bar { flex: 1; height: 6px; background: var(--gray-100); border-radius: 100px; overflow: hidden; }
+.mod-fill { height: 100%; border-radius: 100px; }
+.mod-pct { font-size: 0.75rem; font-weight: 700; }
+.mod-meta { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.mod-lessons-count { font-size: 0.78rem; color: var(--gray-600); }
+.mod-status-pill { font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
+.status-done { background: var(--green-light); color: #059669; }
+.status-progress { background: rgba(245,166,35,0.12); color: #b45309; }
+.status-locked { background: var(--gray-100); color: var(--gray-600); }
+
+/* LESSON LIST */
+.lessons-list { padding: 0 24px 16px; border-top: 1px solid var(--gray-100); }
+
+.lesson-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--gray-50);
+  cursor: pointer;
+}
+.lesson-item:last-child { border-bottom: none; }
+.lesson-item:hover .lesson-name { color: var(--amber-dark); }
+
+.lesson-num { width: 28px; height: 28px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: var(--navy); flex-shrink: 0; }
+.lesson-num.done { background: var(--green); color: var(--white); }
+.lesson-num.active { background: var(--amber); color: var(--navy); }
+
+.lesson-name { font-size: 0.875rem; flex: 1; }
+.lesson-type { font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 100px; flex-shrink: 0; }
+.type-text { background: rgba(59,130,246,0.1); color: #1d4ed8; }
+.type-quiz { background: rgba(245,166,35,0.12); color: #b45309; }
+.type-video { background: rgba(16,185,129,0.1); color: #059669; }
+
+@media (max-width: 600px) {
+  .quiz-body { padding: 20px 16px 60px; }
+  .q-text { font-size: 1.1rem; }
+  .question-card { padding: 24px 20px; }
+  .score-breakdown { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="quiz-topbar">
+  <a href="04-student-dashboard.html" class="logo">
+    <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+    <div class="logo-text">Excellent Driving</div>
+  </a>
+  <div class="topbar-center" id="topbar-center">
+    <div class="quiz-title">Traffic Regulations — Part 1</div>
+    <div class="quiz-module">Module 2 · Lesson 7 · Quiz</div>
+  </div>
+  <div class="topbar-right">
+    <div class="timer" id="timer">⏱ 14:32</div>
+    <a href="04-student-dashboard.html" class="btn btn-outline" style="font-size:0.8rem;padding:8px 14px">Exit</a>
+  </div>
+</div>
+
+<!-- QUIZ BODY -->
+<div class="quiz-body">
+
+  <!-- MODULES LIST SCREEN -->
+  <div class="screen active" id="screen-modules">
+    <div class="back-bar">
+      <a class="back-btn" href="04-student-dashboard.html">← Dashboard</a>
+      <div class="back-title">My Lessons</div>
+    </div>
+
+    <!-- Module 1: Done -->
+    <div class="module-card">
+      <div class="module-card-header" onclick="toggleMod(this)">
+        <div class="mod-icon" style="background:var(--green-light)">📖</div>
+        <div class="mod-info">
+          <div class="mod-name">Module 1: Road Rules & Signs</div>
+          <div class="mod-progress-wrap">
+            <div class="mod-bar"><div class="mod-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="mod-pct" style="color:var(--green)">100%</div>
+          </div>
+        </div>
+        <div class="mod-meta">
+          <div class="mod-lessons-count">8/8 lessons</div>
+          <div class="mod-status-pill status-done">✓ Complete</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module 2: In Progress -->
+    <div class="module-card">
+      <div class="module-card-header" onclick="toggleMod(this)">
+        <div class="mod-icon" style="background:rgba(245,166,35,0.12)">🚦</div>
+        <div class="mod-info">
+          <div class="mod-name">Module 2: Traffic Regulations</div>
+          <div class="mod-progress-wrap">
+            <div class="mod-bar"><div class="mod-fill" style="width:75%;background:var(--amber)"></div></div>
+            <div class="mod-pct" style="color:var(--amber-dark)">75%</div>
+          </div>
+        </div>
+        <div class="mod-meta">
+          <div class="mod-lessons-count">6/8 lessons</div>
+          <div class="mod-status-pill status-progress">In Progress</div>
+        </div>
+      </div>
+      <div class="lessons-list" id="mod2-lessons">
+        <div class="lesson-item" onclick="startLesson()"><div class="lesson-num done">✓</div><div class="lesson-name">Lesson 1: Introduction to Traffic Laws</div><div class="lesson-type type-text">Text</div></div>
+        <div class="lesson-item" onclick="startLesson()"><div class="lesson-num done">✓</div><div class="lesson-name">Lesson 2: Speed Limits & Zones</div><div class="lesson-type type-text">Text</div></div>
+        <div class="lesson-item" onclick="startLesson()"><div class="lesson-num done">✓</div><div class="lesson-name">Lesson 3: Right of Way Rules</div><div class="lesson-type type-video">Video</div></div>
+        <div class="lesson-item" onclick="startLesson()"><div class="lesson-num done">✓</div><div class="lesson-name">Lesson 4: Intersection Rules</div><div class="lesson-type type-text">Text</div></div>
+        <div class="lesson-item" onclick="startLesson()"><div class="lesson-num done">✓</div><div class="lesson-name">Lesson 5: Quiz: Speed & Zones</div><div class="lesson-type type-quiz">Quiz</div></div>
+        <div class="lesson-item" onclick="startLesson()"><div class="lesson-num done">✓</div><div class="lesson-name">Lesson 6: Roundabout Rules</div><div class="lesson-type type-text">Text</div></div>
+        <div class="lesson-item" onclick="startQuiz()" style="background:rgba(245,166,35,0.04);border-radius:8px;padding:12px 8px;margin:0 -8px"><div class="lesson-num active">7</div><div class="lesson-name"><strong>Lesson 7: Quiz — Traffic Regulations Pt. 1</strong></div><div class="lesson-type type-quiz">Quiz</div></div>
+        <div class="lesson-item" style="opacity:0.4;cursor:not-allowed"><div class="lesson-num" style="background:var(--gray-100)">🔒</div><div class="lesson-name">Lesson 8: Advanced Road Rules</div><div class="lesson-type type-text">Text</div></div>
+      </div>
+    </div>
+
+    <!-- Module 3 -->
+    <div class="module-card">
+      <div class="module-card-header" onclick="toggleMod(this)">
+        <div class="mod-icon" style="background:rgba(245,166,35,0.08)">🛣️</div>
+        <div class="mod-info">
+          <div class="mod-name">Module 3: Practical Driving Skills</div>
+          <div class="mod-progress-wrap">
+            <div class="mod-bar"><div class="mod-fill" style="width:30%;background:var(--amber)"></div></div>
+            <div class="mod-pct" style="color:var(--amber-dark)">30%</div>
+          </div>
+        </div>
+        <div class="mod-meta">
+          <div class="mod-lessons-count">3/10 lessons</div>
+          <div class="mod-status-pill status-progress">In Progress</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module 4 Locked -->
+    <div class="module-card" style="opacity:0.6">
+      <div class="module-card-header">
+        <div class="mod-icon" style="background:var(--gray-100)">🚗</div>
+        <div class="mod-info">
+          <div class="mod-name">Module 4: Highway & Motorway Driving</div>
+          <div class="mod-progress-wrap">
+            <div class="mod-bar"><div class="mod-fill" style="width:0%;background:var(--gray-200)"></div></div>
+            <div class="mod-pct" style="color:var(--gray-600)">0%</div>
+          </div>
+        </div>
+        <div class="mod-meta">
+          <div class="mod-lessons-count">0/8 lessons</div>
+          <div class="mod-status-pill status-locked">🔒 Locked</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div class="screen" id="screen-quiz">
+    <!-- Question progress dots -->
+    <div class="q-progress-wrap">
+      <div class="q-progress-header">
+        <div class="q-progress-label">Quiz Progress</div>
+        <div class="q-progress-count" id="q-count">Question 1 of 5</div>
+      </div>
+      <div class="q-progress-dots" id="q-dots">
+        <div class="q-dot active"></div>
+        <div class="q-dot pending"></div>
+        <div class="q-dot pending"></div>
+        <div class="q-dot pending"></div>
+        <div class="q-dot pending"></div>
+      </div>
+    </div>
+
+    <!-- Question card -->
+    <div class="question-card">
+      <div class="q-number">❓ Question <span id="q-num">1</span></div>
+      <div class="q-text" id="q-text">At an uncontrolled intersection, who has the right of way?</div>
+
+      <div class="answers" id="answers-wrap">
+        <!-- rendered by JS -->
+      </div>
+
+      <div class="explanation" id="explanation">
+        <strong>✓ Correct!</strong> At an uncontrolled intersection in Suriname, the vehicle on the <strong>right</strong> has the right of way, unless otherwise indicated by road signs. Always slow down and check both ways before proceeding.
+      </div>
+    </div>
+
+    <div class="q-nav">
+      <button class="btn btn-outline" id="btn-prev" onclick="prevQ()" style="display:none">← Previous</button>
+      <span></span>
+      <button class="btn btn-primary" id="btn-check" onclick="checkAnswer()" style="display:none">Check Answer</button>
+      <button class="btn btn-primary" id="btn-next" onclick="nextQ()" style="display:none">Next Question →</button>
+      <button class="btn btn-primary" id="btn-submit" onclick="submitQuiz()" style="display:none">Submit Quiz</button>
+    </div>
+  </div>
+
+  <!-- SCORE SCREEN -->
+  <div class="screen" id="screen-score">
+    <!-- PASS VERSION -->
+    <div class="score-screen" id="score-pass">
+      <div class="score-badge pass">88%</div>
+      <div class="score-result pass">🎉 PASSED</div>
+      <h2 class="score-title">Excellent Work!</h2>
+      <p class="score-sub">You passed the Traffic Regulations quiz with a score of 88%. The next lesson is now unlocked.</p>
+
+      <div class="score-breakdown">
+        <div class="breakdown-item">
+          <div class="breakdown-num" style="color:var(--green)">4</div>
+          <div class="breakdown-label">Correct</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-num" style="color:var(--red)">1</div>
+          <div class="breakdown-label">Wrong</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-num" style="color:var(--navy)">70%</div>
+          <div class="breakdown-label">Min. to pass</div>
+        </div>
+      </div>
+
+      <div class="score-actions">
+        <button class="btn btn-green btn-lg" onclick="goModules()">✓ Continue to Next Lesson</button>
+        <button class="btn btn-outline btn-lg" onclick="retryQuiz()">Review Answers</button>
+      </div>
+    </div>
+
+    <!-- FAIL VERSION (hidden by default, toggled in demo) -->
+    <div class="score-screen" id="score-fail" style="display:none">
+      <div class="score-badge fail">52%</div>
+      <div class="score-result fail">✗ FAILED</div>
+      <h2 class="score-title">Not Quite There Yet</h2>
+      <p class="score-sub">You scored 52% but need at least 70% to pass. Review the material and try again — you can retry as many times as needed.</p>
+
+      <div class="score-breakdown">
+        <div class="breakdown-item">
+          <div class="breakdown-num" style="color:var(--green)">2</div>
+          <div class="breakdown-label">Correct</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-num" style="color:var(--red)">3</div>
+          <div class="breakdown-label">Wrong</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-num" style="color:var(--navy)">70%</div>
+          <div class="breakdown-label">Min. to pass</div>
+        </div>
+      </div>
+
+      <div class="score-actions">
+        <button class="btn btn-primary btn-lg" onclick="retryQuiz()">🔄 Retry Quiz</button>
+        <button class="btn btn-navy btn-lg" onclick="goModules()">← Back to Lessons</button>
+      </div>
+    </div>
+
+    <!-- Toggle for demo (hidden unless ?demo is in the URL) -->
+    <div id="demo-toggle" style="text-align:center;margin-top:24px">
+      <button class="btn btn-outline" onclick="toggleScore()" style="font-size:0.78rem">Demo: Toggle Pass/Fail</button>
+    </div>
+  </div>
+
+</div><!-- /quiz-body -->
+
+<script>
+const questions = [
+  {
+    text: "At an uncontrolled intersection, who has the right of way?",
+    options: ["The vehicle going straight", "The vehicle on the right", "The larger vehicle", "The vehicle that arrived first"],
+    correct: 1,
+    explanation: "At an uncontrolled intersection in Suriname, the vehicle on the <strong>right</strong> has the right of way, unless otherwise indicated by road signs."
+  },
+  {
+    text: "What is the maximum speed limit in a residential area (30 zone)?",
+    options: ["20 km/h", "30 km/h", "40 km/h", "50 km/h"],
+    correct: 1,
+    explanation: "In a marked 30-zone (residential area), the maximum speed limit is <strong>30 km/h</strong>. Always watch for pedestrians and children."
+  },
+  {
+    text: "When must you use your hazard lights?",
+    options: ["When parking illegally", "When your vehicle is a hazard to others", "When driving in rain", "All of the above"],
+    correct: 1,
+    explanation: "Hazard lights should be used when your stationary or moving vehicle poses a <strong>hazard to other road users</strong> — for example, if you break down or need to stop suddenly."
+  },
+  {
+    text: "A solid white line at the side of the road indicates:",
+    options: ["No overtaking allowed", "Edge of the road / carriageway", "Bus stop zone", "Pedestrian crossing ahead"],
+    correct: 1,
+    explanation: "A <strong>solid white line at the edge</strong> of the road marks the boundary of the carriageway. Do not drive on the other side of this line except in an emergency."
+  },
+  {
+    text: "What should you do when you see a yellow flashing traffic light?",
+    options: ["Stop immediately", "Proceed with caution", "Treat it as a green light", "Honk and proceed"],
+    correct: 1,
+    explanation: "A <strong>yellow flashing light</strong> means proceed with caution. Slow down and be prepared to give way to other road users."
+  }
+];
+
+let currentQ = 0;
+let selected = null;
+let answered = [];
+let scores = [null, null, null, null, null];
+
+function startQuiz() {
+  document.getElementById('screen-modules').classList.remove('active');
+  document.getElementById('screen-quiz').classList.add('active');
+  document.getElementById('topbar-center').innerHTML = '<div class="quiz-title">Traffic Regulations — Part 1</div><div class="quiz-module">Module 2 · Quiz · 5 Questions</div>';
+  currentQ = 0;
+  selected = null;
+  scores = [null, null, null, null, null];
+  renderQ();
+  startTimer();
+}
+
+function startLesson() {
+  startQuiz();
+}
+
+function renderQ() {
+  const q = questions[currentQ];
+  document.getElementById('q-num').textContent = currentQ + 1;
+  document.getElementById('q-count').textContent = `Question ${currentQ + 1} of ${questions.length}`;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('explanation').className = 'explanation';
+  document.getElementById('explanation').innerHTML = '';
+
+  const wrap = document.getElementById('answers-wrap');
+  wrap.innerHTML = q.options.map((opt, i) => `
+    <div class="answer-opt" onclick="selectAns(${i})" id="opt-${i}" tabindex="0" role="button">
+      <div class="opt-letter">${String.fromCharCode(65+i)}</div>
+      <div class="opt-text">${opt}</div>
+      <div class="opt-badge" id="badge-${i}"></div>
+    </div>
+  `).join('');
+
+  selected = null;
+  document.getElementById('btn-check').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+  document.getElementById('btn-submit').style.display = 'none';
+  document.getElementById('btn-prev').style.display = currentQ > 0 ? '' : 'none';
+
+  // dots
+  const dots = document.getElementById('q-dots').children;
+  for (let i = 0; i < dots.length; i++) {
+    dots[i].className = 'q-dot';
+    if (scores[i] === true) dots[i].classList.add('done');
+    else if (scores[i] === false) { dots[i].classList.add('done'); dots[i].style.background = 'var(--red)'; }
+    else if (i === currentQ) dots[i].classList.add('active');
+    else dots[i].classList.add('pending');
+  }
+}
+
+function selectAns(i) {
+  if (document.querySelector('.answer-opt.revealed')) return;
+  document.querySelectorAll('.answer-opt').forEach(o => o.classList.remove('selected'));
+  document.getElementById('opt-' + i).classList.add('selected');
+  selected = i;
+  document.getElementById('btn-check').style.display = '';
+}
+
+function checkAnswer() {
+  if (selected === null) return;
+  const q = questions[currentQ];
+  const isCorrect = selected === q.correct;
+  scores[currentQ] = isCorrect;
+
+  document.querySelectorAll('.answer-opt').forEach((o, i) => {
+    o.classList.add('revealed');
+    if (i === q.correct) { o.classList.add('correct'); document.getElementById('badge-' + i).textContent = '✓ Correct'; }
+    else if (i === selected && !isCorrect) { o.classList.add('wrong'); document.getElementById('badge-' + i).textContent = '✗ Wrong'; }
+  });
+
+  const exp = document.getElementById('explanation');
+  exp.innerHTML = (isCorrect ? '<strong>✓ Correct!</strong> ' : '<strong>✗ Incorrect.</strong> ') + q.explanation;
+  exp.className = 'explanation show';
+
+  document.getElementById('btn-check').style.display = 'none';
+  if (currentQ < questions.length - 1) document.getElementById('btn-next').style.display = '';
+  else document.getElementById('btn-submit').style.display = '';
+
+  // update dot
+  const dots = document.getElementById('q-dots').children;
+  dots[currentQ].classList.remove('active');
+  dots[currentQ].classList.add('done');
+  dots[currentQ].style.background = isCorrect ? '' : 'var(--red)';
+}
+
+function nextQ() {
+  currentQ++;
+  renderQ();
+}
+
+function prevQ() {
+  if (currentQ > 0) { currentQ--; renderQ(); }
+}
+
+function submitQuiz() {
+  document.getElementById('screen-quiz').classList.remove('active');
+  document.getElementById('screen-score').classList.add('active');
+  document.getElementById('timer').textContent = '⏱ Done';
+  document.getElementById('topbar-center').innerHTML = '<div class="quiz-title">Quiz Complete</div>';
+  clearInterval(timerInterval);
+}
+
+if (!window.location.search.includes('demo')) {
+  var demoToggle = document.getElementById('demo-toggle');
+  if (demoToggle) demoToggle.style.display = 'none';
+}
+
+function goModules() {
+  document.getElementById('screen-score').classList.remove('active');
+  document.getElementById('screen-modules').classList.add('active');
+  document.getElementById('topbar-center').innerHTML = '<div class="quiz-title">My Lessons</div>';
+  document.getElementById('timer').style.display = 'none';
+}
+
+function retryQuiz() {
+  startQuiz();
+}
+
+function toggleScore() {
+  const p = document.getElementById('score-pass');
+  const f = document.getElementById('score-fail');
+  if (p.style.display === 'none') { p.style.display = ''; f.style.display = 'none'; }
+  else { p.style.display = 'none'; f.style.display = ''; }
+}
+
+function toggleMod(header) {
+  const card = header.closest('.module-card');
+  const lessons = card.querySelector('.lessons-list');
+  if (lessons) { lessons.style.display = lessons.style.display === 'none' ? '' : 'none'; }
+}
+
+let timerSec = 14 * 60 + 32;
+let timerInterval;
+function startTimer() {
+  clearInterval(timerInterval);
+  timerSec = 15 * 60;
+  timerInterval = setInterval(() => {
+    timerSec--;
+    const m = Math.floor(timerSec / 60);
+    const s = timerSec % 60;
+    const el = document.getElementById('timer');
+    el.textContent = `⏱ ${m}:${s.toString().padStart(2,'0')}`;
+    if (timerSec < 120) el.className = 'timer warning';
+    if (timerSec <= 0) clearInterval(timerInterval);
+  }, 1000);
+}
+
+// a11y: keyboard operability for custom button-like controls
+document.querySelectorAll('.module-card-header').forEach(el => {
+  el.setAttribute('role', 'button');
+  el.setAttribute('tabindex', '0');
+});
+document.addEventListener('keydown', function(e) {
+  const el = document.activeElement;
+  if ((e.key === 'Enter' || e.key === ' ') && el && el.getAttribute('role') === 'button') {
+    e.preventDefault();
+    el.click();
+  }
+});
+</script>
+</body>
+</html>

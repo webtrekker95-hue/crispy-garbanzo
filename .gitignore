@@ -1,0 +1,17 @@
+# Secrets / local config
+.claude/settings.local.json
+.env
+.env.local
+.env*.local
+
+# Redundant archive (duplicates materiaalrijonderricht/ folder contents)
+materiaalrijonderricht.zip
+
+# Node / Next.js (for when the app scaffold is added)
+node_modules/
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+.DS_Store

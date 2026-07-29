@@ -1,0 +1,14 @@
+You are writing vanilla-JS mobile-navigation toggle functions for a set of maquettes. Return ONLY raw JavaScript — the two functions below, no <script> tags, no markdown fences, no explanation.
+
+Write exactly these two functions:
+
+1. toggleMenu() — for the public homepage top navbar.
+   - Toggle the 'open' class on the element with id 'primary-menu'.
+   - Mirror that state on the button with id 'hamburger': toggle its 'open' class to match, and set its aria-expanded attribute to 'true' or 'false' accordingly.
+   - Guard against the button being missing.
+
+2. toggleSidebar() — for the dashboard/admin off-canvas sidebar.
+   - Toggle the 'open' class on the element with id 'sidebar'.
+   - On the button with id 'sidebar-toggle', set aria-expanded to 'true'/'false' to match the open state (guard if missing).
+
+Use document.getElementById, the boolean returned by classList.toggle, and keep it concise and clean.
