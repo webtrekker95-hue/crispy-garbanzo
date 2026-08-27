@@ -376,9 +376,90 @@ AGENT 4/5/6 scope is implemented.
 
 ---
 
-## Phase 3 — Admin + Integrations (not started)
+## Phase 3 — Admin + Integrations
 
-## Phase 3 — Admin + Integrations (not started)
+### 2026-08-27 — AGENT 7 + 9 + 8, same session as Phases 1 and 2
+
+Continued directly from the Phase 2 session (same day, same very long
+session). All three Phase 3 agents built, verified live, committed as
+separate checkpoints, each pushed after explicit confirmation. Order was
+9 -> 7 -> 8 (WhatsApp first since it's self-contained; admin second since
+it's the largest chunk and creates real data other things depend on; i18n
+last since it's a cross-cutting retrofit best done once everything else
+existed).
+
+**AGENT 9 — WhatsApp:** `lib/whatsapp.ts` calls the Meta Graph API
+directly; `notify()` wraps it with the spec's WhatsApp-then-email
+fallback and never throws. Wired into all four trigger points (booking
+created, booking cancelled — both student- and admin-initiated, payment
+confirmed, and a new `/api/cron/booking-reminders` route + `vercel.json`
+schedule for the daily-8AM reminder job). No real Meta/Resend credentials
+exist, so delivery itself is unverified, but the fallback chain was:
+created a real booking, watched WhatsApp fail cleanly ("not configured"),
+watched the email fallback also fail cleanly, confirmed the booking still
+succeeded regardless.
+
+**AGENT 7 — Admin dashboard:** all 8 pages (dashboard, bookings,
+packages, instructors, students, content, faq, settings), dark-sidebar
+design system ported the same way AGENT 4 ported the public site's.
+Content page includes a full quiz builder (add/reorder/remove questions,
+4 options with a correct-answer radio, per-question explanation, passing
+score). Added `User.courseAccess` (schema never modeled the "grant/revoke
+course access" gate Claude.md's students page requires) and a
+`SchoolSettings` singleton model (same gap for the settings page).
+
+Two real bugs caught by live verification, not just build checks:
+- Creating an admin package with a name outside the hardcoded
+  Starter/Standard/Premium/Refresher set hard-crashed the public
+  `/packages` page — AGENT 4's `packages-grid.tsx` had a lookup table
+  that assumed a fixed package set and had never been exercised with a
+  genuinely new name until an admin could actually create one. Fixed
+  with a generic fallback derived from real fields.
+- `/admin/students` called a 2-query unlock-state function once per
+  student (true N+1); with 15 test students accumulated over the
+  session this actually crashed the dev server. Rewritten to 3 bulk
+  queries total regardless of student count.
+
+All test/debug data created while verifying (packages, an instructor, an
+FAQ, 15 accumulated test student accounts from the whole day's testing)
+was deleted afterward so the dataset matches the seed script exactly.
+
+**AGENT 8 — i18n:** next-intl (App Router doesn't support next-i18next;
+flagged back in the Phase 1 entry), cookie-based locale rather than
+URL-prefixed routes, matching the maquettes' own non-prefixed
+language-switcher UX. Resolution order: cookie -> logged-in user's stored
+`language` -> browser `Accept-Language` -> English. `LanguageSwitcher`
+replaced the cosmetic-only local-state toggles in `SiteNav` and
+`StudentShell` (the latter didn't even have one before this, despite the
+maquette dashboard having one). Empty `es.json`/`pt.json` scaffolds per
+spec.
+
+Scope decision, made without re-asking since the project already has a
+precedent for it: the maquette phase's 2026-08-19 session deliberately
+scoped translation to "minimal real" (nav, footer, homepage, packages,
+dashboard) over an owner's explicit choice between that and full
+coverage. Applied the identical scope to the real app — shared nav/footer
+(covers every page), full homepage + packages page, student dashboard
+shell + overview. Booking wizard, quiz engine, FAQ body text,
+instructors/contact pages, and the entire admin panel stay English-only,
+exactly as the maquette itself left them.
+
+Verified live: default English for a browser with no preference;
+automatic Dutch for a browser sending `Accept-Language: nl` on first
+visit (no cookie yet); clicking NL re-renders the current page in Dutch
+within 500ms (measured via response polling) and persists across
+navigation; a logged-in student's language switch updates their
+`User.language` row in the database; confirmed booking/FAQ/instructors/
+admin correctly stay English regardless of the locale cookie.
+
+**Committed:** `48b7602` (AGENT 9), `8be3bfe` (AGENT 7), `5594158`
+(AGENT 8). All three pushed to `origin/main` after the owner confirmed
+each round.
+
+**Phase 3 is now fully complete** per Claude.md's AGENT 7/8/9 scope. Only
+Phase 4 (QA) remains before the whole build order is done.
+
+---
 
 ## Phase 4 — QA (not started)
 
