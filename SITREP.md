@@ -294,7 +294,89 @@ pushed — pending owner confirmation per session convention.
 
 ---
 
-## Phase 2 — Core Features (not started)
+## Phase 2 — Core Features
+
+### 2026-08-27 — AGENT 4 + 5 + 6, same session as Phase 1
+
+Continued directly from the Phase 1 session (same day). All three Phase 2
+agents built, verified live against the real Postgres DB, and committed
+as separate checkpoints per the owner's preference (confirm before each
+commit, confirm before each push).
+
+**AGENT 4 — Public pages:** Rather than rebuilding the maquettes' look in
+Tailwind from scratch, ported their actual CSS (colors, nav, footer,
+buttons, cards, FAQ accordion) into shared `globals.css` tokens + `public-
+shared.css` + per-page CSS modules. Guarantees pixel fidelity and was
+much faster than re-deriving styles by hand. Homepage, Packages,
+Instructors, FAQ, Contact all pull live data from Postgres. Packages page
+has a working client-side category filter; FAQ page has a working EN/NL
+toggle between real DB rows; Contact page has a working form wired to
+`/api/contact` (honest "not configured" error until a real
+`RESEND_API_KEY` exists, not a fake success). Schema gained
+`Package.featured` and `Instructor.yearsExperience` to represent real
+content. Seed data expanded to the maquettes' actual 4 packages / 3
+named instructors / 7 FAQs.
+
+**AGENT 5 — Booking system:** Full 5-step wizard (package → instructor →
+date → time slot → payment → confirmation) with real state instead of
+the maquette's vanilla-JS DOM manipulation. `lib/slots.ts` centralizes
+slot generation (hourly slots that fit a lesson within the instructor's
+schedule window) so the availability API and the booking-creation API
+can never drift apart. `POST /api/bookings` re-validates everything
+server-side inside a transaction that re-checks for a clash immediately
+before insert — two students can't win the same slot in a race. Also
+built `/api/bookings/my`, `/api/bookings/:id/cancel` (24h rule), and
+`/api/admin/bookings/:id/confirm-payment` (route only — the admin UI is
+Phase 3). **Bug caught and fixed:** the booking page initially sorted
+packages by price ascending (Refresher first), inconsistent with the
+canonical Starter/Standard/Premium/Refresher order used everywhere else.
+
+**AGENT 6 — Student dashboard & e-learning:** Seeded real course content
+(5 modules, 18 lessons — TEXT, VIDEO-placeholder, and QUIZ types),
+including the maquette's full 5-question Traffic Regulations quiz
+verbatim rather than leaving it as demo-only content. `lib/progress.ts`
+computes sequential unlock state server-side on every request (a module
+unlocks once the previous module is 100% complete; a lesson unlocks once
+the previous lesson in its module is PASSED) — never trusts client
+state. Split the maquette's single SPA-style quiz screen into three real
+routes per Claude.md's spec: `/student/learn`, `/student/learn/
+[moduleId]`, `/student/learn/[moduleId]/[lessonId]`. Dashboard's "Recent
+Activity" is derived from real StudentProgress/Booking rows, not
+fabricated demo data — a genuinely new student sees a genuinely empty
+state (verified via screenshot). **Bug caught and fixed:** the
+"next lesson" link after completing a lesson was computed from
+pre-submission unlock state, so it always fell back to the module page
+instead of advancing — fixed to always point at the next lesson when one
+exists, since completing the current one is what unlocks it.
+
+**Verification approach, all three:** live Playwright runs against the
+real dev Postgres DB (not just `npm run build`), registering fresh
+students and driving full flows end to end — not just checking that
+pages render. Caught two real app bugs this way (both noted above) plus
+several test-script-only bugs (CSS Modules substring collisions like
+`.pkg-options` matching a `[class*="pkg-option"]` selector, and Next.js
+dev-mode's on-demand Turbopack compilation needing a longer first-hit
+wait) that were traced to the test harness, not the app, before being
+ruled out.
+
+**Also:** hit Prisma's built-in AI-agent safety guard on `prisma migrate
+reset --force` (it refuses to run under an AI agent without explicit
+user consent passed via an env var) when cleaning up stale seed rows
+with mismatched IDs — asked the owner first, per the tool's own
+requirement, got explicit consent, then ran it.
+
+**Committed:** `78750ed` (AGENT 4), `3243872` (AGENT 5), `4d00524`
+(AGENT 6). Not yet pushed — pending owner confirmation, same as every
+other checkpoint this session.
+
+**Still open before Phase 2 can be called done:** owner review of the
+actual pages (this sitrep entry documents what was built and verified
+technically, not a design sign-off). Everything else in Claude.md's
+AGENT 4/5/6 scope is implemented.
+
+---
+
+## Phase 3 — Admin + Integrations (not started)
 
 ## Phase 3 — Admin + Integrations (not started)
 
