@@ -16,6 +16,7 @@
   --gray-50: #f9fafb;
   --gray-100: #f3f4f6;
   --gray-200: #e5e7eb;
+  --gray-400: #9ca3af;
   --gray-600: #4b5563;
   --gray-800: #1f2937;
   --green: #10b981;
@@ -211,8 +212,8 @@ nav {
 }
 
 .cal-day.empty { cursor: default; }
-.cal-day.sunday { color: var(--gray-200); cursor: not-allowed; background: var(--gray-50); }
-.cal-day.past { color: var(--gray-200); cursor: not-allowed; }
+.cal-day.sunday { color: var(--gray-400); cursor: not-allowed; background: var(--gray-50); }
+.cal-day.past { color: var(--gray-400); cursor: not-allowed; }
 .cal-day.available:hover { background: rgba(245,166,35,0.12); border-color: var(--amber); color: var(--navy); }
 .cal-day.selected { background: var(--amber); color: var(--navy); font-weight: 700; border-color: var(--amber); }
 .cal-day.today { font-weight: 700; border-color: var(--navy); }
@@ -236,7 +237,7 @@ nav {
 
 .time-slot:hover { border-color: var(--amber); background: rgba(245,166,35,0.06); }
 .time-slot.selected { background: var(--amber); border-color: var(--amber); color: var(--navy); }
-.time-slot.booked { background: var(--gray-100); border-color: var(--gray-200); color: var(--gray-200); cursor: not-allowed; text-decoration: line-through; }
+.time-slot.booked { background: var(--gray-100); border-color: var(--gray-200); color: var(--gray-400); cursor: not-allowed; text-decoration: line-through; }
 
 /* PAYMENT */
 .payment-options { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -351,6 +352,11 @@ nav {
   .sidebar { display: none; }
   .pkg-options, .payment-options { grid-template-columns: 1fr; }
   .instructor-options { grid-template-columns: 1fr 1fr; }
+}
+
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
 }
 </style>
 </head>
@@ -535,12 +541,12 @@ nav {
           <div class="step-card-sub">Select how you'd like to pay for your package.</div>
           <div class="payment-options">
             <div class="pay-option selected" onclick="selectOption(this, 'pay')" data-name="Cash">
-              <div class="pay-icon">💵</div>
+              <div class="pay-icon" aria-hidden="true">💵</div>
               <div class="pay-name">Cash Payment</div>
               <div class="pay-desc">Pay in person at our school, Bonistraat 44. Bring exact amount.</div>
             </div>
             <div class="pay-option" onclick="selectOption(this, 'pay')" data-name="Bank Transfer">
-              <div class="pay-icon">🏦</div>
+              <div class="pay-icon" aria-hidden="true">🏦</div>
               <div class="pay-name">Bank Transfer</div>
               <div class="pay-desc">Transfer to our account. Admin will confirm after receipt of payment.</div>
             </div>
@@ -559,7 +565,7 @@ nav {
       <!-- STEP 6: CONFIRMATION -->
       <div class="step-panel" id="step-6">
         <div class="confirm-header">
-          <div class="confirm-check">✅</div>
+          <div class="confirm-check"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12.5 9.5 18 20 6"></polyline></svg></div>
           <h2>Booking Confirmed!</h2>
           <p>Your lesson has been booked. Check your WhatsApp for details.</p>
         </div>
@@ -592,7 +598,7 @@ nav {
         </div>
 
         <div class="wa-notice">
-          <div class="wa-notice-icon">📱</div>
+          <div class="wa-notice-icon" aria-hidden="true">📱</div>
           <p>A <strong>WhatsApp confirmation</strong> has been sent to your number with your booking details and payment instructions. Reply to that message if you need help.</p>
         </div>
 

@@ -295,6 +295,11 @@ main { max-width: 1200px; margin: 0 auto; padding: 60px 24px 80px; }
   header h1 { font-size: 1.8rem; }
   .header-stats { flex-wrap: wrap; gap: 16px; }
 }
+
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
 </style>
 </head>
 <body>
@@ -557,12 +562,12 @@ main { max-width: 1200px; margin: 0 auto; padding: 60px 24px 80px; }
     </div>
 
     <div class="tech-grid">
-      <div class="tech-item"><div class="tech-icon">⚛️</div><div class="tech-name">Next.js 14</div><div class="tech-role">Frontend Framework</div></div>
-      <div class="tech-item"><div class="tech-icon">🎨</div><div class="tech-name">Tailwind CSS</div><div class="tech-role">Styling</div></div>
-      <div class="tech-item"><div class="tech-icon">🐘</div><div class="tech-name">PostgreSQL</div><div class="tech-role">Database</div></div>
-      <div class="tech-item"><div class="tech-icon">🔷</div><div class="tech-name">Prisma</div><div class="tech-role">ORM</div></div>
-      <div class="tech-item"><div class="tech-icon">🔐</div><div class="tech-name">NextAuth</div><div class="tech-role">Authentication</div></div>
-      <div class="tech-item"><div class="tech-icon">📱</div><div class="tech-name">WhatsApp API</div><div class="tech-role">Notifications</div></div>
+      <div class="tech-item"><div class="tech-icon" aria-hidden="true">⚛️</div><div class="tech-name">Next.js 14</div><div class="tech-role">Frontend Framework</div></div>
+      <div class="tech-item"><div class="tech-icon" aria-hidden="true">🎨</div><div class="tech-name">Tailwind CSS</div><div class="tech-role">Styling</div></div>
+      <div class="tech-item"><div class="tech-icon" aria-hidden="true">🐘</div><div class="tech-name">PostgreSQL</div><div class="tech-role">Database</div></div>
+      <div class="tech-item"><div class="tech-icon" aria-hidden="true">🔷</div><div class="tech-name">Prisma</div><div class="tech-role">ORM</div></div>
+      <div class="tech-item"><div class="tech-icon" aria-hidden="true">🔐</div><div class="tech-name">NextAuth</div><div class="tech-role">Authentication</div></div>
+      <div class="tech-item"><div class="tech-icon" aria-hidden="true">📱</div><div class="tech-name">WhatsApp API</div><div class="tech-role">Notifications</div></div>
     </div>
   </div>
 

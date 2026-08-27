@@ -127,9 +127,14 @@ h1,h2,h3,h4 { font-family: 'Sora', sans-serif; }
 .search-bar {
   display: flex; align-items: center; gap: 8px;
   background: var(--gray-100); border-radius: 8px;
-  padding: 7px 14px; font-size: 0.82rem; color: var(--gray-600);
-  width: 200px; cursor: text;
+  padding: 7px 14px; width: 200px;
 }
+.search-bar input {
+  border: none; background: transparent; outline: none;
+  font-family: 'Inter', sans-serif; font-size: 0.82rem; color: var(--navy);
+  width: 100%;
+}
+.search-bar input::placeholder { color: var(--gray-600); }
 
 .notif-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--gray-100); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 0.9rem; transition: background 0.2s; }
 .notif-btn:hover { background: var(--gray-200); }
@@ -153,6 +158,8 @@ h1,h2,h3,h4 { font-family: 'Sora', sans-serif; }
 .tabs { display: flex; gap: 4px; background: var(--gray-100); padding: 4px; border-radius: 10px; width: fit-content; margin-bottom: 24px; }
 .tab { padding: 7px 16px; border-radius: 7px; font-size: 0.82rem; font-weight: 600; cursor: pointer; color: var(--gray-600); transition: all 0.2s; border: none; background: transparent; }
 .tab.active { background: var(--white); color: var(--navy); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
 
 /* STATS ROW */
 .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
@@ -178,6 +185,7 @@ h1,h2,h3,h4 { font-family: 'Sora', sans-serif; }
 
 /* GRID */
 .grid-3-1 { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+.revenue-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
 /* CARDS */
@@ -268,6 +276,7 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
 @media (max-width: 1100px) {
   .stats-row { grid-template-columns: repeat(2, 1fr); }
   .grid-3-1 { grid-template-columns: 1fr; }
+  .revenue-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 1024px) {
@@ -276,6 +285,11 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
   .sidebar.open ~ .sidebar-backdrop { display: block; }
   .sidebar-toggle { display: flex; }
   .main { margin-left: 0; }
+}
+
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
 }
 </style>
 </head>
@@ -293,24 +307,24 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
 
   <div class="nav-group">
     <div class="nav-group-label">Overview</div>
-    <a class="nav-link active" onclick="setNav(this)"><span class="nav-icon">📊</span> Dashboard</a>
-    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">📅</span> Bookings <span class="nav-badge">5</span></a>
-    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">👥</span> Students</a>
+    <a class="nav-link active" onclick="setNav(this)"><span class="nav-icon" aria-hidden="true">📊</span> Dashboard</a>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon" aria-hidden="true">📅</span> Bookings <span class="nav-badge">5</span></a>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon" aria-hidden="true">👥</span> Students</a>
   </div>
 
   <div class="nav-group">
     <div class="nav-group-label">School</div>
-    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">📦</span> Packages</a>
-    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">👨‍🏫</span> Instructors</a>
-    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">📚</span> Course Content</a>
-    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">❓</span> FAQ</a>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon" aria-hidden="true">📦</span> Packages</a>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon" aria-hidden="true">👨‍🏫</span> Instructors</a>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon" aria-hidden="true">📚</span> Course Content</a>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon" aria-hidden="true">❓</span> FAQ</a>
   </div>
 
   <div class="nav-group">
     <div class="nav-group-label">System</div>
-    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon">⚙️</span> Settings</a>
-    <a class="nav-link" onclick="setNav(this); window.location='01-homepage.html'"><span class="nav-icon">🌐</span> View Website</a>
-    <a class="nav-link" style="color:rgba(239,68,68,0.6)" onclick="setNav(this)"><span class="nav-icon">🚪</span> Log Out</a>
+    <a class="nav-link" onclick="setNav(this)"><span class="nav-icon" aria-hidden="true">⚙️</span> Settings</a>
+    <a class="nav-link" onclick="setNav(this); window.location='01-homepage.html'"><span class="nav-icon" aria-hidden="true">🌐</span> View Website</a>
+    <a class="nav-link" style="color:rgba(239,68,68,0.6)" onclick="setNav(this)"><span class="nav-icon" aria-hidden="true">🚪</span> Log Out</a>
   </div>
 
   <div class="sidebar-footer">
@@ -336,9 +350,9 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
       <div class="topbar-title">Dashboard</div>
     </div>
     <div class="topbar-right">
-      <div class="search-bar">🔍 Search students, bookings…</div>
+      <div class="search-bar">🔍 <input type="search" placeholder="Search students, bookings…" aria-label="Search students, bookings"></div>
       <button class="btn btn-primary" onclick="openModal()">+ New Booking</button>
-      <button class="notif-btn">🔔<div class="notif-dot"></div></button>
+      <button class="notif-btn" aria-label="Notifications"><span aria-hidden="true">🔔</span><div class="notif-dot"></div></button>
     </div>
   </div>
 
@@ -346,18 +360,20 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
   <div class="content">
 
     <!-- TABS -->
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab(this)">Overview</button>
-      <button class="tab" onclick="switchTab(this)">Bookings</button>
-      <button class="tab" onclick="switchTab(this)">Students</button>
-      <button class="tab" onclick="switchTab(this)">Revenue</button>
+    <div class="tabs" role="tablist">
+      <button class="tab active" id="tab-overview" role="tab" aria-selected="true" data-panel="panel-overview" onclick="switchTab(this)">Overview</button>
+      <button class="tab" id="tab-bookings" role="tab" aria-selected="false" data-panel="panel-bookings" onclick="switchTab(this)">Bookings</button>
+      <button class="tab" id="tab-students" role="tab" aria-selected="false" data-panel="panel-students" onclick="switchTab(this)">Students</button>
+      <button class="tab" id="tab-revenue" role="tab" aria-selected="false" data-panel="panel-revenue" onclick="switchTab(this)">Revenue</button>
     </div>
+
+    <div class="tab-panel active" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
 
     <!-- STATS -->
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-top">
-          <div class="stat-icon" style="background:rgba(59,130,246,0.1)">👥</div>
+          <div class="stat-icon" style="background:rgba(59,130,246,0.1)" aria-hidden="true">👥</div>
           <div class="stat-trend trend-up">↑ 12%</div>
         </div>
         <div class="stat-num">247</div>
@@ -366,7 +382,7 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
       </div>
       <div class="stat-card">
         <div class="stat-top">
-          <div class="stat-icon" style="background:rgba(16,185,129,0.1)">📅</div>
+          <div class="stat-icon" style="background:rgba(16,185,129,0.1)" aria-hidden="true">📅</div>
           <div class="stat-trend trend-up">↑ 6%</div>
         </div>
         <div class="stat-num">34</div>
@@ -375,7 +391,7 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
       </div>
       <div class="stat-card">
         <div class="stat-top">
-          <div class="stat-icon" style="background:rgba(245,166,35,0.12)">💰</div>
+          <div class="stat-icon" style="background:rgba(245,166,35,0.12)" aria-hidden="true">💰</div>
           <div class="stat-trend trend-neutral">5 pending</div>
         </div>
         <div class="stat-num">SRD 9,400</div>
@@ -384,7 +400,7 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
       </div>
       <div class="stat-card">
         <div class="stat-top">
-          <div class="stat-icon" style="background:rgba(245,166,35,0.12)">📦</div>
+          <div class="stat-icon" style="background:rgba(245,166,35,0.12)" aria-hidden="true">📦</div>
           <div class="stat-trend trend-up">↑ 3</div>
         </div>
         <div class="stat-num">4</div>
@@ -481,19 +497,19 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
           <div class="card-body">
             <div class="quick-actions">
               <a class="qa-btn" onclick="openModal()">
-                <div class="qa-icon" style="background:rgba(245,166,35,0.12)">📦</div>
+                <div class="qa-icon" style="background:rgba(245,166,35,0.12)" aria-hidden="true">📦</div>
                 Add Package
               </a>
               <a class="qa-btn">
-                <div class="qa-icon" style="background:rgba(59,130,246,0.1)">👨‍🏫</div>
+                <div class="qa-icon" style="background:rgba(59,130,246,0.1)" aria-hidden="true">👨‍🏫</div>
                 Add Instructor
               </a>
               <a class="qa-btn">
-                <div class="qa-icon" style="background:var(--green-light)">📚</div>
+                <div class="qa-icon" style="background:var(--green-light)" aria-hidden="true">📚</div>
                 Add Lesson
               </a>
               <a class="qa-btn">
-                <div class="qa-icon" style="background:rgba(139,92,246,0.1)">❓</div>
+                <div class="qa-icon" style="background:rgba(139,92,246,0.1)" aria-hidden="true">❓</div>
                 Add FAQ Entry
               </a>
             </div>
@@ -557,14 +573,209 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
       </div>
     </div>
 
+    </div>
+    <!-- /panel-overview -->
+
+    <!-- BOOKINGS TAB PANEL -->
+    <div class="tab-panel" id="panel-bookings" role="tabpanel" aria-labelledby="tab-bookings">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">All Bookings</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select style="font-size:0.75rem;border:1px solid var(--gray-200);border-radius:6px;padding:4px 8px;color:var(--navy);background:var(--white);cursor:pointer">
+              <option>All statuses</option>
+              <option>Pending</option>
+              <option>Confirmed</option>
+            </select>
+            <a class="card-action">Export CSV</a>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Package</th>
+                <th>Date & Time</th>
+                <th>Instructor</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#6366f1">AM</div><div><div style="font-weight:600;font-size:0.82rem">Aisha Mijnals</div><div style="font-size:0.7rem;color:var(--gray-600)">Standard</div></div></div></td>
+                <td>Standard</td>
+                <td><div style="font-size:0.82rem;font-weight:600">May 22</div><div style="font-size:0.7rem;color:var(--gray-600)">10:00 AM</div></td>
+                <td>Carlos M.</td>
+                <td><span class="badge badge-cash">💵 Cash</span></td>
+                <td><span class="badge badge-confirmed">✓ Confirmed</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-outline">View</button><button class="btn btn-sm btn-danger" onclick="openCancel('Aisha Mijnals','May 22 · 10:00 AM','Carlos Martinus','Standard')">Cancel</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#f59e0b">KJ</div><div><div style="font-weight:600;font-size:0.82rem">Kevin Jansen</div><div style="font-size:0.7rem;color:var(--gray-600)">Starter</div></div></div></td>
+                <td>Starter</td>
+                <td><div style="font-size:0.82rem;font-weight:600">May 23</div><div style="font-size:0.7rem;color:var(--gray-600)">2:00 PM</div></td>
+                <td>Sandra P.</td>
+                <td><span class="badge badge-transfer">🏦 Transfer</span></td>
+                <td><span class="badge badge-pending">⏳ Pending</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-success" onclick="openConfirmPay('Kevin Jansen','Starter (10 lessons)','SRD 2,500','Bank Transfer','May 23 · 2:00 PM · Sandra Pengel')">Confirm Pay</button><button class="btn btn-sm btn-danger" onclick="openCancel('Kevin Jansen','May 23 · 2:00 PM','Sandra Pengel','Starter')">Cancel</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#10b981">RP</div><div><div style="font-weight:600;font-size:0.82rem">Reina Pansa</div><div style="font-size:0.7rem;color:var(--gray-600)">Premium</div></div></div></td>
+                <td>Premium</td>
+                <td><div style="font-size:0.82rem;font-weight:600">May 23</div><div style="font-size:0.7rem;color:var(--gray-600)">9:00 AM</div></td>
+                <td>Roy A.</td>
+                <td><span class="badge badge-cash">💵 Cash</span></td>
+                <td><span class="badge badge-confirmed">✓ Confirmed</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-outline">View</button><button class="btn btn-sm btn-danger" onclick="openCancel('Reina Pansa','May 23 · 9:00 AM','Roy Apensa','Premium')">Cancel</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#ef4444">SB</div><div><div style="font-weight:600;font-size:0.82rem">Stefan Bakker</div><div style="font-size:0.7rem;color:var(--gray-600)">Standard</div></div></div></td>
+                <td>Standard</td>
+                <td><div style="font-size:0.82rem;font-weight:600">May 24</div><div style="font-size:0.7rem;color:var(--gray-600)">11:00 AM</div></td>
+                <td>Carlos M.</td>
+                <td><span class="badge badge-transfer">🏦 Transfer</span></td>
+                <td><span class="badge badge-pending">⏳ Pending</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-success" onclick="openConfirmPay('Stefan Bakker','Standard (20 lessons)','SRD 3,000','Bank Transfer','May 24 · 11:00 AM · Carlos Martinus')">Confirm Pay</button><button class="btn btn-sm btn-danger" onclick="openCancel('Stefan Bakker','May 24 · 11:00 AM','Carlos Martinus','Standard')">Cancel</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#8b5cf6">LT</div><div><div style="font-weight:600;font-size:0.82rem">Lisa Thomas</div><div style="font-size:0.7rem;color:var(--gray-600)">Starter</div></div></div></td>
+                <td>Starter</td>
+                <td><div style="font-size:0.82rem;font-weight:600">May 25</div><div style="font-size:0.7rem;color:var(--gray-600)">3:00 PM</div></td>
+                <td>Sandra P.</td>
+                <td><span class="badge badge-cash">💵 Cash</span></td>
+                <td><span class="badge badge-cancelled">✗ Cancelled</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-outline">View</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- STUDENTS TAB PANEL -->
+    <div class="tab-panel" id="panel-students" role="tabpanel" aria-labelledby="tab-students">
+      <div class="card">
+        <div class="card-header"><div class="card-title">All Students</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Package</th>
+                <th>Lessons Completed</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#6366f1">AM</div><div><div style="font-weight:600;font-size:0.82rem">Aisha Mijnals</div></div></div></td>
+                <td>Standard</td>
+                <td>14 / 20</td>
+                <td><span class="badge badge-confirmed">✓ Active</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-outline">View Progress</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#f59e0b">KJ</div><div><div style="font-weight:600;font-size:0.82rem">Kevin Jansen</div></div></div></td>
+                <td>Starter</td>
+                <td>3 / 10</td>
+                <td><span class="badge badge-pending">⏳ Payment Pending</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-outline">View Progress</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#10b981">RP</div><div><div style="font-weight:600;font-size:0.82rem">Reina Pansa</div></div></div></td>
+                <td>Premium</td>
+                <td>22 / 30</td>
+                <td><span class="badge badge-confirmed">✓ Active</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-outline">View Progress</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#ef4444">SB</div><div><div style="font-weight:600;font-size:0.82rem">Stefan Bakker</div></div></div></td>
+                <td>Standard</td>
+                <td>5 / 20</td>
+                <td><span class="badge badge-pending">⏳ Payment Pending</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-outline">View Progress</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="student-cell"><div class="student-avatar" style="background:#8b5cf6">LT</div><div><div style="font-weight:600;font-size:0.82rem">Lisa Thomas</div></div></div></td>
+                <td>Starter</td>
+                <td>0 / 10</td>
+                <td><span class="badge badge-cancelled">✗ Cancelled</span></td>
+                <td><div class="action-btns"><button class="btn btn-sm btn-outline">View Progress</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUE TAB PANEL -->
+    <div class="tab-panel" id="panel-revenue" role="tabpanel" aria-labelledby="tab-revenue">
+      <div class="revenue-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Pending Payments</div>
+            <span style="background:rgba(245,166,35,0.12);color:#b45309;font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:100px">3</span>
+          </div>
+          <div class="card-body">
+            <div class="payment-item">
+              <div class="pay-avatar" style="background:#f59e0b">KJ</div>
+              <div class="pay-info">
+                <div class="pay-name">Kevin Jansen</div>
+                <div class="pay-detail">Starter · Bank Transfer</div>
+              </div>
+              <div class="pay-amount">SRD 2,500</div>
+              <button class="btn btn-sm btn-success" onclick="openConfirmPay('Kevin Jansen','Starter (10 lessons)','SRD 2,500','Bank Transfer','May 23 · 2:00 PM · Sandra Pengel')">✓</button>
+            </div>
+            <div class="payment-item">
+              <div class="pay-avatar" style="background:#ef4444">SB</div>
+              <div class="pay-info">
+                <div class="pay-name">Stefan Bakker</div>
+                <div class="pay-detail">Standard · Bank Transfer</div>
+              </div>
+              <div class="pay-amount">SRD 3,000</div>
+              <button class="btn btn-sm btn-success" onclick="openConfirmPay('Stefan Bakker','Standard (20 lessons)','SRD 3,000','Bank Transfer','May 24 · 11:00 AM · Carlos Martinus')">✓</button>
+            </div>
+            <div class="payment-item">
+              <div class="pay-avatar" style="background:#8b5cf6">MF</div>
+              <div class="pay-info">
+                <div class="pay-name">Marco Fong</div>
+                <div class="pay-detail">Premium · Bank Transfer</div>
+              </div>
+              <div class="pay-amount">SRD 3,500</div>
+              <button class="btn btn-sm btn-success" onclick="openConfirmPay('Marco Fong','Premium (30 lessons)','SRD 3,500','Bank Transfer','—')">✓</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Bookings This Week</div></div>
+          <div class="card-body">
+            <div style="font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:800;color:var(--navy);margin-bottom:4px">34</div>
+            <div style="font-size:0.72rem;color:var(--gray-600);margin-bottom:12px">↑ 6% vs last week</div>
+            <div class="mini-chart">
+              <div class="bar-col"><div class="bar" style="height:30px"></div><div class="bar-label">Mon</div></div>
+              <div class="bar-col"><div class="bar" style="height:45px"></div><div class="bar-label">Tue</div></div>
+              <div class="bar-col"><div class="bar" style="height:38px"></div><div class="bar-label">Wed</div></div>
+              <div class="bar-col"><div class="bar active" style="height:54px"></div><div class="bar-label">Thu</div></div>
+              <div class="bar-col"><div class="bar" style="height:20px;opacity:0.3"></div><div class="bar-label">Fri</div></div>
+              <div class="bar-col"><div class="bar" style="height:8px;opacity:0.2"></div><div class="bar-label">Sat</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <!-- CONFIRM PAYMENT MODAL -->
 <div class="modal-overlay" id="modal-confirm" onclick="closeModals(event)">
-  <div class="modal">
-    <div style="font-size:2rem;margin-bottom:12px">💰</div>
-    <div class="modal-title">Confirm Payment Received</div>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title" tabindex="-1">
+    <div style="font-size:2rem;margin-bottom:12px" aria-hidden="true">💰</div>
+    <div class="modal-title" id="modal-confirm-title">Confirm Payment Received</div>
     <div class="modal-sub">Mark this booking's bank transfer as received and confirm the student's access.</div>
     <div class="modal-detail">
       <strong>Student:</strong> <span id="cf-student">Kevin Jansen</span><br>
@@ -577,17 +788,17 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
       ✓ Upon confirmation, the student will receive a WhatsApp message and their course access will be activated.
     </div>
     <div class="modal-actions">
-      <button class="btn btn-outline" onclick="document.getElementById('modal-confirm').classList.remove('open')">Cancel</button>
-      <button class="btn btn-success" onclick="document.getElementById('modal-confirm').classList.remove('open')">✓ Confirm Payment</button>
+      <button class="btn btn-outline" onclick="closeModalById('modal-confirm')">Cancel</button>
+      <button class="btn btn-success" onclick="closeModalById('modal-confirm')">✓ Confirm Payment</button>
     </div>
   </div>
 </div>
 
 <!-- CANCEL MODAL -->
 <div class="modal-overlay" id="modal-cancel" onclick="closeModals(event)">
-  <div class="modal">
-    <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
-    <div class="modal-title">Cancel This Booking?</div>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-cancel-title" tabindex="-1">
+    <div style="font-size:2rem;margin-bottom:12px" aria-hidden="true">⚠️</div>
+    <div class="modal-title" id="modal-cancel-title">Cancel This Booking?</div>
     <div class="modal-sub">This will cancel the booking and send a WhatsApp notification to the student and instructor.</div>
     <div class="modal-detail">
       <strong>Student:</strong> <span id="cx-student">Aisha Mijnals</span><br>
@@ -596,16 +807,16 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
       <strong>Package:</strong> <span id="cx-pkg">Standard</span>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-outline" onclick="document.getElementById('modal-cancel').classList.remove('open')">Keep Booking</button>
-      <button class="btn btn-danger" onclick="document.getElementById('modal-cancel').classList.remove('open')">✗ Cancel Booking</button>
+      <button class="btn btn-outline" onclick="closeModalById('modal-cancel')">Keep Booking</button>
+      <button class="btn btn-danger" onclick="closeModalById('modal-cancel')">✗ Cancel Booking</button>
     </div>
   </div>
 </div>
 
 <!-- ADD PACKAGE MODAL -->
 <div class="modal-overlay" id="modal-add" onclick="closeModals(event)">
-  <div class="modal">
-    <div class="modal-title">Add New Package</div>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-add-title" tabindex="-1">
+    <div class="modal-title" id="modal-add-title">Add New Package</div>
     <div class="modal-sub">Create a new driving package. It will be saved as a draft until you publish it.</div>
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
       <div>
@@ -628,8 +839,8 @@ tbody tr:hover td { background: rgba(245,166,35,0.03); }
       </div>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-outline" onclick="document.getElementById('modal-add').classList.remove('open')">Cancel</button>
-      <button class="btn btn-primary" onclick="document.getElementById('modal-add').classList.remove('open')">Save as Draft</button>
+      <button class="btn btn-outline" onclick="closeModalById('modal-add')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModalById('modal-add')">Save as Draft</button>
     </div>
   </div>
 </div>
@@ -665,8 +876,14 @@ document.addEventListener('keydown', function(e) {
 });
 
 function switchTab(el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.remove('active');
+    t.setAttribute('aria-selected', 'false');
+  });
   el.classList.add('active');
+  el.setAttribute('aria-selected', 'true');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(el.dataset.panel).classList.add('active');
 }
 
 function openConfirmPay(student, pkg, amount, method, booking) {
@@ -675,7 +892,7 @@ function openConfirmPay(student, pkg, amount, method, booking) {
   document.getElementById('cf-amount').textContent = amount;
   document.getElementById('cf-method').textContent = method;
   document.getElementById('cf-booking').textContent = booking;
-  document.getElementById('modal-confirm').classList.add('open');
+  openModalById('modal-confirm');
 }
 
 function openCancel(student, date, inst, pkg) {
@@ -683,16 +900,55 @@ function openCancel(student, date, inst, pkg) {
   document.getElementById('cx-date').textContent = date;
   document.getElementById('cx-inst').textContent = inst;
   document.getElementById('cx-pkg').textContent = pkg;
-  document.getElementById('modal-cancel').classList.add('open');
+  openModalById('modal-cancel');
 }
 
 function openModal() {
-  document.getElementById('modal-add').classList.add('open');
+  openModalById('modal-add');
 }
+
+let lastFocusedEl = null;
+
+function openModalById(id) {
+  lastFocusedEl = document.activeElement;
+  const overlay = document.getElementById(id);
+  overlay.classList.add('open');
+  overlay.querySelector('.modal').focus();
+}
+
+function closeModalById(id) {
+  document.getElementById(id).classList.remove('open');
+  if (lastFocusedEl) lastFocusedEl.focus();
+}
+
+function getFocusable(modal) {
+  return modal.querySelectorAll('button, input, [href], [tabindex]:not([tabindex="-1"])');
+}
+
+document.addEventListener('keydown', function(e) {
+  const openOverlay = document.querySelector('.modal-overlay.open');
+  if (!openOverlay) return;
+  if (e.key === 'Escape') {
+    closeModalById(openOverlay.id);
+    return;
+  }
+  if (e.key === 'Tab') {
+    const modal = openOverlay.querySelector('.modal');
+    const focusables = getFocusable(modal);
+    if (!focusables.length) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus();
+    }
+  }
+});
 
 function closeModals(e) {
   if (e.target.classList.contains('modal-overlay')) {
-    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+    closeModalById(e.target.id);
   }
 }
 </script>

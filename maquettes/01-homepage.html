@@ -275,7 +275,7 @@ nav {
 }
 
 .cert-label { font-size: 0.875rem; color: rgba(255,255,255,0.8); font-weight: 500; }
-.cert-sub { font-size: 0.75rem; color: rgba(255,255,255,0.45); }
+.cert-sub { font-size: 0.75rem; color: rgba(255,255,255,0.72); }
 
 /* STATS BAR */
 .stats-bar {
@@ -550,6 +550,7 @@ section { padding: 80px 24px; }
 }
 
 .faq-item.open .faq-a { max-height: 200px; padding: 0 24px 20px; }
+.faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
 
 /* FOOTER */
 footer {
@@ -664,6 +665,12 @@ footer {
   .steps-grid::before { display: none; }
   .stats-inner { gap: 32px; flex-wrap: wrap; }
   .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+  .faq-grid { grid-template-columns: 1fr; gap: 32px; }
+}
+
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
 }
 </style>
 </head>
@@ -684,19 +691,19 @@ footer {
 
     <ul class="nav-links" id="primary-menu">
       <li><a href="01-homepage.html">Home</a></li>
-      <li><a href="02-packages.html">Packages</a></li>
-      <li><a href="#">Instructors</a></li>
-      <li><a href="#">FAQ</a></li>
+      <li><a href="02-packages.html" data-en="Packages" data-nl="Pakketten">Packages</a></li>
+      <li><a href="#" data-en="Instructors" data-nl="Instructeurs">Instructors</a></li>
+      <li><a href="#" data-en="FAQ" data-nl="Veelgestelde Vragen">FAQ</a></li>
       <li><a href="#">Contact</a></li>
     </ul>
 
     <div class="nav-actions">
       <div class="lang-switch">
-        <button class="lang-btn active">EN</button>
-        <button class="lang-btn">NL</button>
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="nl">NL</button>
       </div>
-      <a href="#" class="btn btn-outline">Login</a>
-      <a href="03-booking.html" class="btn btn-primary">Book Now</a>
+      <a href="#" class="btn btn-outline" data-en="Login" data-nl="Inloggen">Login</a>
+      <a href="03-booking.html" class="btn btn-primary" data-en="Book Now" data-nl="Nu Boeken">Book Now</a>
     </div>
 
     <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="primary-menu" onclick="toggleMenu()">
@@ -710,13 +717,13 @@ footer {
   <div class="hero-inner">
     <div class="hero-content">
       <div class="hero-badge">
-        <span>🏆</span> Suriname's #1 Driving School
+        <span aria-hidden="true">🏆</span> <span data-en="Suriname's #1 Driving School" data-nl="Suriname's #1 Rijschool">Suriname's #1 Driving School</span>
       </div>
-      <h1>Learn to Drive<br>with <span>Confidence</span></h1>
-      <p>Professional driving lessons in Paramaribo. Certified instructors, flexible schedules Monday through Saturday, and a complete online learning platform.</p>
+      <h1><span data-en="Learn to Drive" data-nl="Leer Autorijden">Learn to Drive</span><br><span data-en="with" data-nl="met">with</span> <span data-en="Confidence" data-nl="Vertrouwen">Confidence</span></h1>
+      <p data-en="Professional driving lessons in Paramaribo. Certified instructors, flexible schedules Monday through Saturday, and a complete online learning platform." data-nl="Professionele rijlessen in Paramaribo. Gecertificeerde instructeurs, flexibele lesroosters van maandag tot en met zaterdag, en een compleet online leerplatform.">Professional driving lessons in Paramaribo. Certified instructors, flexible schedules Monday through Saturday, and a complete online learning platform.</p>
       <div class="hero-ctas">
-        <a href="03-booking.html" class="btn btn-primary btn-lg">Book a Lesson</a>
-        <a href="02-packages.html" class="btn btn-white btn-lg">View Packages</a>
+        <a href="03-booking.html" class="btn btn-primary btn-lg" data-en="Book a Lesson" data-nl="Boek een Les">Book a Lesson</a>
+        <a href="02-packages.html" class="btn btn-white btn-lg" data-en="View Packages" data-nl="Bekijk Pakketten">View Packages</a>
       </div>
     </div>
 
@@ -724,28 +731,28 @@ footer {
       <div class="hero-card">
         <div class="hero-card-title">Your Learning Journey</div>
         <div class="cert-item">
-          <div class="cert-icon">📚</div>
+          <div class="cert-icon" aria-hidden="true">📚</div>
           <div>
             <div class="cert-label">Theory Lessons</div>
             <div class="cert-sub">Online at your own pace</div>
           </div>
         </div>
         <div class="cert-item">
-          <div class="cert-icon">🚗</div>
+          <div class="cert-icon" aria-hidden="true">🚗</div>
           <div>
             <div class="cert-label">Practical Training</div>
             <div class="cert-sub">With certified instructors</div>
           </div>
         </div>
         <div class="cert-item">
-          <div class="cert-icon">🎓</div>
+          <div class="cert-icon" aria-hidden="true">🎓</div>
           <div>
             <div class="cert-label">Exam Preparation</div>
             <div class="cert-sub">Pass on your first try</div>
           </div>
         </div>
         <div class="cert-item">
-          <div class="cert-icon">📱</div>
+          <div class="cert-icon" aria-hidden="true">📱</div>
           <div>
             <div class="cert-label">WhatsApp Updates</div>
             <div class="cert-sub">Instant confirmations</div>
@@ -761,19 +768,19 @@ footer {
   <div class="stats-inner">
     <div class="stat">
       <div class="stat-number">500+</div>
-      <div class="stat-label">Students Trained</div>
+      <div class="stat-label" data-en="Students Trained" data-nl="Studenten Opgeleid">Students Trained</div>
     </div>
     <div class="stat">
       <div class="stat-number">8</div>
-      <div class="stat-label">Expert Instructors</div>
+      <div class="stat-label" data-en="Expert Instructors" data-nl="Ervaren Instructeurs">Expert Instructors</div>
     </div>
     <div class="stat">
       <div class="stat-number">Mon–Sat</div>
-      <div class="stat-label">Available 7am–6pm</div>
+      <div class="stat-label" data-en="Available 7am–6pm" data-nl="Geopend 7:00–18:00">Available 7am–6pm</div>
     </div>
     <div class="stat">
       <div class="stat-number">95%</div>
-      <div class="stat-label">Pass Rate</div>
+      <div class="stat-label" data-en="Pass Rate" data-nl="Slagingspercentage">Pass Rate</div>
     </div>
   </div>
 </div>
@@ -783,55 +790,55 @@ footer {
   <div class="section-inner">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;">
       <div>
-        <div class="section-tag">Packages</div>
-        <h2 class="section-title">Choose Your<br>Learning Package</h2>
-        <p class="section-sub">All packages include access to our online theory platform with quizzes and study materials.</p>
+        <div class="section-tag" data-en="Packages" data-nl="Pakketten">Packages</div>
+        <h2 class="section-title"><span data-en="Choose Your" data-nl="Kies Je">Choose Your</span><br><span data-en="Learning Package" data-nl="Lespakket">Learning Package</span></h2>
+        <p class="section-sub" data-en="All packages include access to our online theory platform with quizzes and study materials." data-nl="Alle pakketten geven toegang tot ons online theorieplatform met quizzen en studiemateriaal.">All packages include access to our online theory platform with quizzes and study materials.</p>
       </div>
-      <a href="02-packages.html" class="btn btn-outline">See All Packages →</a>
+      <a href="02-packages.html" class="btn btn-outline"><span data-en="See All Packages" data-nl="Bekijk Alle Pakketten">See All Packages</span> →</a>
     </div>
 
     <div class="packages-grid">
       <div class="package-card">
-        <div class="package-icon">🚀</div>
+        <div class="package-icon" aria-hidden="true">🚀</div>
         <div class="package-name">Starter</div>
-        <div class="package-desc">Perfect for beginners with no prior driving experience.</div>
+        <div class="package-desc" data-en="Perfect for beginners with no prior driving experience." data-nl="Perfect voor beginners zonder eerdere rijervaring.">Perfect for beginners with no prior driving experience.</div>
         <div class="package-price">SRD 2,500 <span>/ package</span></div>
         <div class="package-includes">
-          <div class="include-item">10 practical lessons (50 min each)</div>
+          <div class="include-item">Practical lessons are not included, theory only</div>
           <div class="include-item">Theory access included</div>
           <div class="include-item">WhatsApp support</div>
           <div class="include-item">Certificate upon completion</div>
         </div>
-        <a href="03-booking.html" class="btn btn-outline" style="width:100%;justify-content:center;">Book This Package</a>
+        <a href="03-booking.html" class="btn btn-outline" style="width:100%;justify-content:center;" data-en="Book This Package" data-nl="Boek Dit Pakket">Book This Package</a>
       </div>
 
       <div class="package-card featured">
-        <div class="package-badge">Most Popular</div>
-        <div class="package-icon">⭐</div>
-        <div class="package-name" style="color:var(--white)">Standard</div>
-        <div class="package-desc">Our most popular package — comprehensive training for confident drivers.</div>
+        <div class="package-badge" data-en="Most Popular" data-nl="Meest Gekozen">Most Popular</div>
+        <div class="package-icon" aria-hidden="true">⭐</div>
+        <div class="package-name" style="color:var(--white)" data-en="Standard" data-nl="Standaard">Standard</div>
+        <div class="package-desc" data-en="Our most popular package — comprehensive training for confident drivers." data-nl="Ons populairste pakket — uitgebreide training voor zelfverzekerde bestuurders.">Our most popular package — comprehensive training for confident drivers.</div>
         <div class="package-price">SRD 3,000 <span style="color:rgba(255,255,255,0.5)">/ package</span></div>
         <div class="package-includes">
-          <div class="include-item">20 practical lessons (50 min each)</div>
+          <div class="include-item">Practical lessons are not included, theory only</div>
           <div class="include-item">Full theory course</div>
           <div class="include-item">2 mock exams</div>
           <div class="include-item">Priority booking</div>
         </div>
-        <a href="03-booking.html" class="btn btn-primary" style="width:100%;justify-content:center;">Book This Package</a>
+        <a href="03-booking.html" class="btn btn-primary" style="width:100%;justify-content:center;" data-en="Book This Package" data-nl="Boek Dit Pakket">Book This Package</a>
       </div>
 
       <div class="package-card">
-        <div class="package-icon">💎</div>
+        <div class="package-icon" aria-hidden="true">💎</div>
         <div class="package-name">Premium</div>
-        <div class="package-desc">Intensive program designed to get you exam-ready in minimum time.</div>
+        <div class="package-desc" data-en="Intensive program designed to get you exam-ready in minimum time." data-nl="Intensief programma om je in minimale tijd examenklaar te maken.">Intensive program designed to get you exam-ready in minimum time.</div>
         <div class="package-price">SRD 3,500 <span>/ package</span></div>
         <div class="package-includes">
-          <div class="include-item">30 practical lessons (50 min each)</div>
+          <div class="include-item">Practical lessons are not included, theory only</div>
           <div class="include-item">Full theory + video lessons</div>
           <div class="include-item">Unlimited mock exams</div>
           <div class="include-item">Exam day accompaniment</div>
         </div>
-        <a href="03-booking.html" class="btn btn-outline" style="width:100%;justify-content:center;">Book This Package</a>
+        <a href="03-booking.html" class="btn btn-outline" style="width:100%;justify-content:center;" data-en="Book This Package" data-nl="Boek Dit Pakket">Book This Package</a>
       </div>
     </div>
   </div>
@@ -840,25 +847,25 @@ footer {
 <!-- HOW IT WORKS -->
 <section>
   <div class="section-inner" style="text-align:center;">
-    <div class="section-tag">Process</div>
-    <h2 class="section-title">How It Works</h2>
-    <p class="section-sub" style="margin:0 auto;">Three simple steps to get your driver's license.</p>
+    <div class="section-tag" data-en="Process" data-nl="Proces">Process</div>
+    <h2 class="section-title" data-en="How It Works" data-nl="Hoe Het Werkt">How It Works</h2>
+    <p class="section-sub" style="margin:0 auto;" data-en="Three simple steps to get your driver's license." data-nl="Drie eenvoudige stappen naar je rijbewijs.">Three simple steps to get your driver's license.</p>
 
     <div class="steps-grid">
       <div class="step">
         <div class="step-num">1</div>
-        <h3>Register & Choose a Package</h3>
-        <p>Create your free account, pick the package that fits your needs and budget, and pay via cash or bank transfer.</p>
+        <h3 data-en="Register & Choose a Package" data-nl="Registreer & Kies een Pakket">Register & Choose a Package</h3>
+        <p data-en="Create your free account, pick the package that fits your needs and budget, and pay via cash or bank transfer." data-nl="Maak een gratis account aan, kies het pakket dat bij je past en betaal via contant of bankoverschrijving.">Create your free account, pick the package that fits your needs and budget, and pay via cash or bank transfer.</p>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <h3>Book Your Lessons</h3>
-        <p>Select your preferred instructor, pick your days and time slots, and receive instant WhatsApp confirmation.</p>
+        <h3 data-en="Book Your Lessons" data-nl="Boek Je Lessen">Book Your Lessons</h3>
+        <p data-en="Select your preferred instructor, pick your days and time slots, and receive instant WhatsApp confirmation." data-nl="Kies je instructeur, selecteer je dagen en tijden, en ontvang direct een WhatsApp-bevestiging.">Select your preferred instructor, pick your days and time slots, and receive instant WhatsApp confirmation.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <h3>Learn & Get Licensed</h3>
-        <p>Complete your online theory modules, attend practical lessons, and pass your exam with confidence.</p>
+        <h3 data-en="Learn & Get Licensed" data-nl="Leer & Behaal Je Rijbewijs">Learn & Get Licensed</h3>
+        <p data-en="Complete your online theory modules, attend practical lessons, and pass your exam with confidence." data-nl="Rond je online theoriemodules af, volg praktijklessen en behaal je examen met vertrouwen.">Complete your online theory modules, attend practical lessons, and pass your exam with confidence.</p>
       </div>
     </div>
   </div>
@@ -869,11 +876,11 @@ footer {
   <div class="section-inner">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:0;">
       <div>
-        <div class="section-tag">Instructors</div>
-        <h2 class="section-title">Meet Our Team</h2>
-        <p class="section-sub">Experienced, patient, and certified professionals dedicated to your success.</p>
+        <div class="section-tag" data-en="Instructors" data-nl="Instructeurs">Instructors</div>
+        <h2 class="section-title" data-en="Meet Our Team" data-nl="Maak Kennis met Ons Team">Meet Our Team</h2>
+        <p class="section-sub" data-en="Experienced, patient, and certified professionals dedicated to your success." data-nl="Ervaren, geduldige en gecertificeerde professionals die zich inzetten voor jouw succes.">Experienced, patient, and certified professionals dedicated to your success.</p>
       </div>
-      <a href="#" class="btn btn-outline">View All Instructors →</a>
+      <a href="#" class="btn btn-outline"><span data-en="View All Instructors" data-nl="Bekijk Alle Instructeurs">View All Instructors</span> →</a>
     </div>
 
     <div class="instructors-scroll">
@@ -914,13 +921,13 @@ footer {
 <!-- FAQ -->
 <section class="faq-section">
   <div class="section-inner">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;">
+    <div class="faq-grid">
       <div>
-        <div class="section-tag">FAQ</div>
-        <h2 class="section-title">Frequently Asked Questions</h2>
-        <p class="section-sub">Everything you need to know about starting your driving lessons.</p>
+        <div class="section-tag" data-en="FAQ" data-nl="Veelgestelde Vragen">FAQ</div>
+        <h2 class="section-title" data-en="Frequently Asked Questions" data-nl="Veelgestelde Vragen">Frequently Asked Questions</h2>
+        <p class="section-sub" data-en="Everything you need to know about starting your driving lessons." data-nl="Alles wat je moet weten om te beginnen met rijlessen.">Everything you need to know about starting your driving lessons.</p>
         <br>
-        <a href="#" class="btn btn-primary" style="margin-top:8px">View All Questions →</a>
+        <a href="#" class="btn btn-primary" style="margin-top:8px"><span data-en="View All Questions" data-nl="Bekijk Alle Vragen">View All Questions</span> →</a>
       </div>
       <div class="faq-list">
         <div class="faq-item open">
@@ -981,20 +988,20 @@ footer {
     <div class="footer-col">
       <h4>School</h4>
       <ul>
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">Packages</a></li>
-        <li><a href="#">Instructors</a></li>
+        <li><a href="#" data-en="About Us" data-nl="Over Ons">About Us</a></li>
+        <li><a href="#" data-en="Packages" data-nl="Pakketten">Packages</a></li>
+        <li><a href="#" data-en="Instructors" data-nl="Instructeurs">Instructors</a></li>
         <li><a href="#">Contact</a></li>
       </ul>
     </div>
 
     <div class="footer-col">
-      <h4>Students</h4>
+      <h4 data-en="Students" data-nl="Studenten">Students</h4>
       <ul>
-        <li><a href="#">Login</a></li>
-        <li><a href="#">Register</a></li>
+        <li><a href="#" data-en="Login" data-nl="Inloggen">Login</a></li>
+        <li><a href="#" data-en="Register" data-nl="Registreren">Register</a></li>
         <li><a href="04-student-dashboard.html">Dashboard</a></li>
-        <li><a href="#">My Bookings</a></li>
+        <li><a href="#" data-en="My Bookings" data-nl="Mijn Boekingen">My Bookings</a></li>
       </ul>
     </div>
 
@@ -1038,9 +1045,17 @@ function toggleMenu() {
 function toggleFAQ(el) {
   const item = el.closest('.faq-item');
   const isOpen = item.classList.contains('open');
-  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
-  if (!isOpen) item.classList.add('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.faq-a').style.maxHeight = '';
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    const answer = item.querySelector('.faq-a');
+    answer.style.maxHeight = answer.scrollHeight + 'px';
+  }
 }
+document.querySelectorAll('.faq-item.open .faq-a').forEach(a => a.style.maxHeight = a.scrollHeight + 'px');
 
 // a11y: make FAQ questions keyboard-operable
 document.querySelectorAll('.faq-q').forEach(el => {
@@ -1056,11 +1071,15 @@ document.addEventListener('keydown', function(e) {
 });
 
 // Lang switch
-document.querySelectorAll('.lang-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+function setLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  document.querySelectorAll('[data-en]').forEach(el => {
+    el.textContent = lang === 'nl' ? (el.dataset.nl || el.dataset.en) : el.dataset.en;
   });
+  document.documentElement.lang = lang;
+}
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
 });
 </script>
 </body>

@@ -252,6 +252,9 @@ h1,h2,h3,h4,h5 { font-family: 'Sora', sans-serif; }
   cursor: pointer;
 }
 
+.mod-chevron { flex-shrink: 0; font-size: 0.85rem; color: var(--gray-600); transition: transform 0.25s; }
+.module-card-header.expanded .mod-chevron { transform: rotate(180deg); }
+
 .mod-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
 .mod-info { flex: 1; }
 .mod-name { font-family: 'Sora', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
@@ -293,6 +296,11 @@ h1,h2,h3,h4,h5 { font-family: 'Sora', sans-serif; }
   .question-card { padding: 24px 20px; }
   .score-breakdown { grid-template-columns: 1fr; }
 }
+
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
 </style>
 </head>
 <body>
@@ -326,7 +334,7 @@ h1,h2,h3,h4,h5 { font-family: 'Sora', sans-serif; }
     <!-- Module 1: Done -->
     <div class="module-card">
       <div class="module-card-header" onclick="toggleMod(this)">
-        <div class="mod-icon" style="background:var(--green-light)">📖</div>
+        <div class="mod-icon" style="background:var(--green-light)" aria-hidden="true">📖</div>
         <div class="mod-info">
           <div class="mod-name">Module 1: Road Rules & Signs</div>
           <div class="mod-progress-wrap">
@@ -343,8 +351,8 @@ h1,h2,h3,h4,h5 { font-family: 'Sora', sans-serif; }
 
     <!-- Module 2: In Progress -->
     <div class="module-card">
-      <div class="module-card-header" onclick="toggleMod(this)">
-        <div class="mod-icon" style="background:rgba(245,166,35,0.12)">🚦</div>
+      <div class="module-card-header expanded" onclick="toggleMod(this)" aria-expanded="true" aria-controls="mod2-lessons">
+        <div class="mod-icon" style="background:rgba(245,166,35,0.12)" aria-hidden="true">🚦</div>
         <div class="mod-info">
           <div class="mod-name">Module 2: Traffic Regulations</div>
           <div class="mod-progress-wrap">
@@ -356,6 +364,7 @@ h1,h2,h3,h4,h5 { font-family: 'Sora', sans-serif; }
           <div class="mod-lessons-count">6/8 lessons</div>
           <div class="mod-status-pill status-progress">In Progress</div>
         </div>
+        <div class="mod-chevron" aria-hidden="true">▼</div>
       </div>
       <div class="lessons-list" id="mod2-lessons">
         <div class="lesson-item" onclick="startLesson()"><div class="lesson-num done">✓</div><div class="lesson-name">Lesson 1: Introduction to Traffic Laws</div><div class="lesson-type type-text">Text</div></div>
@@ -372,7 +381,7 @@ h1,h2,h3,h4,h5 { font-family: 'Sora', sans-serif; }
     <!-- Module 3 -->
     <div class="module-card">
       <div class="module-card-header" onclick="toggleMod(this)">
-        <div class="mod-icon" style="background:rgba(245,166,35,0.08)">🛣️</div>
+        <div class="mod-icon" style="background:rgba(245,166,35,0.08)" aria-hidden="true">🛣️</div>
         <div class="mod-info">
           <div class="mod-name">Module 3: Practical Driving Skills</div>
           <div class="mod-progress-wrap">
@@ -390,7 +399,7 @@ h1,h2,h3,h4,h5 { font-family: 'Sora', sans-serif; }
     <!-- Module 4 Locked -->
     <div class="module-card" style="opacity:0.6">
       <div class="module-card-header">
-        <div class="mod-icon" style="background:var(--gray-100)">🚗</div>
+        <div class="mod-icon" style="background:var(--gray-100)" aria-hidden="true">🚗</div>
         <div class="mod-info">
           <div class="mod-name">Module 4: Highway & Motorway Driving</div>
           <div class="mod-progress-wrap">
@@ -557,6 +566,7 @@ function startQuiz() {
   document.getElementById('topbar-center').innerHTML = '<div class="quiz-title">Traffic Regulations — Part 1</div><div class="quiz-module">Module 2 · Quiz · 5 Questions</div>';
   currentQ = 0;
   selected = null;
+  answered = questions.map(() => null);
   scores = [null, null, null, null, null];
   renderQ();
   startTimer();
@@ -583,11 +593,19 @@ function renderQ() {
     </div>
   `).join('');
 
-  selected = null;
   document.getElementById('btn-check').style.display = 'none';
   document.getElementById('btn-next').style.display = 'none';
   document.getElementById('btn-submit').style.display = 'none';
   document.getElementById('btn-prev').style.display = currentQ > 0 ? '' : 'none';
+
+  const prevAnswer = answered[currentQ];
+  if (prevAnswer !== null && prevAnswer !== undefined) {
+    selected = prevAnswer;
+    document.getElementById('opt-' + prevAnswer).classList.add('selected');
+    revealAnswer(scores[currentQ]);
+  } else {
+    selected = null;
+  }
 
   // dots
   const dots = document.getElementById('q-dots').children;
@@ -610,9 +628,20 @@ function selectAns(i) {
 
 function checkAnswer() {
   if (selected === null) return;
-  const q = questions[currentQ];
-  const isCorrect = selected === q.correct;
+  const isCorrect = selected === questions[currentQ].correct;
+  answered[currentQ] = selected;
   scores[currentQ] = isCorrect;
+  revealAnswer(isCorrect);
+
+  // update dot
+  const dots = document.getElementById('q-dots').children;
+  dots[currentQ].classList.remove('active');
+  dots[currentQ].classList.add('done');
+  dots[currentQ].style.background = isCorrect ? '' : 'var(--red)';
+}
+
+function revealAnswer(isCorrect) {
+  const q = questions[currentQ];
 
   document.querySelectorAll('.answer-opt').forEach((o, i) => {
     o.classList.add('revealed');
@@ -627,12 +656,6 @@ function checkAnswer() {
   document.getElementById('btn-check').style.display = 'none';
   if (currentQ < questions.length - 1) document.getElementById('btn-next').style.display = '';
   else document.getElementById('btn-submit').style.display = '';
-
-  // update dot
-  const dots = document.getElementById('q-dots').children;
-  dots[currentQ].classList.remove('active');
-  dots[currentQ].classList.add('done');
-  dots[currentQ].style.background = isCorrect ? '' : 'var(--red)';
 }
 
 function nextQ() {
@@ -678,7 +701,11 @@ function toggleScore() {
 function toggleMod(header) {
   const card = header.closest('.module-card');
   const lessons = card.querySelector('.lessons-list');
-  if (lessons) { lessons.style.display = lessons.style.display === 'none' ? '' : 'none'; }
+  if (!lessons) return;
+  const isHidden = lessons.style.display === 'none';
+  lessons.style.display = isHidden ? '' : 'none';
+  header.classList.toggle('expanded', isHidden);
+  header.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
 }
 
 let timerSec = 14 * 60 + 32;
