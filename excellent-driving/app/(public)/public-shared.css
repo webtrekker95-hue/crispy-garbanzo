@@ -1,0 +1,250 @@
+/* Shared across every public page — ported 1:1 from maquettes/01-homepage.html
+   so nav/buttons/footer look identical everywhere. Page-specific sections
+   (hero, packages grid, comparison table, etc.) live in each page's own
+   CSS module instead, since some maquettes reuse class names like
+   .package-card for visually different components. */
+
+h1, h2, h3, h4, h5 { font-family: var(--font-sora), sans-serif; }
+
+/* NAV */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  box-shadow: 0 2px 12px rgba(15, 31, 61, 0.06);
+}
+
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--navy);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-icon svg { width: 22px; height: 22px; fill: var(--amber); }
+
+.logo-text { font-family: var(--font-sora), sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--navy); line-height: 1.1; }
+.logo-text span { color: var(--amber); display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a { font-size: 0.9rem; font-weight: 500; color: var(--gray-600); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--navy); }
+.nav-links a.active { font-weight: 700; border-bottom: 2px solid var(--amber); padding-bottom: 2px; }
+
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-outline { background: transparent; border: 2px solid var(--navy); color: var(--navy); }
+.btn-outline:hover { background: var(--navy); color: var(--white); }
+.btn-primary { background: var(--amber); color: var(--navy); }
+.btn-primary:hover { background: var(--amber-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(245, 166, 35, 0.4); }
+.btn-white { background: var(--white); color: var(--navy); }
+.btn-white:hover { background: var(--gray-100); transform: translateY(-1px); }
+.btn-lg { padding: 14px 28px; font-size: 1rem; border-radius: 10px; }
+
+.lang-switch { display: flex; gap: 4px; background: var(--gray-100); border-radius: 8px; padding: 4px; }
+.lang-btn { padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--gray-600); transition: all 0.2s; }
+.lang-btn.active { background: var(--white); color: var(--navy); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); }
+
+.hamburger { display: none; background: none; border: none; padding: 4px; }
+
+/* SECTIONS (shared layout primitives) */
+section { padding: 80px 24px; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+
+.section-tag {
+  display: inline-block;
+  background: rgba(245, 166, 35, 0.12);
+  color: var(--amber-dark);
+  padding: 4px 14px;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.section-title { font-size: 2.2rem; font-weight: 800; color: var(--navy); line-height: 1.2; margin-bottom: 12px; }
+.section-sub { font-size: 1rem; color: var(--gray-600); line-height: 1.6; max-width: 520px; }
+
+/* FOOTER */
+footer {
+  background: var(--navy);
+  color: var(--white);
+  padding: 60px 24px 32px;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.footer-brand p { font-size: 0.875rem; color: rgba(255, 255, 255, 0.55); line-height: 1.7; margin-top: 16px; max-width: 280px; }
+.footer-col h4 { font-family: var(--font-sora), sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255, 255, 255, 0.4); margin-bottom: 16px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a { color: rgba(255, 255, 255, 0.65); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+.footer-col a:hover { color: var(--amber); }
+.footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-bottom p { font-size: 0.8rem; color: rgba(255, 255, 255, 0.4); }
+
+.whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #25d366;
+  color: var(--white);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.whatsapp-btn:hover { background: #1ebe5c; transform: translateY(-1px); }
+
+/* FLOATING WHATSAPP BUTTON */
+.wa-float { position: fixed; bottom: 28px; right: 28px; z-index: 200; }
+.wa-float-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #25d366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.45);
+  transition: transform 0.2s;
+  text-decoration: none;
+}
+.wa-float-btn:hover { transform: scale(1.1); }
+.wa-float-btn svg { width: 30px; height: 30px; fill: var(--white); }
+.wa-pulse {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  border-radius: 50%;
+  background: #25d366;
+  animation: pulse 2s infinite;
+  z-index: -1;
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  70% { transform: scale(1.5); opacity: 0; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* FAQ ACCORDION (shared component, used on homepage and /faq) */
+.faq-item { background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-200); margin-bottom: 12px; overflow: hidden; }
+
+.faq-q {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--navy);
+  font-size: 0.95rem;
+  transition: background 0.2s;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+.faq-q:hover { background: var(--gray-50); }
+
+.faq-chevron {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s;
+  font-size: 0.75rem;
+}
+.faq-item.open .faq-chevron { background: var(--amber); transform: rotate(180deg); }
+
+.faq-a {
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  line-height: 1.7;
+  padding: 0 24px;
+  max-height: 0;
+}
+.faq-item.open .faq-a { padding: 0 24px 20px; }
+
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [role="button"]:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 24px; height: 2px; background: var(--navy); border-radius: 2px; transition: all 0.25s; display: block; }
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    padding: 18px 24px;
+    gap: 16px;
+    box-shadow: 0 10px 28px rgba(15, 31, 61, 0.12);
+    border-top: 1px solid var(--gray-100);
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+}

@@ -6,6 +6,24 @@
   --color-white: #ffffff;
   --background: var(--color-white);
   --foreground: var(--color-navy);
+
+  /* Maquette design-system tokens (kept under their original names so CSS
+     ported from maquettes/*.html resolves var(--navy) etc. unchanged). */
+  --navy: #0f1f3d;
+  --navy-light: #1a2f54;
+  --amber: #f5a623;
+  --amber-dark: #e09510;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-400: #9ca3af;
+  --gray-600: #4b5563;
+  --gray-800: #1f2937;
+  --green: #10b981;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(15, 31, 61, 0.1);
+  --shadow-lg: 0 8px 40px rgba(15, 31, 61, 0.18);
 }
 
 @theme inline {
