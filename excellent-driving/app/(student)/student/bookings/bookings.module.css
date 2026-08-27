@@ -1,0 +1,33 @@
+.list { display: flex; flex-direction: column; gap: 12px; }
+
+.row {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-200);
+  padding: 18px 20px;
+  display: flex; align-items: center; gap: 16px;
+  flex-wrap: wrap;
+}
+
+.date-box { background: var(--navy); color: var(--white); border-radius: 10px; padding: 10px 16px; text-align: center; flex-shrink: 0; min-width: 60px; }
+.month { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--amber); }
+.day { font-family: var(--font-sora), sans-serif; font-size: 1.5rem; font-weight: 800; line-height: 1; }
+.year { font-size: 0.62rem; color: rgba(255, 255, 255, 0.5); }
+
+.info { flex: 1; min-width: 200px; }
+.title { font-family: var(--font-sora), sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.8rem; color: var(--gray-600); }
+
+.badge { font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 100px; flex-shrink: 0; }
+.badge-pending { background: rgba(245, 166, 35, 0.15); color: #b45309; }
+.badge-confirmed { background: var(--green-light); color: #059669; }
+.badge-cancelled { background: var(--gray-100); color: var(--gray-600); }
+
+.actions { flex-shrink: 0; display: flex; gap: 8px; align-items: center; }
+
+.empty-state { padding: 40px 24px; text-align: center; color: var(--gray-600); background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-200); }
+
+.error-banner { background: var(--red-light); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 10px; padding: 10px 16px; color: #b91c1c; font-size: 0.85rem; margin-bottom: 16px; }
+
+.section-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-600); margin: 24px 0 12px; }
+.section-label:first-child { margin-top: 0; }

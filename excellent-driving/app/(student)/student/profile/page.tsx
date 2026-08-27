@@ -1,7 +1,18 @@
-export default function StudentProfilePage() {
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { ProfileForm } from "./profile-form";
+
+export default async function StudentProfilePage() {
+  const session = await getServerSession(authOptions);
+  const user = await prisma.user.findUnique({ where: { id: session!.user.id } });
+
   return (
-    <main className="flex flex-1 items-center justify-center px-6 py-24 text-center">
-      <p className="text-[var(--color-navy)]/60">Profile — placeholder (AGENT 6, Phase 2).</p>
-    </main>
+    <ProfileForm
+      initialName={user!.name}
+      email={user!.email}
+      initialPhone={user!.phone ?? ""}
+      initialLanguage={user!.language}
+    />
   );
 }

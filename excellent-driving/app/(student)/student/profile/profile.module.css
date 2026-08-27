@@ -1,0 +1,27 @@
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+
+.card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-200); box-shadow: var(--shadow); padding: 28px; }
+.card h2 { font-size: 1.1rem; font-weight: 800; color: var(--navy); margin-bottom: 20px; }
+
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+.field input,
+.field select {
+  width: 100%;
+  border: 2px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--gray-800);
+}
+.field input:focus,
+.field select:focus { outline: none; border-color: var(--amber); }
+.field input:disabled { background: var(--gray-50); color: var(--gray-600); }
+
+.status-success { background: var(--green-light); color: #047857; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; margin-bottom: 16px; }
+.status-error { background: var(--red-light); color: #b91c1c; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; margin-bottom: 16px; }
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; }
+}

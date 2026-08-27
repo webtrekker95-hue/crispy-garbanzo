@@ -201,11 +201,172 @@ async function main() {
     }
   }
 
+  const trafficRegQuiz = {
+    type: "QUIZ",
+    passingScore: 70,
+    questions: [
+      {
+        text: "At an uncontrolled intersection, who has the right of way?",
+        options: ["The vehicle going straight", "The vehicle on the right", "The larger vehicle", "The vehicle that arrived first"],
+        correct: 1,
+        explanation: "At an uncontrolled intersection in Suriname, the vehicle on the <strong>right</strong> has the right of way, unless otherwise indicated by road signs.",
+      },
+      {
+        text: "What is the maximum speed limit in a residential area (30 zone)?",
+        options: ["20 km/h", "30 km/h", "40 km/h", "50 km/h"],
+        correct: 1,
+        explanation: "In a marked 30-zone (residential area), the maximum speed limit is <strong>30 km/h</strong>. Always watch for pedestrians and children.",
+      },
+      {
+        text: "When must you use your hazard lights?",
+        options: ["When parking illegally", "When your vehicle is a hazard to others", "When driving in rain", "All of the above"],
+        correct: 1,
+        explanation: "Hazard lights should be used when your stationary or moving vehicle poses a <strong>hazard to other road users</strong> — for example, if you break down or need to stop suddenly.",
+      },
+      {
+        text: "A solid white line at the side of the road indicates:",
+        options: ["No overtaking allowed", "Edge of the road / carriageway", "Bus stop zone", "Pedestrian crossing ahead"],
+        correct: 1,
+        explanation: "A <strong>solid white line at the edge</strong> of the road marks the boundary of the carriageway. Do not drive on the other side of this line except in an emergency.",
+      },
+      {
+        text: "What should you do when you see a yellow flashing traffic light?",
+        options: ["Stop immediately", "Proceed with caution", "Treat it as a green light", "Honk and proceed"],
+        correct: 1,
+        explanation: "A <strong>yellow flashing light</strong> means proceed with caution. Slow down and be prepared to give way to other road users.",
+      },
+    ],
+  };
+
+  const speedZonesQuiz = {
+    type: "QUIZ",
+    passingScore: 70,
+    questions: [
+      {
+        text: "What does a 'school zone' speed sign typically require?",
+        options: ["No change from normal limits", "A reduced speed limit near schools", "Only applies on weekends", "Only applies to buses"],
+        correct: 1,
+        explanation: "School zone signs mark a <strong>reduced speed limit</strong> to protect children during school hours.",
+      },
+      {
+        text: "On an open highway with no posted signs, what governs the speed limit?",
+        options: ["There is no limit", "The default national speed limit applies", "Whatever feels safe", "60 km/h always"],
+        correct: 1,
+        explanation: "Suriname's <strong>default national speed limit</strong> applies wherever no specific sign overrides it.",
+      },
+    ],
+  };
+
+  const examPrepQuiz = {
+    type: "QUIZ",
+    passingScore: 70,
+    questions: [
+      {
+        text: "Before starting the exam vehicle, what should you check first?",
+        options: ["Radio settings", "Mirrors and seat position", "Phone notifications", "Air conditioning"],
+        correct: 1,
+        explanation: "Examiners expect you to adjust <strong>mirrors and seat position</strong> before moving off — it's one of the first things assessed.",
+      },
+      {
+        text: "If you make a minor mistake during the driving exam, you should:",
+        options: ["Stop the car and apologize", "Stay calm and continue driving safely", "Ask to restart the exam", "Panic and speed up"],
+        correct: 1,
+        explanation: "A single minor mistake rarely fails an exam on its own — <strong>staying calm and continuing safely</strong> is what examiners want to see.",
+      },
+    ],
+  };
+
+  const moduleSeeds = [
+    {
+      titleEn: "Road Rules & Signs",
+      titleNl: "Verkeersregels & Borden",
+      orderIndex: 1,
+      lessons: [
+        { title: "Introduction to Suriname Road Signs", type: "TEXT" as const, content: { type: "TEXT", body: "Suriname uses road signs based on international conventions: warning signs (triangular, red border), regulatory signs (circular), and information signs (rectangular, blue). Learning to recognize these at a glance is the foundation of safe driving." } },
+        { title: "Right of Way Basics", type: "TEXT" as const, content: { type: "TEXT", body: "Right of way determines who goes first when two vehicles' paths cross. At uncontrolled intersections, traffic from the right generally has priority. Roundabouts give priority to traffic already circulating." } },
+        { title: "Pedestrian Crossings & Priority", type: "TEXT" as const, content: { type: "TEXT", body: "Pedestrians have the right of way at marked crossings once they have stepped onto the crossing. Always slow down when approaching a crossing, even if it looks empty." } },
+      ],
+    },
+    {
+      titleEn: "Traffic Regulations",
+      titleNl: "Verkeersreglementen",
+      orderIndex: 2,
+      lessons: [
+        { title: "Introduction to Traffic Laws", type: "TEXT" as const, content: { type: "TEXT", body: "Traffic laws exist to keep everyone safe and traffic flowing predictably. As a driver, you're responsible for knowing and following these rules at all times, not just when a police officer is watching." } },
+        { title: "Speed Limits & Zones", type: "TEXT" as const, content: { type: "TEXT", body: "Speed limits vary by zone: residential (30 km/h), urban roads (50 km/h unless posted otherwise), and open highways (the national default unless signed). Always adjust for road and weather conditions." } },
+        { title: "Right of Way Rules", type: "VIDEO" as const, content: { type: "VIDEO", description: "A short video walkthrough of right-of-way scenarios at intersections and roundabouts. (Video content placeholder — to be produced.)" } },
+        { title: "Intersection Rules", type: "TEXT" as const, content: { type: "TEXT", body: "At intersections without signals, yield to traffic on your right. At four-way stops, the first vehicle to arrive goes first; if two arrive together, the vehicle on the right goes first." } },
+        { title: "Quiz: Speed & Zones", type: "QUIZ" as const, content: speedZonesQuiz },
+        { title: "Roundabout Rules", type: "TEXT" as const, content: { type: "TEXT", body: "When entering a roundabout, yield to traffic already circulating. Signal left when exiting. Stay in your lane throughout unless changing lanes is clearly safe and signaled." } },
+        { title: "Quiz — Traffic Regulations Pt. 1", type: "QUIZ" as const, content: trafficRegQuiz },
+        { title: "Advanced Road Rules", type: "TEXT" as const, content: { type: "TEXT", body: "Advanced topics: overtaking rules, use of hazard lights, driving in adverse weather, and rules specific to motorways. These build on everything covered earlier in this module." } },
+      ],
+    },
+    {
+      titleEn: "Practical Driving Skills",
+      titleNl: "Praktische Rijvaardigheden",
+      orderIndex: 3,
+      lessons: [
+        { title: "Vehicle Controls Overview", type: "TEXT" as const, content: { type: "TEXT", body: "Before your first practical lesson, familiarize yourself with the controls: steering, pedals, gear selector, mirrors, and indicators. Your instructor will walk through these in person, but knowing the names in advance speeds things up." } },
+        { title: "Parking & Maneuvering Basics", type: "TEXT" as const, content: { type: "TEXT", body: "Parallel parking, reverse parking, and three-point turns are core maneuvering skills assessed in the practical exam. Practice the theory here, then apply it with your instructor." } },
+      ],
+    },
+    {
+      titleEn: "Highway & Motorway Driving",
+      titleNl: "Snelweg Rijden",
+      orderIndex: 4,
+      lessons: [
+        { title: "Merging & Lane Discipline", type: "TEXT" as const, content: { type: "TEXT", body: "When merging onto a highway, match your speed to traffic flow before merging. Stay in the appropriate lane for your speed and intentions — slower traffic keeps right." } },
+        { title: "Overtaking Safely", type: "TEXT" as const, content: { type: "TEXT", body: "Only overtake when you can see the road ahead is clear, you have enough space to complete the maneuver, and it's legal to do so at that point in the road." } },
+      ],
+    },
+    {
+      titleEn: "Exam Preparation",
+      titleNl: "Examenvoorbereiding",
+      orderIndex: 5,
+      lessons: [
+        { title: "What to Expect on Exam Day", type: "TEXT" as const, content: { type: "TEXT", body: "Arrive 15 minutes early, bring valid ID and your learner documentation, and get a good night's sleep beforehand. The exam covers both a vehicle check and a supervised drive." } },
+        { title: "Final Mock Exam", type: "QUIZ" as const, content: examPrepQuiz },
+      ],
+    },
+  ];
+
+  for (const mod of moduleSeeds) {
+    const module = await prisma.module.upsert({
+      where: { id: `seed-module-${mod.orderIndex}` },
+      update: {},
+      create: {
+        id: `seed-module-${mod.orderIndex}`,
+        titleEn: mod.titleEn,
+        titleNl: mod.titleNl,
+        orderIndex: mod.orderIndex,
+        isPublished: true,
+      },
+    });
+
+    for (let i = 0; i < mod.lessons.length; i++) {
+      const lesson = mod.lessons[i];
+      await prisma.lesson.upsert({
+        where: { id: `${module.id}-lesson-${i + 1}` },
+        update: {},
+        create: {
+          id: `${module.id}-lesson-${i + 1}`,
+          moduleId: module.id,
+          title: lesson.title,
+          type: lesson.type,
+          content: lesson.content,
+          orderIndex: i + 1,
+        },
+      });
+    }
+  }
+
   console.log({
     admin: admin.email,
     instructors: instructors.length,
     packages: packageSeeds.length,
     faqs: faqSeeds.length,
+    modules: moduleSeeds.length,
   });
 }
 
