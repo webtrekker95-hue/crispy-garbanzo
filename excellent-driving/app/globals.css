@@ -7,6 +7,12 @@
   --background: var(--color-white);
   --foreground: var(--color-navy);
 
+  /* Set (in px) by components/demo-banner.tsx while it's visible, so the
+     student/admin sidebars (position: fixed, normally top: 0) can start
+     below it instead of being covered by it. Defaults to 0 so nothing
+     shifts before the banner's effect script runs or if it's dismissed. */
+  --demo-banner-height: 0px;
+
   /* Maquette design-system tokens (kept under their original names so CSS
      ported from maquettes/*.html resolves var(--navy) etc. unchanged). */
   --navy: #0f1f3d;

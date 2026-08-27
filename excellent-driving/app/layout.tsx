@@ -3,6 +3,7 @@ import { Sora, Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Providers } from "@/components/providers";
+import { DemoBanner } from "@/components/demo-banner";
 import "./globals.css";
 
 const sora = Sora({
@@ -29,6 +30,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang={locale} className={`${sora.variable} ${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
+        <DemoBanner />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
