@@ -207,7 +207,92 @@ need to be brought back at that point.
 
 ---
 
-## Phase 1 — Foundation (not started)
+## Phase 1 — Foundation
+
+### 2026-08-27 — Scaffold, schema, auth: AGENT 1 + 2 + 3
+
+**Context:** Owner made one content change to the maquettes first (package
+cards: practical lessons no longer included, packages are theory-only —
+applied across `01-homepage.html` and `02-packages.html`), confirmed Phase 0
+was done, and had that committed (`2a556de`) and pushed before Phase 1
+started.
+
+**AGENT 1 — Scaffold & config:** `excellent-driving/` created with
+`create-next-app` — Next.js 16 (App Router, Turbopack), TypeScript, Tailwind
+v4. Deviations from the literal `Claude.md` spec, made deliberately since
+the spec pins versions/libraries that have moved on:
+- Next.js 14 → 16 (14 is EOL-adjacent; App Router API is the same shape).
+- `next-i18next` → `next-intl` swapped in as a dependency only — not wired
+  up yet. `next-i18next` targets the Pages Router; App Router needs
+  `next-intl` or equivalent. Full i18n wiring is still AGENT 8 (Phase 3).
+- `prisma`/`@prisma/client` pinned to **6.19.3**, not latest. Prisma 7 (the
+  `latest` npm tag) removed schema-file `url = env("DATABASE_URL")` in favor
+  of a driver-adapter pattern requiring `prisma.config.ts` — a bigger
+  architecture change than this phase needed. 6.x keeps the classic,
+  widely-documented flow the rest of the spec assumes.
+- `next-auth` stayed on stable v4 (`^4.24.15`), not the v5/Auth.js beta —
+  the spec's described API (`CredentialsProvider`, `middleware.ts`, Prisma
+  adapter) is v4-shaped.
+- Brand theme (navy `#0F1F3D` / amber `#F5A623`, Sora + Inter fonts) pulled
+  from the maquettes' actual CSS, not re-derived from `Claude.md`'s prose
+  description, so Phase 2 pages match pixel-for-pixel later.
+- Folder structure follows `Claude.md`'s architecture tree: route groups
+  `(public)`, `(auth)`, `(student)`, `(admin)`, plus `api/`, `components/`,
+  `lib/`, `prisma/`, `types/`.
+
+**AGENT 2 — DB schema:** Full `prisma/schema.prisma` — every model from the
+spec (User, Package, Booking, Instructor, Schedule, Module, Lesson,
+StudentProgress, FAQ) plus NextAuth's required Account/Session/
+VerificationToken models, merged into the same schema. `prisma/seed.ts`
+creates 1 admin (`admin@excellentdriving.sr` / `ChangeMe123!`), 1 instructor
+with a Mon–Sat schedule, 1 package (`lessonCount: 0`, reflecting the
+theory-only pivot from the maquette change above), and FAQ rows in both
+languages.
+
+**AGENT 3 — Auth:** NextAuth Credentials provider (bcrypt, JWT sessions,
+Prisma adapter), `/api/register`, real `/login` and `/register` forms.
+Route protection via `proxy.ts` — Next.js 16 renamed the `middleware.ts`
+convention; used the new name from the start rather than shipping on a
+deprecated one. Protects `/student/*`, `/admin/*`, `/booking/*` and checks
+role, not just "is logged in."
+
+**Database setup (this session, interactively):** No passwordless `sudo` in
+this sandbox, so Postgres install and role/db creation needed the owner to
+run commands directly (`sudo -u postgres psql ...`) in a separate terminal —
+walked through in three round trips: install postgres, create the
+`excellent_driving` role + database, then grant it `CREATEDB` (needed for
+Prisma's migrate-dev shadow database). `DATABASE_URL` lives in **two**
+files: `.env` (Prisma CLI only reads `.env`, not `.env.local`) and
+`.env.local` (what Next.js actually reads at runtime) — both gitignored,
+kept in sync manually.
+
+**Verification (live, not just `npm run build`):** hit a real bug mid-session
+— an old `next dev` process from an earlier, aborted server start had
+survived a `kill` and kept serving port 3000 with stale (placeholder)
+DB credentials, silently shadowing the freshly-configured one. Caught via
+Playwright driving the login/register flow and seeing an unexpected 401,
+traced through `/tmp/nextdev.log`, fixed by hard-killing all `next`-related
+processes and restarting clean. After that: registered a new student
+end-to-end (auto-login → lands on `/student/dashboard` with correct
+name/role), logged in as the seeded admin (→ `/admin/dashboard`), and
+confirmed the admin account is correctly *blocked* from `/student/dashboard`
+(redirected to `/login`) — proving the route guard checks role, not just
+session presence.
+
+**Committed:** `19f0c03` (scaffold + schema + auth) and `4f81e72` (initial
+migration, generated and applied against the real local Postgres — not
+committed until it had actually been run against a live database). Not yet
+pushed — pending owner confirmation per session convention.
+
+**Still open before Phase 1 can be called done:**
+1. All 12 non-index public/student/admin/booking pages are placeholder stubs
+   marked "AGENT 4/5/6/7, Phase 2/3" — real page content comes later, on
+   schedule per the build order, not a gap in this phase.
+2. i18n is dependency-installed only (`next-intl`), not wired up — AGENT 8,
+   Phase 3.
+3. WhatsApp/Resend integrations untouched — AGENT 9, Phase 3.
+
+---
 
 ## Phase 2 — Core Features (not started)
 
