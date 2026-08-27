@@ -4,16 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { useLocale, useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import styles from "@/app/(student)/student-shell.module.css";
-
-const navItems = [
-  { href: "/student/dashboard", icon: "🏠", label: "Dashboard" },
-  { href: "/student/learn", icon: "📚", label: "My Lessons" },
-  { href: "/booking", icon: "📅", label: "Book a Lesson", badge: "New" },
-  { href: "/student/bookings", icon: "🎯", label: "My Bookings" },
-];
-
-const accountItems = [{ href: "/student/profile", icon: "👤", label: "Profile" }];
 
 function initials(name: string) {
   return name
@@ -24,13 +17,6 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-const pageTitles: Record<string, string> = {
-  "/student/dashboard": "Dashboard",
-  "/student/learn": "My Lessons",
-  "/student/bookings": "My Bookings",
-  "/student/profile": "Profile",
-};
-
 export function StudentShell({
   userName,
   children,
@@ -38,14 +24,29 @@ export function StudentShell({
   userName: string;
   children: React.ReactNode;
 }) {
+  const t = useTranslations("Dashboard");
+  const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-  const pageTitle =
-    pageTitles[pathname] ??
-    (pathname.startsWith("/student/learn") ? "My Lessons" : "Student Portal");
 
-  const dateLabel = new Date().toLocaleDateString("en-US", {
+  const navItems = [
+    { href: "/student/dashboard", icon: "🏠", label: t("navDashboard") },
+    { href: "/student/learn", icon: "📚", label: t("navMyLessons") },
+    { href: "/booking", icon: "📅", label: t("navBookALesson"), badge: t("navNew") },
+    { href: "/student/bookings", icon: "🎯", label: t("navMyBookings") },
+  ];
+  const accountItems = [{ href: "/student/profile", icon: "👤", label: t("navProfile") }];
+
+  const pageTitles: Record<string, string> = {
+    "/student/dashboard": t("navDashboard"),
+    "/student/learn": t("navMyLessons"),
+    "/student/bookings": t("navMyBookings"),
+    "/student/profile": t("navProfile"),
+  };
+  const pageTitle = pageTitles[pathname] ?? (pathname.startsWith("/student/learn") ? t("navMyLessons") : "Student Portal");
+
+  const dateLabel = new Date().toLocaleDateString(locale === "nl" ? "nl-NL" : "en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -98,7 +99,7 @@ export function StudentShell({
             style={{ color: "rgba(239,68,68,0.7)", width: "100%", textAlign: "left" }}
             onClick={() => signOut({ callbackUrl: "/" })}
           >
-            <span className={styles["nav-icon"]} aria-hidden="true">🚪</span> Log Out
+            <span className={styles["nav-icon"]} aria-hidden="true">🚪</span> {t("navLogOut")}
           </button>
         </div>
 
@@ -136,6 +137,7 @@ export function StudentShell({
             </div>
           </div>
           <div className={styles["topbar-right"]}>
+            <LanguageSwitcher />
             <button className={styles["notif-btn"]} aria-label="Notifications">
               <span aria-hidden="true">🔔</span>
             </button>

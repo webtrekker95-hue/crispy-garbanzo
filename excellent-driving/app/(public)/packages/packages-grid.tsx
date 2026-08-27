@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import styles from "./packages.module.css";
 
 type Pkg = {
   id: string;
   nameEn: string;
+  nameNl: string;
   descriptionEn: string;
+  descriptionNl: string;
   price: number;
   featured: boolean;
 };
@@ -80,13 +83,6 @@ const packageMeta: Record<
   },
 };
 
-const filters = [
-  { value: "all", label: "All Packages" },
-  { value: "beginner", label: "Beginner" },
-  { value: "theory", label: "Includes Theory" },
-  { value: "exam", label: "Exam Prep" },
-];
-
 const fallbackIncludes = [
   { text: "Practical lessons are not included, theory only", included: false },
   { text: "Online theory course access", included: true },
@@ -102,7 +98,17 @@ function getMeta(name: string) {
 }
 
 export function PackagesGrid({ packages }: { packages: Pkg[] }) {
+  const t = useTranslations("Packages");
+  const locale = useLocale();
+  const isNl = locale === "nl";
   const [filter, setFilter] = useState("all");
+
+  const filters = [
+    { value: "all", label: t("filterAll") },
+    { value: "beginner", label: t("filterBeginner") },
+    { value: "theory", label: t("filterTheory") },
+    { value: "exam", label: t("filterExam") },
+  ];
 
   const regular = packages.filter((p) => p.nameEn !== "Refresher");
   const refresher = packages.find((p) => p.nameEn === "Refresher");
@@ -117,7 +123,7 @@ export function PackagesGrid({ packages }: { packages: Pkg[] }) {
     <>
       <div className={styles["filter-bar"]}>
         <div>
-          <div className={styles["filter-label"]}>Filter packages</div>
+          <div className={styles["filter-label"]}>{t("filterLabel")}</div>
         </div>
         <div className={styles["filter-tabs"]}>
           {filters.map((f) => (
@@ -132,7 +138,7 @@ export function PackagesGrid({ packages }: { packages: Pkg[] }) {
           ))}
         </div>
         <div className={styles["result-count"]}>
-          Showing <strong>{totalVisible}</strong> packages
+          {t("showing")} <strong>{totalVisible}</strong> {t("packagesWord")}
         </div>
       </div>
 
@@ -145,10 +151,10 @@ export function PackagesGrid({ packages }: { packages: Pkg[] }) {
               className={`${styles["package-card"]}${pkg.featured ? ` ${styles.featured}` : ""}`}
             >
               <div className={styles["package-header"]}>
-                {pkg.featured && <div className={styles["popular-badge"]}>⭐ Most Popular</div>}
+                {pkg.featured && <div className={styles["popular-badge"]}>⭐ {t("mostPopular")}</div>}
                 <div className={styles["pkg-icon"]} aria-hidden="true">{meta.icon}</div>
-                <div className={styles["pkg-name"]}>{pkg.nameEn}</div>
-                <div className={styles["pkg-tagline"]}>{pkg.descriptionEn}</div>
+                <div className={styles["pkg-name"]}>{isNl ? pkg.nameNl : pkg.nameEn}</div>
+                <div className={styles["pkg-tagline"]}>{isNl ? pkg.descriptionNl : pkg.descriptionEn}</div>
                 <div className={styles["pkg-price-row"]}>
                   <div className={styles["pkg-price"]}>{pkg.price.toLocaleString()}</div>
                   <div className={styles["pkg-currency"]}>SRD</div>
@@ -182,7 +188,7 @@ export function PackagesGrid({ packages }: { packages: Pkg[] }) {
                   href="/booking"
                   className={`btn ${pkg.featured ? "btn-primary" : "btn-outline"} ${styles["pkg-cta"]}`}
                 >
-                  Book {pkg.nameEn} Package
+                  {t("bookPackage", { name: isNl ? pkg.nameNl : pkg.nameEn })}
                 </Link>
               </div>
             </div>
@@ -194,8 +200,8 @@ export function PackagesGrid({ packages }: { packages: Pkg[] }) {
             <div className={styles["refresher-inner"]}>
               <div className={`${styles["package-header"]} ${styles["refresher-header"]}`}>
                 <div className={styles["pkg-icon"]} aria-hidden="true">🔄</div>
-                <div className={styles["pkg-name"]}>Refresher</div>
-                <div className={styles["pkg-tagline"]}>{visibleRefresher.descriptionEn}</div>
+                <div className={styles["pkg-name"]}>{isNl ? visibleRefresher.nameNl : "Refresher"}</div>
+                <div className={styles["pkg-tagline"]}>{isNl ? visibleRefresher.descriptionNl : visibleRefresher.descriptionEn}</div>
                 <div className={styles["pkg-price-row"]}>
                   <div className={styles["pkg-price"]}>{visibleRefresher.price.toLocaleString()}</div>
                   <div className={styles["pkg-currency"]}>SRD</div>
@@ -222,7 +228,7 @@ export function PackagesGrid({ packages }: { packages: Pkg[] }) {
                   className={`btn btn-outline ${styles["pkg-cta"]}`}
                   style={{ marginTop: "auto" }}
                 >
-                  Book Refresher
+                  {t("bookRefresher")}
                 </Link>
               </div>
             </div>

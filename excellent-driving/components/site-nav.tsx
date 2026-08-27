@@ -3,19 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/packages", label: "Packages" },
-  { href: "/instructors", label: "Instructors" },
-  { href: "/faq", label: "FAQ" },
-  { href: "/contact", label: "Contact" },
-];
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "./language-switcher";
 
 export function SiteNav() {
+  const t = useTranslations("Nav");
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [lang, setLang] = useState<"en" | "nl">("en");
+
+  const navLinks = [
+    { href: "/", label: t("home") },
+    { href: "/packages", label: t("packages") },
+    { href: "/instructors", label: t("instructors") },
+    { href: "/faq", label: t("faq") },
+    { href: "/contact", label: t("contact") },
+  ];
 
   return (
     <nav>
@@ -43,27 +45,12 @@ export function SiteNav() {
         </ul>
 
         <div className="nav-actions">
-          <div className="lang-switch">
-            <button
-              type="button"
-              className={`lang-btn${lang === "en" ? " active" : ""}`}
-              onClick={() => setLang("en")}
-            >
-              EN
-            </button>
-            <button
-              type="button"
-              className={`lang-btn${lang === "nl" ? " active" : ""}`}
-              onClick={() => setLang("nl")}
-            >
-              NL
-            </button>
-          </div>
+          <LanguageSwitcher />
           <Link href="/login" className="btn btn-outline">
-            Login
+            {t("login")}
           </Link>
           <Link href="/booking" className="btn btn-primary">
-            Book Now
+            {t("bookNow")}
           </Link>
         </div>
 

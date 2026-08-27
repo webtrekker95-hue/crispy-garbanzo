@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { PackagesGrid } from "./packages-grid";
 import styles from "./packages.module.css";
@@ -6,6 +7,10 @@ import styles from "./packages.module.css";
 const displayOrder = ["Starter", "Standard", "Premium", "Refresher"];
 
 export default async function PackagesPage() {
+  const t = await getTranslations("Packages");
+  const locale = await getLocale();
+  const isNl = locale === "nl";
+
   const packages = await prisma.package.findMany({ where: { isActive: true } });
   const orderOf = (name: string) => {
     const i = displayOrder.indexOf(name);
@@ -19,15 +24,12 @@ export default async function PackagesPage() {
       <div className={styles["page-header"]}>
         <div className={styles["page-header-inner"]}>
           <div className={styles.breadcrumb}>
-            <Link href="/">Home</Link>
+            <Link href="/">{t("breadcrumbHome")}</Link>
             <span>›</span>
-            <span style={{ color: "rgba(255,255,255,0.8)" }}>Packages</span>
+            <span style={{ color: "rgba(255,255,255,0.8)" }}>{t("breadcrumbPackages")}</span>
           </div>
-          <h1>Our Driving Packages</h1>
-          <p>
-            Choose the package that matches your experience level and goals. All packages include
-            online theory access and WhatsApp support.
-          </p>
+          <h1>{t("pageTitle")}</h1>
+          <p>{t("pageSubtitle")}</p>
         </div>
       </div>
 
@@ -37,7 +39,9 @@ export default async function PackagesPage() {
             packages={sorted.map((p) => ({
               id: p.id,
               nameEn: p.nameEn,
+              nameNl: p.nameNl,
               descriptionEn: p.descriptionEn,
+              descriptionNl: p.descriptionNl,
               price: Number(p.price),
               featured: p.featured,
             }))}
@@ -47,18 +51,18 @@ export default async function PackagesPage() {
 
       <section className={styles.comparison}>
         <div className={styles["comparison-inner"]}>
-          <h2 className={styles["comparison-title"]}>Compare All Packages</h2>
-          <p className={styles["comparison-sub"]}>See exactly what&apos;s included in each package side by side.</p>
+          <h2 className={styles["comparison-title"]}>{t("comparisonTitle")}</h2>
+          <p className={styles["comparison-sub"]}>{t("comparisonSubtitle")}</p>
 
           <div style={{ overflowX: "auto" }}>
             <table className={styles["comp-table"]}>
               <thead>
                 <tr>
-                  <th>Feature</th>
-                  <th>Starter</th>
-                  <th className={styles.highlight}>Standard ⭐</th>
-                  <th>Premium</th>
-                  <th>Refresher</th>
+                  <th>{t("featureCol")}</th>
+                  <th>{isNl ? byName.Starter?.nameNl : "Starter"}</th>
+                  <th className={styles.highlight}>{(isNl ? byName.Standard?.nameNl : "Standard") ?? "Standard"} ⭐</th>
+                  <th>{isNl ? byName.Premium?.nameNl : "Premium"}</th>
+                  <th>{isNl ? byName.Refresher?.nameNl : "Refresher"}</th>
                 </tr>
               </thead>
               <tbody>
@@ -125,11 +129,11 @@ export default async function PackagesPage() {
       </section>
 
       <div className={styles["cta-banner"]}>
-        <h2>Ready to Start Driving?</h2>
-        <p>Join over 500 students who&apos;ve earned their license with Excellent Driving.</p>
+        <h2>{t("ctaTitle")}</h2>
+        <p>{t("ctaSubtitle")}</p>
         <div className={styles["cta-actions"]}>
-          <Link href="/booking" className="btn btn-primary btn-lg">Book Your First Lesson</Link>
-          <Link href="/contact" className="btn btn-white btn-lg">Ask a Question</Link>
+          <Link href="/booking" className="btn btn-primary btn-lg">{t("bookFirstLesson")}</Link>
+          <Link href="/contact" className="btn btn-white btn-lg">{t("askQuestion")}</Link>
         </div>
       </div>
     </>

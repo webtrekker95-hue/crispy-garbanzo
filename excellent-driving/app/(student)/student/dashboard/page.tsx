@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
+import { getTranslations } from "next-intl/server";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getStudentModuleStates, getStudentDashboardStats } from "@/lib/progress";
@@ -7,14 +8,15 @@ import styles from "./dashboard.module.css";
 
 const moduleIcons = ["📖", "🚦", "🛣️", "🚗", "🏁"];
 
-function greeting() {
+function greetingKey(): "goodMorning" | "goodAfternoon" | "goodEvening" {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return "goodMorning";
+  if (hour < 18) return "goodAfternoon";
+  return "goodEvening";
 }
 
 export default async function StudentDashboardPage() {
+  const t = await getTranslations("Dashboard");
   const session = await getServerSession(authOptions);
   const studentId = session!.user.id;
   const firstName = (session!.user.name ?? "Student").split(" ")[0];
@@ -82,9 +84,9 @@ export default async function StudentDashboardPage() {
     <>
       <div className={styles["welcome-banner"]}>
         <div>
-          <div className={styles["welcome-title"]}>{greeting()}, {firstName}! 👋</div>
+          <div className={styles["welcome-title"]}>{t(greetingKey())}, {firstName}! 👋</div>
           <div className={styles["welcome-sub"]}>
-            {totalCompleted > 0 ? "You're making great progress. Keep it up!" : "Ready to start your first lesson?"}
+            {totalCompleted > 0 ? t("keepItUp") : t("readyToStart")}
           </div>
           {totalLessons > 0 && (
             <div className={styles["progress-pill"]}>
@@ -94,8 +96,8 @@ export default async function StudentDashboardPage() {
           )}
         </div>
         <div style={{ display: "flex", gap: 10, flexShrink: 0 }}>
-          <Link href="/student/learn" className={`btn ${styles["btn-amber"]}`}>Continue Learning →</Link>
-          <Link href="/booking" className={`btn ${styles["btn-outline-white"]}`}>Book a Lesson</Link>
+          <Link href="/student/learn" className={`btn ${styles["btn-amber"]}`}>{t("continueLearning")} →</Link>
+          <Link href="/booking" className={`btn ${styles["btn-outline-white"]}`}>{t("bookALesson")}</Link>
         </div>
       </div>
 
@@ -105,36 +107,36 @@ export default async function StudentDashboardPage() {
             <div className={styles["stat-icon"]} style={{ background: "rgba(16,185,129,0.1)" }} aria-hidden="true">✅</div>
           </div>
           <div className={styles["stat-num"]}>{stats.lessonsCompleted}</div>
-          <div className={styles["stat-label"]}>Lessons Completed</div>
+          <div className={styles["stat-label"]}>{t("lessonsCompleted")}</div>
         </div>
         <div className={styles["stat-card"]}>
           <div className={styles["stat-card-top"]}>
             <div className={styles["stat-icon"]} style={{ background: "rgba(245,166,35,0.12)" }} aria-hidden="true">🎯</div>
           </div>
           <div className={styles["stat-num"]}>{stats.quizzesPassed}</div>
-          <div className={styles["stat-label"]}>Quizzes Passed</div>
+          <div className={styles["stat-label"]}>{t("quizzesPassed")}</div>
         </div>
         <div className={styles["stat-card"]}>
           <div className={styles["stat-card-top"]}>
             <div className={styles["stat-icon"]} style={{ background: "rgba(59,130,246,0.1)" }} aria-hidden="true">📅</div>
           </div>
           <div className={styles["stat-num"]}>{stats.upcomingBookings}</div>
-          <div className={styles["stat-label"]}>Upcoming Bookings</div>
+          <div className={styles["stat-label"]}>{t("upcomingBookings")}</div>
         </div>
         <div className={styles["stat-card"]}>
           <div className={styles["stat-card-top"]}>
             <div className={styles["stat-icon"]} style={{ background: "rgba(245,166,35,0.12)" }} aria-hidden="true">⭐</div>
           </div>
           <div className={styles["stat-num"]}>{stats.avgQuizScore !== null ? `${stats.avgQuizScore}%` : "—"}</div>
-          <div className={styles["stat-label"]}>Average Quiz Score</div>
+          <div className={styles["stat-label"]}>{t("avgQuizScore")}</div>
         </div>
       </div>
 
       <div className={styles["grid-3-1"]}>
         <div className={styles.card}>
           <div className={styles["card-header"]}>
-            <div className={styles["card-title"]}>Course Progress</div>
-            <Link className={styles["card-action"]} href="/student/learn">View all modules →</Link>
+            <div className={styles["card-title"]}>{t("courseProgress")}</div>
+            <Link className={styles["card-action"]} href="/student/learn">{t("viewAllModules")} →</Link>
           </div>
           <div className={styles["card-body"]}>
             {moduleStates.map((m, i) => {
@@ -170,8 +172,8 @@ export default async function StudentDashboardPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div className={styles.card}>
             <div className={styles["card-header"]}>
-              <div className={styles["card-title"]}>Next Lesson</div>
-              <Link className={styles["card-action"]} href="/student/bookings">View all</Link>
+              <div className={styles["card-title"]}>{t("nextLesson")}</div>
+              <Link className={styles["card-action"]} href="/student/bookings">{t("viewAll")}</Link>
             </div>
             <div className={styles["card-body"]} style={{ padding: 16 }}>
               {nextBooking ? (
@@ -201,21 +203,21 @@ export default async function StudentDashboardPage() {
 
           <div className={styles.card}>
             <div className={styles["card-header"]}>
-              <div className={styles["card-title"]}>Quick Links</div>
+              <div className={styles["card-title"]}>{t("quickLinks")}</div>
             </div>
             <div className={styles["card-body"]} style={{ padding: 16 }}>
               <div className={styles["quick-links"]}>
                 <Link className={styles["quick-link"]} href="/student/learn">
-                  <span className={styles["quick-link-icon"]} aria-hidden="true">🎓</span> Take a Quiz
+                  <span className={styles["quick-link-icon"]} aria-hidden="true">🎓</span> {t("takeAQuiz")}
                 </Link>
                 <Link className={styles["quick-link"]} href="/booking">
-                  <span className={styles["quick-link-icon"]} aria-hidden="true">📅</span> Book Lesson
+                  <span className={styles["quick-link-icon"]} aria-hidden="true">📅</span> {t("bookLesson")}
                 </Link>
                 <Link className={styles["quick-link"]} href="/student/bookings">
-                  <span className={styles["quick-link-icon"]} aria-hidden="true">📊</span> My Bookings
+                  <span className={styles["quick-link-icon"]} aria-hidden="true">📊</span> {t("myBookings")}
                 </Link>
                 <Link className={styles["quick-link"]} href="/student/profile">
-                  <span className={styles["quick-link-icon"]} aria-hidden="true">👤</span> Edit Profile
+                  <span className={styles["quick-link-icon"]} aria-hidden="true">👤</span> {t("editProfile")}
                 </Link>
               </div>
             </div>
@@ -225,7 +227,7 @@ export default async function StudentDashboardPage() {
 
       <div className={styles.card}>
         <div className={styles["card-header"]}>
-          <div className={styles["card-title"]}>Recent Activity</div>
+          <div className={styles["card-title"]}>{t("recentActivity")}</div>
         </div>
         <div className={styles["card-body"]}>
           {activity.length === 0 ? (
