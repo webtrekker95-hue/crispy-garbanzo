@@ -559,3 +559,44 @@ text**, and why — all flagged at the time, none silent:
   before notifications and the contact form actually send anything.
 - Spanish/Portuguese locale files exist as empty scaffolds only, per
   Claude.md's own "fill in later" instruction.
+
+## 2026-08-27 — Post-Phase-4: live demo access + demo banner
+
+Owner asked to see the finished product. Started the app for live
+review over an ngrok tunnel and hit/fixed two real issues along the way:
+
+- **Login silently broken over the tunnel.** Root cause: `npm run dev`
+  blocks cross-origin HMR requests by default
+  (`⚠ Blocked cross-origin request to Next.js dev resource /_next/hmr`),
+  which quietly kills client-side interactivity even though pages
+  render. Fixed by switching to a real production build (`npm run
+  build` + `npm start`) and correcting `NEXTAUTH_URL` in `.env.local`
+  to the actual tunnel origin (was still `http://localhost:3000`,
+  which breaks NextAuth's cookie/session handling behind a different
+  origin).
+- **Demo-limitation confusion risk.** Owner flagged (correctly) that
+  simulated WhatsApp/email notifications and temporary/resettable data
+  could read as bugs rather than expected sandbox behavior during
+  review. Added `components/demo-banner.tsx` — a dismissible top
+  banner, shown on every page, stating notifications are simulated and
+  data is temporary. Found and fixed a real layout bug this surfaced:
+  the student/admin sidebars are `position: fixed; top: 0`, which
+  ignores the banner's normal-flow position entirely, so the banner
+  covered the top of both sidebars. Fixed by having the banner report
+  its live rendered height via a `ref` + `useEffect` into a
+  `--demo-banner-height` CSS var on `<html>`, and changing both
+  sidebar stylesheets to `top: var(--demo-banner-height); height:
+  calc(100vh - var(--demo-banner-height))`. Verified via Playwright
+  screenshots (homepage, student dashboard, admin dashboard
+  visible/dismissed states) and confirmed dismiss persists across
+  reload via localStorage.
+- Re-ran the full test suite after these changes (48 unit + 3 E2E, all
+  passing) before switching the tunnel back to a production server.
+  Also cleared out accumulated E2E/manual test students, bookings, and
+  one leftover test package from the local Postgres DB so the owner's
+  first look at `/admin` isn't cluttered with fake records.
+- Committed and pushed as `a29b5ec`.
+
+Tunnel URL is stable across restarts as long as the ngrok process
+stays up: `https://croak-unlimited-harmony.ngrok-free.dev`. If it's
+ever restarted, the URL will change and needs to be re-shared.
