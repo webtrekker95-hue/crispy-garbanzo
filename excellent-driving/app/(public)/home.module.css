@@ -236,7 +236,7 @@
 
 .instructor-info { padding: 32px 24px 24px; text-align: center; }
 .instructor-name { font-family: var(--font-sora), sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
-.instructor-years { font-size: 0.8rem; color: var(--amber-dark); font-weight: 600; margin-bottom: 10px; }
+.instructor-years { font-size: 0.8rem; color: var(--amber-text); font-weight: 600; margin-bottom: 10px; }
 .instructor-bio { font-size: 0.85rem; color: var(--gray-600); line-height: 1.5; }
 
 /* FAQ (homepage two-column layout only — .faq-item/.faq-q/etc. live in

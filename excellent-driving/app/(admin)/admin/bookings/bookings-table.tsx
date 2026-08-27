@@ -62,7 +62,7 @@ export function BookingsTable({
     <div>
       <div className={styles["filter-bar"]}>
         <div className="search-bar">
-          🔍 <input
+          <span aria-hidden="true">🔍</span> <input
             type="search"
             placeholder="Search student…"
             aria-label="Search by student name"

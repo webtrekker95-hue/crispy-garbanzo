@@ -20,7 +20,7 @@
 
 .badge { font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 100px; flex-shrink: 0; }
 .badge-pending { background: rgba(245, 166, 35, 0.15); color: #b45309; }
-.badge-confirmed { background: var(--green-light); color: #059669; }
+.badge-confirmed { background: var(--green-light); color: #047857; }
 .badge-cancelled { background: var(--gray-100); color: var(--gray-600); }
 
 .actions { flex-shrink: 0; display: flex; gap: 8px; align-items: center; }

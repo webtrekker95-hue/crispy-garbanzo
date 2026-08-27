@@ -239,6 +239,7 @@ export function InstructorsManager({ initial }: { initial: Instructor[] }) {
                       </label>
                       <input
                         type="time"
+                        aria-label={`${d.label} start time`}
                         disabled={!form.schedule[d.code].on}
                         value={form.schedule[d.code].start}
                         onChange={(e) =>
@@ -250,6 +251,7 @@ export function InstructorsManager({ initial }: { initial: Instructor[] }) {
                       />
                       <input
                         type="time"
+                        aria-label={`${d.label} end time`}
                         disabled={!form.schedule[d.code].on}
                         value={form.schedule[d.code].end}
                         onChange={(e) =>

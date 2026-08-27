@@ -102,7 +102,7 @@
 .instructor-option.selected .inst-avatar, .instructor-option:hover .inst-avatar { border-color: var(--amber); }
 
 .inst-name { font-family: var(--font-sora), sans-serif; font-weight: 700; font-size: 0.9rem; color: var(--navy); margin-bottom: 4px; }
-.inst-exp { font-size: 0.72rem; color: var(--amber-dark); font-weight: 600; margin-bottom: 6px; }
+.inst-exp { font-size: 0.72rem; color: var(--amber-text); font-weight: 600; margin-bottom: 6px; }
 .inst-avail { font-size: 0.72rem; color: var(--gray-600); }
 
 /* CALENDAR */

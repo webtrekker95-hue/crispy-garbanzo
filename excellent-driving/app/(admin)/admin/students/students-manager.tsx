@@ -48,7 +48,13 @@ export function StudentsManager({ initial }: { initial: StudentRow[] }) {
   return (
     <div>
       <div className="search-bar" style={{ marginBottom: 16 }}>
-        🔍 <input type="search" placeholder="Search students…" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <span aria-hidden="true">🔍</span> <input
+          type="search"
+          placeholder="Search students…"
+          aria-label="Search students by name or email"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </div>
 
       <div className="card">

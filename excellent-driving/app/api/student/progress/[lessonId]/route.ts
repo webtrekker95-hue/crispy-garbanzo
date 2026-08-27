@@ -4,6 +4,7 @@ import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getStudentModuleStates } from "@/lib/progress";
+import { scoreQuiz } from "@/lib/quiz";
 
 const submitSchema = z.object({
   answers: z.array(z.number().nullable()).optional(),
@@ -48,14 +49,12 @@ export async function POST(
       passingScore?: number;
     };
     const answers = parsed.data.answers ?? [];
-    const total = content.questions.length;
-    const correctCount = content.questions.reduce(
-      (count, q, i) => count + (answers[i] === q.correct ? 1 : 0),
-      0
+    const { score, correctCount, total, passed } = scoreQuiz(
+      content.questions,
+      answers,
+      content.passingScore ?? 70
     );
-    const score = total > 0 ? Math.round((correctCount / total) * 100) : 0;
-    const passingScore = content.passingScore ?? 70;
-    const status = score >= passingScore ? "PASSED" : "FAILED";
+    const status = passed ? "PASSED" : "FAILED";
 
     const progress = await prisma.studentProgress.upsert({
       where: { studentId_lessonId: { studentId: session.user.id, lessonId } },

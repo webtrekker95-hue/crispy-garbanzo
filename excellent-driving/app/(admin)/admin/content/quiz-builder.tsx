@@ -72,6 +72,7 @@ export function QuizBuilder({
               <input
                 type="text"
                 required
+                aria-label={`Option ${oi + 1} text`}
                 placeholder={`Option ${oi + 1}`}
                 value={opt}
                 onChange={(e) => updateOption(qi, oi, e.target.value)}

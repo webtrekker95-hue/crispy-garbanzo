@@ -23,7 +23,7 @@
 .mod-meta { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .mod-lessons-count { font-size: 0.78rem; color: var(--gray-600); }
 .mod-status-pill { font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
-.status-done { background: var(--green-light); color: #059669; }
+.status-done { background: var(--green-light); color: #047857; }
 .status-progress { background: rgba(245, 166, 35, 0.12); color: #b45309; }
 .status-locked { background: var(--gray-100); color: var(--gray-600); }
 .mod-arrow { flex-shrink: 0; font-size: 0.9rem; color: var(--gray-400); }
@@ -48,7 +48,7 @@
 
 .lesson-item { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--gray-50); text-decoration: none; color: inherit; }
 .lesson-item:last-child { border-bottom: none; }
-.lesson-item.clickable:hover .lesson-name { color: var(--amber-dark); }
+.lesson-item.clickable:hover .lesson-name { color: var(--amber-text); }
 .lesson-item.locked { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
 
 .lesson-num { width: 28px; height: 28px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: var(--navy); flex-shrink: 0; }
@@ -59,4 +59,4 @@
 .lesson-type { font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 100px; flex-shrink: 0; }
 .type-text { background: rgba(59, 130, 246, 0.1); color: #1d4ed8; }
 .type-quiz { background: rgba(245, 166, 35, 0.12); color: #b45309; }
-.type-video { background: rgba(16, 185, 129, 0.1); color: #059669; }
+.type-video { background: rgba(16, 185, 129, 0.1); color: #047857; }

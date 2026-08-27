@@ -34,24 +34,26 @@ export function SiteNav() {
           </div>
         </Link>
 
-        <ul className={`nav-links${menuOpen ? " open" : ""}`} id="primary-menu">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <Link href={link.href} className={pathname === link.href ? "active" : ""}>
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className={`mobile-nav-panel${menuOpen ? " open" : ""}`}>
+          <ul className="nav-links" id="primary-menu">
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className={pathname === link.href ? "active" : ""} onClick={() => setMenuOpen(false)}>
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
 
-        <div className="nav-actions">
-          <LanguageSwitcher />
-          <Link href="/login" className="btn btn-outline">
-            {t("login")}
-          </Link>
-          <Link href="/booking" className="btn btn-primary">
-            {t("bookNow")}
-          </Link>
+          <div className="nav-actions">
+            <LanguageSwitcher />
+            <Link href="/login" className="btn btn-outline" onClick={() => setMenuOpen(false)}>
+              {t("login")}
+            </Link>
+            <Link href="/booking" className="btn btn-primary" onClick={() => setMenuOpen(false)}>
+              {t("bookNow")}
+            </Link>
+          </div>
         </div>
 
         <button

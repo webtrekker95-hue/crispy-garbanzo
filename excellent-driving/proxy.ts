@@ -1,19 +1,13 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { decideRedirect } from "@/lib/route-guard";
 
 export default withAuth(
   function middleware(req) {
-    const { pathname } = req.nextUrl;
-    const role = req.nextauth.token?.role;
-
-    if (pathname.startsWith("/admin") && role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/login", req.url));
+    const redirectTo = decideRedirect(req.nextUrl.pathname, req.nextauth.token?.role as string | undefined);
+    if (redirectTo) {
+      return NextResponse.redirect(new URL(redirectTo, req.url));
     }
-
-    if (pathname.startsWith("/student") && role !== "STUDENT") {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-
     return NextResponse.next();
   },
   {

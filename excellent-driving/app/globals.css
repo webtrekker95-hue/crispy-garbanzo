@@ -14,6 +14,13 @@
   --navy-dark: #08121f;
   --amber: #f5a623;
   --amber-dark: #e09510;
+  /* --amber-dark on white is only 2.48:1, well under WCAG AA (4.5:1) for
+     text — it works fine as a button-hover background (large area, text
+     on top is navy, which has plenty of contrast) but fails wherever it's
+     used as small text color directly. This darker shade of the same hue
+     hits 4.75:1 and is for text specifically; --amber-dark itself is left
+     unchanged since its other (background) uses aren't broken. */
+  --amber-text: #9d680b;
   --white: #ffffff;
   --gray-50: #f9fafb;
   --gray-100: #f3f4f6;
