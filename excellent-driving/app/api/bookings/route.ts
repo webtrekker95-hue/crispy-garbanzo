@@ -4,6 +4,7 @@ import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { dayOfWeekCode, formatSlotLabel, generateSlotMinutes } from "@/lib/slots";
+import { notify, templates } from "@/lib/whatsapp";
 
 const bookingSchema = z.object({
   packageId: z.string().min(1),
@@ -76,7 +77,11 @@ export async function POST(request: Request) {
         status: "PENDING",
         paymentStatus: "PENDING",
       },
-      include: { package: true, instructor: { include: { user: true } } },
+      include: {
+        package: true,
+        instructor: { include: { user: true } },
+        student: true,
+      },
     });
   });
 
@@ -86,6 +91,32 @@ export async function POST(request: Request) {
       { status: 409 }
     );
   }
+
+  const dateLabel = booking.date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" });
+
+  await notify({
+    phone: booking.student.phone,
+    email: booking.student.email,
+    subject: "Your Excellent Driving booking is confirmed",
+    message: templates.bookingConfirmation({
+      name: booking.student.name,
+      instructor: booking.instructor.user.name,
+      date: dateLabel,
+      time: booking.timeSlot,
+      method: booking.paymentMethod === "CASH" ? "Cash" : "Bank Transfer",
+    }),
+  });
+
+  await notify({
+    phone: null, // instructor phone isn't collected yet — falls back to email
+    email: booking.instructor.user.email,
+    subject: "New lesson booking",
+    message: templates.instructorNewBooking({
+      studentName: booking.student.name,
+      date: dateLabel,
+      time: booking.timeSlot,
+    }),
+  });
 
   return NextResponse.json({ booking }, { status: 201 });
 }

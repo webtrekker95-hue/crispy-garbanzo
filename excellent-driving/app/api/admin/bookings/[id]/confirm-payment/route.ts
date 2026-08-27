@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { notify, templates } from "@/lib/whatsapp";
 
 export async function PATCH(
   _request: Request,
@@ -13,12 +14,22 @@ export async function PATCH(
   }
 
   const { id } = await params;
-  const booking = await prisma.booking.findUnique({ where: { id } });
+  const booking = await prisma.booking.findUnique({
+    where: { id },
+    include: { student: true, package: true },
+  });
   if (!booking) return NextResponse.json({ error: "Booking not found." }, { status: 404 });
 
   const updated = await prisma.booking.update({
     where: { id },
     data: { paymentStatus: "CONFIRMED", status: "CONFIRMED" },
+  });
+
+  await notify({
+    phone: booking.student.phone,
+    email: booking.student.email,
+    subject: "Payment confirmed — Excellent Driving",
+    message: templates.paymentConfirmed({ packageName: booking.package.nameEn }),
   });
 
   return NextResponse.json({ booking: updated });
