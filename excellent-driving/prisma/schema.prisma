@@ -66,6 +66,7 @@ model User {
   role          Role      @default(STUDENT)
   name          String
   language      Language  @default(EN)
+  courseAccess  Boolean   @default(true)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -245,4 +246,18 @@ model FAQ {
   orderIndex Int      @default(0)
 
   @@map("faqs")
+}
+
+/// Singleton row (always id "school") holding editable school-wide settings.
+model SchoolSettings {
+  id                 String   @id @default("school")
+  schoolName         String   @default("Excellent Driving")
+  address            String   @default("Bonistraat 44, Paramaribo")
+  phone              String   @default("+597 XXX XXXX")
+  whatsappNumber     String   @default("")
+  whatsappBotEnabled Boolean  @default(false)
+  defaultLanguage    Language @default(EN)
+  updatedAt          DateTime @updatedAt
+
+  @@map("school_settings")
 }

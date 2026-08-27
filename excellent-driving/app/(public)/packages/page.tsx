@@ -7,9 +7,11 @@ const displayOrder = ["Starter", "Standard", "Premium", "Refresher"];
 
 export default async function PackagesPage() {
   const packages = await prisma.package.findMany({ where: { isActive: true } });
-  const sorted = [...packages].sort(
-    (a, b) => displayOrder.indexOf(a.nameEn) - displayOrder.indexOf(b.nameEn)
-  );
+  const orderOf = (name: string) => {
+    const i = displayOrder.indexOf(name);
+    return i === -1 ? displayOrder.length : i; // unknown packages sort last, not first
+  };
+  const sorted = [...packages].sort((a, b) => orderOf(a.nameEn) - orderOf(b.nameEn));
   const byName = Object.fromEntries(sorted.map((p) => [p.nameEn, p]));
 
   return (

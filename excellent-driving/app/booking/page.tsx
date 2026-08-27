@@ -24,9 +24,11 @@ export default async function BookingPage() {
     }),
   ]);
 
-  const packages = [...packagesRaw].sort(
-    (a, b) => packageDisplayOrder.indexOf(a.nameEn) - packageDisplayOrder.indexOf(b.nameEn)
-  );
+  const orderOf = (name: string) => {
+    const i = packageDisplayOrder.indexOf(name);
+    return i === -1 ? packageDisplayOrder.length : i; // unknown packages sort last, not first
+  };
+  const packages = [...packagesRaw].sort((a, b) => orderOf(a.nameEn) - orderOf(b.nameEn));
 
   return (
     <BookingWizard

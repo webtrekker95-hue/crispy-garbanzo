@@ -1,0 +1,8 @@
+.toolbar { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+
+.schedule-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.schedule-row { display: grid; grid-template-columns: 90px 1fr 1fr; gap: 8px; align-items: center; }
+.schedule-row label { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 600; color: var(--navy); }
+.schedule-row input[type="checkbox"] { width: auto; }
+.schedule-row input[type="time"] { border: 1.5px solid var(--gray-200); border-radius: 6px; padding: 6px 8px; font-size: 0.8rem; }
+.schedule-row input[type="time"]:disabled { background: var(--gray-50); color: var(--gray-400); }

@@ -1,0 +1,8 @@
+.filter-bar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: var(--white); border-radius: 10px; border: 1px solid var(--gray-200);
+  padding: 14px 18px; margin-bottom: 20px;
+}
+.filter-bar select { border: 1.5px solid var(--gray-200); border-radius: 7px; padding: 7px 10px; font-size: 0.8rem; color: var(--navy); background: var(--white); }
+.filter-spacer { flex: 1; }
+.result-count { font-size: 0.78rem; color: var(--gray-600); }

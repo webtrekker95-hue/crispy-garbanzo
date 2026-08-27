@@ -1,0 +1,24 @@
+.grid-3-1 { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+
+.quick-actions { display: flex; flex-direction: column; gap: 10px; }
+.qa-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: 9px;
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  font-size: 0.82rem; font-weight: 600; color: var(--navy);
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+}
+.qa-btn:hover { background: rgba(245, 166, 35, 0.06); border-color: var(--amber); }
+.qa-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; background: rgba(245, 166, 35, 0.12); }
+
+.payment-item { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--gray-100); }
+.payment-item:last-child { border-bottom: none; }
+.pay-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; color: var(--white); flex-shrink: 0; }
+.pay-info { flex: 1; min-width: 0; }
+.pay-name { font-size: 0.82rem; font-weight: 600; color: var(--navy); margin-bottom: 1px; }
+.pay-detail { font-size: 0.72rem; color: var(--gray-600); }
+.pay-amount { font-family: var(--font-sora), sans-serif; font-size: 0.875rem; font-weight: 700; color: var(--navy); margin-right: 8px; }
+
+@media (max-width: 1100px) {
+  .grid-3-1 { grid-template-columns: 1fr; }
+}

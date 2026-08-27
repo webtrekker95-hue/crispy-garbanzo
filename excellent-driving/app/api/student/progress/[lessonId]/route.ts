@@ -16,6 +16,11 @@ export async function POST(
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const user = await prisma.user.findUnique({ where: { id: session.user.id }, select: { courseAccess: true } });
+  if (!user?.courseAccess) {
+    return NextResponse.json({ error: "Your course access is currently on hold." }, { status: 403 });
+  }
+
   const { lessonId } = await params;
   const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } });
   if (!lesson) return NextResponse.json({ error: "Lesson not found." }, { status: 404 });

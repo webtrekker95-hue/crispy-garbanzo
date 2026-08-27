@@ -11,6 +11,7 @@
      ported from maquettes/*.html resolves var(--navy) etc. unchanged). */
   --navy: #0f1f3d;
   --navy-light: #1a2f54;
+  --navy-dark: #08121f;
   --amber: #f5a623;
   --amber-dark: #e09510;
   --white: #ffffff;
@@ -25,6 +26,8 @@
   --green-light: rgba(16, 185, 129, 0.1);
   --red: #ef4444;
   --red-light: rgba(239, 68, 68, 0.08);
+  --blue: #3b82f6;
+  --blue-light: rgba(59, 130, 246, 0.1);
   --radius: 12px;
   --shadow: 0 4px 24px rgba(15, 31, 61, 0.1);
   --shadow-lg: 0 8px 40px rgba(15, 31, 61, 0.18);

@@ -87,14 +87,27 @@ const filters = [
   { value: "exam", label: "Exam Prep" },
 ];
 
+const fallbackIncludes = [
+  { text: "Practical lessons are not included, theory only", included: false },
+  { text: "Online theory course access", included: true },
+  { text: "WhatsApp support", included: true },
+  { text: "Completion certificate", included: true },
+];
+
+/** Every known package has hand-tuned copy above; anything else (e.g. a
+ * package created later in the admin panel) falls back to generic content
+ * derived from real fields, instead of crashing on an unrecognized name. */
+function getMeta(name: string) {
+  return packageMeta[name] ?? { icon: "🚗", tags: [] as string[], stats: [], includes: fallbackIncludes };
+}
+
 export function PackagesGrid({ packages }: { packages: Pkg[] }) {
   const [filter, setFilter] = useState("all");
 
   const regular = packages.filter((p) => p.nameEn !== "Refresher");
   const refresher = packages.find((p) => p.nameEn === "Refresher");
 
-  const matchesFilter = (name: string) =>
-    filter === "all" || (packageMeta[name]?.tags ?? []).includes(filter);
+  const matchesFilter = (name: string) => filter === "all" || getMeta(name).tags.includes(filter);
 
   const visibleRegular = regular.filter((p) => matchesFilter(p.nameEn));
   const visibleRefresher = refresher && matchesFilter(refresher.nameEn) ? refresher : null;
@@ -125,7 +138,7 @@ export function PackagesGrid({ packages }: { packages: Pkg[] }) {
 
       <div className={styles["packages-grid"]}>
         {visibleRegular.map((pkg) => {
-          const meta = packageMeta[pkg.nameEn];
+          const meta = getMeta(pkg.nameEn);
           return (
             <div
               key={pkg.id}
@@ -192,7 +205,7 @@ export function PackagesGrid({ packages }: { packages: Pkg[] }) {
               <div className={styles["package-body"]}>
                 <div className={styles["includes-title"]}>What&apos;s included</div>
                 <div className={styles["includes-list"]}>
-                  {packageMeta.Refresher.includes.map((item) => (
+                  {getMeta("Refresher").includes.map((item) => (
                     <div
                       key={item.text}
                       className={`${styles["include-item"]}${item.included ? "" : ` ${styles.unavailable}`}`}
