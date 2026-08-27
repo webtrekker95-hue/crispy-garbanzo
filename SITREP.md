@@ -461,12 +461,101 @@ Phase 4 (QA) remains before the whole build order is done.
 
 ---
 
-## Phase 4 — QA (not started)
+## Phase 4 — QA
+
+### 2026-08-27 — AGENT 10, same session as Phases 1, 2, and 3
+
+Final phase of the build order, same very long session as everything
+before it. Set up two permanent, checked-in test suites — Jest (48 unit
+tests across 4 files: quiz scoring, slot availability, auth route-guard,
+WhatsApp/email fallback with mocks) and Playwright E2E (3 scenarios
+matching Claude.md's spec exactly: student onboarding, booking
+confirmation, admin-creates-package-student-sees-it). Extracted
+`lib/quiz.ts` and `lib/route-guard.ts` from inline route/middleware logic
+specifically to make the unit tests possible.
+
+Found and fixed six more real bugs by actually driving the app one more
+time, none caught by `npm run build` or TypeScript: the same
+packages-grid crash from the Phase 3 entry (now with a permanent
+regression test), the admin/students N+1 that had crashed the dev
+server, a mobile nav overflow on every public page (pre-existing in the
+maquette itself — `.nav-actions` had no mobile treatment at all),
+a classic CSS Grid `1fr`-doesn't-shrink bug on the student dashboard,
+two WCAG AA contrast failures found by computing actual contrast ratios
+rather than eyeballing (both inherited unchanged from the maquette's
+original color tokens), and three missing `aria-label`s on Phase 3 form
+inputs. Full detail, including exactly what was verified vs. what's a
+known limitation (shared dev DB for E2E, partial i18n scope, unverifiable
+WhatsApp delivery), is in `excellent-driving/QA.md` rather than
+duplicated here.
+
+**Committed:** `b4aae59`. Pushed after owner confirmation, same as every
+other checkpoint.
+
+**This closes out Claude.md's entire build order — Phases 0 through 4 are
+now all complete.** See the End-to-end overview below.
 
 ---
 
 ## End-to-end overview
 
-*(To be filled in once all phases are complete — full start-to-finish summary
-of what was built, key decisions made along the way, and how the final app
-maps back to the original brief.)*
+Built across a single (very long) session on 2026-08-27, continuing from
+Phase 0's maquette work completed 2026-08-18/19. Every phase was verified
+live (Playwright driving a real browser against the real app and a real
+local Postgres database) before being committed, not just checked with
+`npm run build`.
+
+**What exists now:** a working Next.js 16 App Router application at
+`excellent-driving/` — public marketing site, a 5-step booking wizard
+with race-safe slot booking, a full student e-learning system (sequential
+module/lesson unlocking, a working quiz engine with pass/fail/retry), an
+8-page admin panel including a real quiz builder, WhatsApp notifications
+with an email fallback chain, functional EN/NL language switching, and
+two permanent automated test suites. 9 real, non-hypothetical bugs were
+caught and fixed by live-testing rather than trusting a clean build —
+listed in the Phase 2/3/4 entries above and in `QA.md`.
+
+**Where the real app deliberately deviates from `Claude.md`'s literal
+text**, and why — all flagged at the time, none silent:
+- **Next.js 14 → 16.** 14 was already old by the build date; the App
+  Router API shape Claude.md describes is unchanged.
+- **next-i18next → next-intl.** next-i18next targets the Pages Router;
+  the App Router needs next-intl or equivalent.
+- **Prisma pinned to 6.19.3, not `latest` (8.0.0 at build time).**
+  Prisma 7 removed the classic `url = env("DATABASE_URL")` schema
+  pattern in favor of a driver-adapter architecture — a bigger change
+  than this phase needed. 6.x keeps the flow the rest of the spec
+  assumes.
+- **next-auth stayed on stable v4**, not the v5/Auth.js beta — the
+  spec's described API (`CredentialsProvider`, `middleware.ts`, Prisma
+  adapter) is v4-shaped. (`middleware.ts` itself got renamed to
+  `proxy.ts` mid-project when Next.js 16 deprecated the old convention.)
+- **i18n coverage is intentionally partial**, not "translate
+  everything" — matched an explicit owner decision already made once
+  during the maquette phase (2026-08-19: chose "minimal real" over full
+  coverage). Nav/footer/homepage/packages/student-dashboard are
+  functionally bilingual; booking, quiz, admin, and body/FAQ text stay
+  English, same as the maquette itself.
+- **Two schema additions Claude.md's model list never mentioned but
+  the spec's own page descriptions require:** `User.courseAccess`
+  (the students page explicitly asks for "grant/revoke course access")
+  and a `SchoolSettings` singleton (the settings page needs somewhere
+  to persist school name/address/WhatsApp number/language default).
+- **WhatsApp and email delivery are unverifiable** without real Meta
+  Business and Resend credentials — the dispatch *logic* (WhatsApp
+  first, fall back to email, never throw) is fully built and unit-
+  tested with mocks; actual message delivery was never able to be
+  observed end-to-end in this sandbox.
+
+**What's still genuinely open, not silently dropped:**
+- Owner review/sign-off on the actual built pages — every phase's
+  "done" in this log means "built and technically verified," not
+  "approved by the person the site is for."
+- Production deployment itself (Vercel + Supabase per Claude.md's
+  deployment notes) — nothing in this session touched a production
+  environment; `DATABASE_URL`/`NEXTAUTH_URL`/API keys are all still
+  local placeholders.
+- Real WhatsApp Business and Resend accounts need to be provisioned
+  before notifications and the contact form actually send anything.
+- Spanish/Portuguese locale files exist as empty scaffolds only, per
+  Claude.md's own "fill in later" instruction.
