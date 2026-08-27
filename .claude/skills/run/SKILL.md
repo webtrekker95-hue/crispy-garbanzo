@@ -84,9 +84,60 @@ closes it and returns focus to the trigger button. Both verified live.
   relative asset/font loads behave oddly without an HTTP server — prefer the
   `http.server` approach above.
 
-## Later phases: real Next.js app
+## Phase 1+: the real Next.js app (`/excellent-driving`)
 
-Once Phase 1 scaffolds the actual app (see `Claude.md` / `SITREP.md`), this
-section should be replaced with the real dev command (`npm run dev`, likely
-port 3000) and the same Playwright driving approach adapted to a live app
-with auth, following the same NODE_PATH / executablePath pattern above.
+The maquettes above are still the design reference; the real app now lives
+in `excellent-driving/` at the repo root (Next.js 16, App Router, Tailwind
+v4, Prisma 6, NextAuth v4).
+
+### Serve
+
+```bash
+cd /home/demo/STEVEN_EXCELLENT_DRIVING/excellent-driving
+lsof -ti:3000 -sTCP:LISTEN | xargs -r kill 2>/dev/null
+nohup npm run dev > /tmp/nextdev.log 2>&1 &
+disown
+timeout 30 bash -c 'until curl -sf http://localhost:3000 >/dev/null; do sleep 0.5; done'
+```
+
+Stop with the same `lsof -ti:3000 ... | xargs -r kill` line. Server logs
+(including Prisma/NextAuth errors) land in `/tmp/nextdev.log` — `tail` it
+when something 500s.
+
+### Drive
+
+Same Playwright/Chromium setup as the maquettes (`NODE_PATH`,
+`executablePath: '/usr/bin/chromium'`, `--no-sandbox` — see gotchas below),
+just pointed at `http://localhost:3000` instead of `:8765`. No persistent
+REPL; write a one-off script per verification task.
+
+### No database is configured yet
+
+`DATABASE_URL` in `.env.local` is a placeholder (`localhost:5432`, nothing
+listening). Any route touching Prisma (`/api/register`, credentials login)
+will fail with `PrismaClientInitializationError: Can't reach database
+server` — that's expected, not a bug, until a real Postgres instance
+(local install or Supabase) is wired up. Routing, page rendering, and the
+NextAuth-based `/student/*` `/admin/*` `/booking/*` redirect-to-`/login`
+protection (via `proxy.ts`, Next 16's renamed `middleware.ts`) all work
+without a DB and were verified live 2026-08-27.
+
+### Gotchas (Next.js app, in addition to the ones below)
+
+- Next.js 16 renamed the `middleware.ts` convention to `proxy.ts` — same
+  API (`withAuth`, `config.matcher`), new filename. Don't recreate
+  `middleware.ts`; it'll just warn as deprecated.
+- `npm run build` and `prisma generate` both work with no DB connection.
+  `prisma migrate dev` and anything at runtime that queries does not.
+
+## Gotchas shared with the maquette phase
+
+- **No emoji font in this container.** Icon emoji (🔍, 🏠, 📅, etc.) render
+  as empty tofu boxes in screenshots. This is a rendering-environment gap,
+  not an app bug — don't file it as a regression. Install
+  `fonts-noto-color-emoji` via apt if accurate emoji screenshots are needed.
+- **`playwright-core` is global, not local** — always `export NODE_PATH=$(npm root -g)`
+  before running a driver script, or every `require('playwright-core')` fails
+  with `MODULE_NOT_FOUND`.
+- **`--no-sandbox` is required** — this container has no user namespaces set
+  up for Chromium's sandbox; omitting the flag makes `launch()` hang/crash.
