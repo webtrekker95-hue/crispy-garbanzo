@@ -38,7 +38,7 @@ export function TextLessonView({
   return (
     <div className={styles["text-card"]}>
       <h1 className={styles["text-title"]}>{title}</h1>
-      <div className={styles["text-body"]}>{body}</div>
+      <div className={styles["text-body"]} dangerouslySetInnerHTML={{ __html: body }} />
       {isVideo && (
         <div className={styles["video-placeholder"]}>
           🎬 Video content coming soon — this lesson will include an embedded instructional video.

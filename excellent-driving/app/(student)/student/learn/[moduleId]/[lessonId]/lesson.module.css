@@ -14,6 +14,24 @@
 .text-card { background: var(--white); border-radius: 20px; padding: 36px; border: 1px solid var(--gray-200); box-shadow: var(--shadow); margin-bottom: 20px; }
 .text-title { font-family: var(--font-sora), sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--navy); margin-bottom: 20px; }
 .text-body { font-size: 0.98rem; color: var(--gray-700); line-height: 1.7; }
+.text-body :global(p) { margin: 0 0 16px; }
+.text-body :global(p:last-child) { margin-bottom: 0; }
+.text-body :global(h3) { font-family: var(--font-sora), sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--navy); margin: 24px 0 10px; }
+.text-body :global(h3:first-child) { margin-top: 0; }
+.text-body :global(ul), .text-body :global(ol) { margin: 0 0 16px; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
+.text-body :global(strong) { color: var(--navy); }
+.text-body :global(.callout) {
+  background: rgba(245, 166, 35, 0.08); border: 1px solid rgba(245, 166, 35, 0.3);
+  border-radius: 12px; padding: 16px 20px; margin: 20px 0;
+}
+.text-body :global(.callout strong) { color: var(--amber-text); }
+.text-body :global(.legend-table) { width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 0.92rem; }
+.text-body :global(.legend-table td) { padding: 6px 10px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+.text-body :global(.legend-table td:first-child) { white-space: nowrap; font-weight: 700; color: var(--navy); width: 64px; }
+.text-body :global(.legend-dot) {
+  display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--navy); vertical-align: middle;
+}
 .video-placeholder {
   background: var(--gray-50); border: 2px dashed var(--gray-200); border-radius: 12px;
   padding: 48px 24px; text-align: center; color: var(--gray-600);

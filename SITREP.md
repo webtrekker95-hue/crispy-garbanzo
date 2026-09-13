@@ -600,3 +600,53 @@ review over an ngrok tunnel and hit/fixed two real issues along the way:
 Tunnel URL is stable across restarts as long as the ngrok process
 stays up: `https://croak-unlimited-harmony.ngrok-free.dev`. If it's
 ever restarted, the URL will change and needs to be re-shared.
+
+## 2026-09-11 — First real lesson content: Maquette Les 1
+
+Owner (Middag Mo) flagged that every lesson currently in the app is
+placeholder/example material, and provided the school's actual course
+material to start replacing it with, beginning with
+`materiaalrijonderricht/Maquette les 1.pdf` (also uploaded there
+alongside the existing `.docx` originals for les 1–6).
+
+- **Content added, kept separate from placeholders on purpose.** Rather
+  than editing the 5 existing example modules, added a new module —
+  "Maquette — Voorrangsregels (Les 1)" — to `prisma/seed.ts`, at
+  `orderIndex: 0` so it's the first thing a new student sees (module 1
+  is always unlocked; see `lib/progress.ts`). The 5 example modules are
+  untouched and still present; nothing here silently replaces them.
+  Split the PDF's 3 pages into 5 TEXT lessons matching its actual
+  structure: intro to the digital maquette, Suriname's left-hand-
+  traffic rule + legal definitions, the 4-step method for solving
+  maquette problems, the 10 numbered priority ("LET OP") rules plus the
+  Goudenregel, and the legend/symbol key.
+- **Real bug found and fixed along the way:** `TextLessonView` rendered
+  lesson body as plain text (`{body}`), so any HTML in lesson content
+  showed as literal `<p>`/`<ul>` tags on screen. Since the real content
+  needs headings, lists, bold terms, and a highlighted rule box, switched
+  it to `dangerouslySetInnerHTML` (matching how quiz explanations
+  already render) and added matching `:global()` rich-text styles in
+  `lesson.module.css` (headings, lists, a `.callout` box for the
+  Goudenregel, and a `.legend-table`/`.legend-dot` for the symbol key).
+  Existing placeholder lessons are plain strings with no tags, so this
+  is backward-compatible — verified visually.
+- Per the owner's clarification: a solid black circle (`⚫`) in a
+  maquette situation diagram always denotes a *zandweg* (dirt/sand
+  road) — encoded as item 11 of the legend table, rendered as an
+  actual small solid circle (`.legend-dot`) next to "zandweg" rather
+  than relying on an emoji glyph.
+- **Verification gotcha, same class of bug as 2026-08-27's tunnel
+  issue:** a stale `next start` production server from the Aug 27
+  session (PID alive since then) was still squatting on port 3000, so
+  a fresh `next dev` silently rebound to 3001 and initial Playwright
+  verification was unknowingly hitting the old build (which still had
+  the raw-HTML-tag bug). Killed the stale process, confirmed a single
+  clean dev server on 3000, then re-verified. Walked a temporary QA
+  student account through all 5 real lessons at both 1280px and 400px
+  viewports via Playwright/Chromium screenshots — confirmed no raw
+  tags, clean list/callout/table rendering, and no mobile overflow on
+  the legend table. Deleted the QA test account and its progress rows
+  afterward.
+- Not yet committed — left as working-tree changes pending the owner's
+  go-ahead, since this establishes the pattern for incorporating les 2–6
+  next and is worth a look before it lands.
