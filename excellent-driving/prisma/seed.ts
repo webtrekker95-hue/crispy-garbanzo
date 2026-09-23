@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { maquetteLes1aLessons } from "./content/maquette-les-1a";
 
 const prisma = new PrismaClient();
 
@@ -387,13 +388,22 @@ async function main() {
     {
       titleEn: "Maquette — Right of Way (Lesson 1)",
       titleNl: "Maquette — Voorrangsregels (Les 1)",
+      id: "seed-module-0",
       orderIndex: 0,
       lessons: maquetteLes1Lessons,
     },
     {
+      id: "seed-module-maquette-les-1a",
+      titleEn: "Maquette — Right of Way Practice (Lesson 1a)",
+      titleNl: "Maquette — Voorrangsoefeningen (Les 1a)",
+      orderIndex: 1,
+      lessons: maquetteLes1aLessons,
+    },
+    {
       titleEn: "Road Rules & Signs",
       titleNl: "Verkeersregels & Borden",
-      orderIndex: 1,
+      id: "seed-module-1",
+      orderIndex: 2,
       lessons: [
         { title: "Introduction to Suriname Road Signs", type: "TEXT" as const, content: { type: "TEXT", body: "Suriname uses road signs based on international conventions: warning signs (triangular, red border), regulatory signs (circular), and information signs (rectangular, blue). Learning to recognize these at a glance is the foundation of safe driving." } },
         { title: "Right of Way Basics", type: "TEXT" as const, content: { type: "TEXT", body: "Right of way determines who goes first when two vehicles' paths cross. At uncontrolled intersections, traffic from the right generally has priority. Roundabouts give priority to traffic already circulating." } },
@@ -403,7 +413,8 @@ async function main() {
     {
       titleEn: "Traffic Regulations",
       titleNl: "Verkeersreglementen",
-      orderIndex: 2,
+      id: "seed-module-2",
+      orderIndex: 3,
       lessons: [
         { title: "Introduction to Traffic Laws", type: "TEXT" as const, content: { type: "TEXT", body: "Traffic laws exist to keep everyone safe and traffic flowing predictably. As a driver, you're responsible for knowing and following these rules at all times, not just when a police officer is watching." } },
         { title: "Speed Limits & Zones", type: "TEXT" as const, content: { type: "TEXT", body: "Speed limits vary by zone: residential (30 km/h), urban roads (50 km/h unless posted otherwise), and open highways (the national default unless signed). Always adjust for road and weather conditions." } },
@@ -418,7 +429,8 @@ async function main() {
     {
       titleEn: "Practical Driving Skills",
       titleNl: "Praktische Rijvaardigheden",
-      orderIndex: 3,
+      id: "seed-module-3",
+      orderIndex: 4,
       lessons: [
         { title: "Vehicle Controls Overview", type: "TEXT" as const, content: { type: "TEXT", body: "Before your first practical lesson, familiarize yourself with the controls: steering, pedals, gear selector, mirrors, and indicators. Your instructor will walk through these in person, but knowing the names in advance speeds things up." } },
         { title: "Parking & Maneuvering Basics", type: "TEXT" as const, content: { type: "TEXT", body: "Parallel parking, reverse parking, and three-point turns are core maneuvering skills assessed in the practical exam. Practice the theory here, then apply it with your instructor." } },
@@ -427,7 +439,8 @@ async function main() {
     {
       titleEn: "Highway & Motorway Driving",
       titleNl: "Snelweg Rijden",
-      orderIndex: 4,
+      id: "seed-module-4",
+      orderIndex: 5,
       lessons: [
         { title: "Merging & Lane Discipline", type: "TEXT" as const, content: { type: "TEXT", body: "When merging onto a highway, match your speed to traffic flow before merging. Stay in the appropriate lane for your speed and intentions — slower traffic keeps right." } },
         { title: "Overtaking Safely", type: "TEXT" as const, content: { type: "TEXT", body: "Only overtake when you can see the road ahead is clear, you have enough space to complete the maneuver, and it's legal to do so at that point in the road." } },
@@ -436,7 +449,8 @@ async function main() {
     {
       titleEn: "Exam Preparation",
       titleNl: "Examenvoorbereiding",
-      orderIndex: 5,
+      id: "seed-module-5",
+      orderIndex: 6,
       lessons: [
         { title: "What to Expect on Exam Day", type: "TEXT" as const, content: { type: "TEXT", body: "Arrive 15 minutes early, bring valid ID and your learner documentation, and get a good night's sleep beforehand. The exam covers both a vehicle check and a supervised drive." } },
         { title: "Final Mock Exam", type: "QUIZ" as const, content: examPrepQuiz },
@@ -446,10 +460,11 @@ async function main() {
 
   for (const mod of moduleSeeds) {
     const module = await prisma.module.upsert({
-      where: { id: `seed-module-${mod.orderIndex}` },
-      update: {},
+      where: { id: mod.id },
+      // Keep existing rows in step when a module is inserted before them.
+      update: { orderIndex: mod.orderIndex },
       create: {
-        id: `seed-module-${mod.orderIndex}`,
+        id: mod.id,
         titleEn: mod.titleEn,
         titleNl: mod.titleNl,
         orderIndex: mod.orderIndex,

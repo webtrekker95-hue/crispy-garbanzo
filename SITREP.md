@@ -650,3 +650,43 @@ alongside the existing `.docx` originals for les 1–6).
 - Not yet committed — left as working-tree changes pending the owner's
   go-ahead, since this establishes the pattern for incorporating les 2–6
   next and is worth a look before it lands.
+
+## 2026-09-22 — Maquette Les 1a: 20 voorrangssituaties as diagrams + quizzes
+
+Retry of Les 1a. The first attempt didn't come out the way the owner wanted
+and was never committed, so the owner wrote a build spec
+(`materiaalrijonderricht/claude_code_build_spec.md`) plus reference SVGs
+(`verkeerssituaties_diagrammen_1-20_v5.html`), and this build follows those.
+
+| What | Expectation | Outcome |
+|---|---|---|
+| One renderer, not 20 SVGs | Situations stored as data and drawn from fixed template constants | `lib/maquette.ts` (geometry) + `components/maquette-situation.tsx` (SVG). Paths match the v5 reference for all 20 situations. Test: `lib/__tests__/maquette.test.ts` |
+| Colours are the answer key | Worked examples (1, 4, 17, 18) coloured; exercises neutral until answered | Worked examples go in TEXT lessons with a new optional `examples` field. Exercise diagrams sit in QUIZ questions (`situation` field), drawn neutral grey and coloured after "Check Answer". Checked in the browser for all 16 exercises |
+| Own module, directly after Les 1 | Kept apart from the placeholder modules | New module `seed-module-maquette-les-1a` at `orderIndex: 1`. Modules now carry explicit ids, so the 5 example modules shifted to order 2–6 and kept their ids (the upsert now also updates `orderIndex`) |
+| Lesson split | Follows the PDF | 1: how to read a diagram + worked 1 & 4 · 2: quiz on 2, 3, 5–9 · 3: quiz on 10–16 (bikes / bike lanes) · 4: worked 17 & 18 · 5: quiz on 19–20 |
+
+**Answer-key deviations from the spec (confirmed with the owner: the Les 1 rules win over the spec):**
+- 12 (both turn left, Z.R.P.) is **f – 1**, not 1 + f (rule 4). 14 (both turn right, Z.R.P.) is **1 – f**, not 1 + f (rule 5). 17 is **2 – 1 – f**, as the PDF itself says, not 2 – 1+f.
+- 19: 1 turns right, 2 goes straight on opposite → by the Goudenregel **2 – 1**. The spec said 1 – 2. Same class of fix, flagged for the owner to confirm.
+- 18: the bike is coloured orange (waiting), which fits "2 – 1 + f". The v5 reference had it green.
+- 4: the PDF prints "1-2", but the Goudenregel note in the same PDF cites 4 as its example, so the spec's **2 – 1** is kept.
+- Geometry: 11's bike start uses y=67 as in the spec (v5 had 72). The spec table's "linksaf→west" for 18's car 1 is a typo; it turns right. Bike-lane bands are drawn on both the east and west roads whenever M.R.P., matching the PDF and v5.
+
+**Verification:** tsc, eslint and jest all pass (55 tests). Ran a dev server on :3001 (left :3000 alone, since it's the prod server behind the ngrok tunnel). A temporary QA student walked all 5 lessons at 1280px and 400px, answering every exercise correctly. Result: all quizzes passed, no console errors, no horizontal overflow. Along the way, fixed a global `section` padding that left an 80px gap under the worked examples. QA account and its progress rows deleted afterwards.
+
+**Open:**
+- ~~Prod server on :3000 still runs the old build~~. Rebuilt and restarted on 2026-09-23 (see below).
+- Not committed yet.
+
+### 2026-09-23 — Test-account cleanup
+
+- Deleted the 4 leftover "Temp Les1a Check" student accounts from the first Les 1a attempt. None had progress or bookings.
+- `demo-student@excellentdriving.sr` (Demo Student) is now the owner's main account for checking lessons as a student. It has a new password, which was given to the owner in chat and is not written here. Login checked against the :3000 server.
+- The students left are Demo Student and the real account `stevandpas@gmail.com`, which was not touched.
+
+### 2026-09-23 — Prod rebuild for Les 1a
+
+- Stopped the `npm start` server on :3000, ran `npm run build`, and started it again. The site was down for about a minute. ngrok kept running, so the tunnel URL is unchanged: `https://croak-unlimited-harmony.ngrok-free.dev` → :3000.
+- Checked on the prod build with a throwaway QA account, deleted afterwards: Les 1a lesson 1 shows both worked-example diagrams, the first quiz shows its diagram, no page errors.
+- Note: prod now runs code that isn't committed yet.
+- Owner went through Les 1a by hand on the prod build and approved it. Next step: waiting for the next lesson from the owner.

@@ -6,9 +6,14 @@ import { getStudentModuleStates } from "@/lib/progress";
 import { TextLessonView } from "./text-lesson-view";
 import { QuizLessonView } from "./quiz-lesson-view";
 import styles from "./lesson.module.css";
+import type { Situation } from "@/lib/maquette";
 
-type TextContent = { type: "TEXT" | "VIDEO"; body?: string; description?: string };
-type QuizContent = { type: "QUIZ"; questions: { text: string; options: string[]; correct: number; explanation: string }[] };
+type WorkedExample = { situation: Situation; solution: string; explanation: string };
+type TextContent = { type: "TEXT" | "VIDEO"; body?: string; description?: string; examples?: WorkedExample[] };
+type QuizContent = {
+  type: "QUIZ";
+  questions: { text: string; options: string[]; correct: number; explanation: string; situation?: Situation }[];
+};
 
 export default async function LessonPage({
   params,
@@ -66,6 +71,7 @@ export default async function LessonPage({
           lessonId={lesson.id}
           title={lesson.title}
           body={(lesson.content as TextContent).body ?? (lesson.content as TextContent).description ?? ""}
+          examples={(lesson.content as TextContent).examples}
           isVideo={lesson.type === "VIDEO"}
           alreadyComplete={lessonState.status === "PASSED"}
           nextHref={nextHref}

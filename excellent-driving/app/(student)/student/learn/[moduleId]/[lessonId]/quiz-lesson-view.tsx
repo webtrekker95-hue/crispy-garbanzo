@@ -3,12 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./lesson.module.css";
+import { MaquetteSituation } from "@/components/maquette-situation";
+import type { Situation } from "@/lib/maquette";
 
 type Question = {
   text: string;
   options: string[];
   correct: number;
   explanation: string;
+  /** Maquette diagram; drawn neutral until the answer is checked, then colour-coded. */
+  situation?: Situation;
 };
 
 export function QuizLessonView({
@@ -135,6 +139,11 @@ export function QuizLessonView({
 
       <div className={styles["question-card"]}>
         <div className={styles["q-number"]}>❓ Question {currentQ + 1}</div>
+        {q.situation && (
+          <div className={styles["q-situation"]}>
+            <MaquetteSituation key={currentQ} situation={q.situation} colored={revealed[currentQ]} />
+          </div>
+        )}
         <div className={styles["q-text"]}>{q.text}</div>
 
         <div className={styles.answers}>

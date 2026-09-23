@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Verkeerssituaties 1-20 (v5: strikte standaardisatie)</title>
+<style>
+  body { background:#faf9f7; font-family: sans-serif; padding: 24px; color:#1f2937; }
+  h1 { text-align:center; }
+  .note { max-width:460px; margin:0 auto 32px auto; font-size:13px; color:#6b7280; text-align:center; }
+  .situatie { max-width: 460px; margin: 0 auto 48px auto; border-bottom: 1px solid #e5e3de; padding-bottom: 24px; }
+  .situatie h2 { text-align:center; margin-bottom:4px; }
+  .situatie .type { text-align:center; font-size:13px; color:#6b7280; margin-bottom:10px; }
+  svg { width:100%; height:auto; display:block; }
+  .curb { stroke:#8b8b83; stroke-width:0.5; }
+  .center { stroke:#b8b6ad; stroke-width:0.5; stroke-dasharray:6 5; }
+  .bike { fill:#3b82f6; opacity:0.12; }
+  .sb { font-size:12px; fill:#6b7280; text-anchor:middle; }
+  .lbl { font-size:12px; fill:#1f2937; text-anchor:middle; }
+  .answer { text-align:center; margin-top:10px; font-size:14px; background:#fff7ec; border-radius:8px; padding:8px 12px; }
+</style>
+</head>
+<body>
+<h1>Verkeerssituaties 1&ndash;20 (v5)</h1>
+<div class="note">Strikte standaardisatie: auto (220/40 noord, 180/226 zuid), fietser (r=7, cy=60 noord / cy=240 zuid), afslagdiepte altijd 280 (oost) / 140 (west), rijstrook-rij 130/170 (rijbaan) of 100/200 (fietspad), &plusmn;6 verschuiving bij gedeelde rijstrook.</div>
+
+<!-- ============ SITUATIE 1 ============ -->
+<div class="situatie">
+<h2>Situatie 1</h2><div class="type">Uitgewerkt</div>
+<svg viewBox="0 0 380 300">
+<defs><marker id="ag1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker></defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="270" y1="30" x2="270" y2="90"/>
+<line class="curb" x1="150" y1="210" x2="150" y2="270"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="230" y="34">1</text>
+<line x1="230" y1="78" x2="230" y2="215" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag1)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="190" y="270">2</text>
+<line x1="190" y1="222" x2="190" y2="85" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag1)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 1 + 2</strong></div>
+</div>
+
+<!-- ============ SITUATIE 2 ============ -->
+<div class="situatie">
+<h2>Situatie 2</h2><div class="type">Oefening</div>
+<svg viewBox="0 0 380 300">
+<defs><marker id="ag2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker></defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="270" y1="30" x2="270" y2="90"/>
+<line class="curb" x1="150" y1="210" x2="150" y2="270"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,130 L280,130" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag2)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="190" y="270">2</text>
+<line x1="190" y1="222" x2="190" y2="85" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag2)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 1 + 2</strong></div>
+</div>
+
+<!-- ============ SITUATIE 3 ============ -->
+<div class="situatie">
+<h2>Situatie 3</h2><div class="type">Oefening</div>
+<svg viewBox="0 0 380 300">
+<defs><marker id="ag3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker></defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="270" y1="30" x2="270" y2="90"/>
+<line class="curb" x1="150" y1="210" x2="150" y2="270"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,130 L280,130" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag3)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="190" y="270">2</text>
+<path d="M190,222 L190,170 L140,170" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag3)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 1 + 2</strong></div>
+</div>
+
+<!-- ============ SITUATIE 4 ============ -->
+<div class="situatie">
+<h2>Situatie 4</h2><div class="type">Uitgewerkt</div>
+<svg viewBox="0 0 380 300">
+<defs>
+<marker id="ag4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker>
+<marker id="aa4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
+</defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="270" y1="30" x2="270" y2="90"/>
+<line class="curb" x1="150" y1="210" x2="150" y2="270"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#d97706"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,170 L140,170" fill="none" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa4)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="190" y="270">2</text>
+<line x1="190" y1="222" x2="190" y2="85" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag4)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 2, dan 1</strong></div>
+</div>
+
+<!-- ============ SITUATIE 5 ============ -->
+<div class="situatie">
+<h2>Situatie 5</h2><div class="type">Oefening (Goudenregel)</div>
+<svg viewBox="0 0 380 300">
+<defs>
+<marker id="ag5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker>
+<marker id="aa5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
+</defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="270" y1="30" x2="270" y2="90"/>
+<line class="curb" x1="150" y1="210" x2="150" y2="270"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,124 L280,124" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag5)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#d97706"/><text class="lbl" x="190" y="270">2</text>
+<path d="M190,222 L190,136 L280,136" fill="none" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa5)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 1, dan 2</strong></div>
+</div>
+
+<!-- ============ SITUATIE 6 ============ -->
+<div class="situatie">
+<h2>Situatie 6</h2><div class="type">Oefening (Goudenregel)</div>
+<svg viewBox="0 0 380 300">
+<defs>
+<marker id="ag6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker>
+<marker id="aa6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
+</defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="270" y1="30" x2="270" y2="90"/>
+<line class="curb" x1="150" y1="210" x2="150" y2="270"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<circle cx="258" cy="60" r="7" fill="#16a34a"/><text class="lbl" x="258" y="44">f</text>
+<line x1="258" y1="67" x2="258" y2="215" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag6)"/>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#d97706"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,170 L140,170" fill="none" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa6)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="190" y="270">2</text>
+<line x1="190" y1="222" x2="190" y2="85" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag6)"/>
+</svg>
+<div class="answer"><strong>Oplossing: f + 2 (tegelijk), dan 1</strong></div>
+</div>
+
+<!-- ============ SITUATIE 7 ============ -->
+<div class="situatie">
+<h2>Situatie 7</h2><div class="type">Oefening (Goudenregel)</div>
+<svg viewBox="0 0 380 300">
+<defs>
+<marker id="ag7" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker>
+<marker id="aa7" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
+</defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="270" y1="30" x2="270" y2="90"/>
+<line class="curb" x1="150" y1="210" x2="150" y2="270"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<circle cx="258" cy="60" r="7" fill="#16a34a"/><text class="lbl" x="258" y="44">f</text>
+<path d="M258,67 L258,100 L280,100" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag7)"/>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#d97706"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,170 L140,170" fill="none" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa7)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="190" y="270">2</text>
+<line x1="190" y1="222" x2="190" y2="85" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag7)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 2, dan 1. f mag altijd rijden.</strong></div>
+</div>
+
+<!-- ============ SITUATIE 8 ============ -->
+<div class="situatie">
+<h2>Situatie 8</h2><div class="type">Oefening (Goudenregel)</div>
+<svg viewBox="0 0 380 300">
+<defs>
+<marker id="ag8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker>
+<marker id="aa8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
+</defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="270" y1="30" x2="270" y2="90"/>
+<line class="curb" x1="150" y1="210" x2="150" y2="270"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<circle cx="258" cy="60" r="7" fill="#16a34a"/><text class="lbl" x="258" y="44">f</text>
+<line x1="258" y1="67" x2="258" y2="215" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag8)"/>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#d97706"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,164 L140,164" fill="none" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa8)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="190" y="270">2</text>
+<path d="M190,222 L190,176 L140,176" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag8)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 2, dan 1. f mag altijd rijden.</strong></div>
+</div>
+
+<!-- ============ SITUATIE 9 ============ -->
+<div class="situatie">
+<h2>Situatie 9</h2><div class="type">Oefening (Goudenregel)</div>
+<svg viewBox="0 0 380 300">
+<defs>
+<marker id="ag9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker>
+<marker id="aa9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
+</defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="270" y1="30" x2="270" y2="90"/>
+<line class="curb" x1="150" y1="210" x2="150" y2="270"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<circle cx="258" cy="60" r="7" fill="#16a34a"/><text class="lbl" x="258" y="44">f</text>
+<path d="M258,67 L258,100 L280,100" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag9)"/>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#d97706"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,164 L140,164" fill="none" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa9)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="190" y="270">2</text>
+<path d="M190,222 L190,176 L140,176" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag9)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 2, dan 1. f mag altijd rijden.</strong></div>
+</div>
+
+<!-- ============ SITUATIE 10 ============ -->
+<div class="situatie">
+<h2>Situatie 10</h2><div class="type">Oefening</div>
+<svg viewBox="0 0 380 300">
+<defs>
+<marker id="ag10" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker>
+<marker id="aa10" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
+</defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="270" y1="30" x2="270" y2="90"/>
+<line class="curb" x1="150" y1="210" x2="150" y2="270"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<circle cx="258" cy="60" r="7" fill="#16a34a"/><text class="lbl" x="258" y="44">f</text>
+<line x1="258" y1="67" x2="258" y2="215" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag10)"/>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#d97706"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,130 L280,130" fill="none" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa10)"/>
+</svg>
+<div class="answer"><strong>Oplossing: f, dan 1</strong></div>
+</div>
+
+<!-- ============ SITUATIE 11 ============ -->
+<div class="situatie">
+<h2>Situatie 11</h2><div class="type">Oefening</div>
+<svg viewBox="0 0 380 300">
+<defs>
+<marker id="ag11" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker>
+<marker id="aa11" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
+</defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="270" y1="30" x2="270" y2="90"/>
+<line class="curb" x1="150" y1="210" x2="150" y2="270"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<circle cx="258" cy="60" r="7" fill="#d97706"/><text class="lbl" x="258" y="44">f</text>
+<path d="M258,72 L258,200 L140,200" fill="none" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa11)"/>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,130 L280,130" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag11)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 1, dan f</strong></div>
+</div>
+
+<!-- ============ SITUATIE 12 (shared car lane, offset rows) ============ -->
+<div class="situatie">
+<h2>Situatie 12</h2><div class="type">Oefening (Z.R.P.)</div>
+<svg viewBox="0 0 380 300">
+<defs><marker id="ag12" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker></defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="150" y1="210" x2="150" y2="270"/>
+<line class="curb" x1="270" y1="30" x2="270" y2="90"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,130 L280,130" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag12)"/>
+<circle cx="258" cy="60" r="7" fill="#16a34a"/><text class="lbl" x="258" y="44">f</text>
+<path d="M258,67 L258,100 L280,100" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag12)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 1 + f</strong></div>
+</div>
+
+<!-- ============ SITUATIE 13 (separate lanes, no offset needed) ============ -->
+<div class="situatie">
+<h2>Situatie 13</h2><div class="type">Oefening (M.R.P.)</div>
+<svg viewBox="0 0 380 300">
+<defs><marker id="ag13" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker></defs>
+<rect class="bike" x="270" y="90" width="90" height="20"/><rect class="bike" x="270" y="190" width="90" height="20"/>
+<rect class="bike" x="20" y="90" width="130" height="20"/><rect class="bike" x="20" y="190" width="130" height="20"/>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="150" y1="210" x2="150" y2="270"/>
+<line class="curb" x1="270" y1="30" x2="270" y2="90"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="110" x2="150" y2="110"/><line class="curb" x1="270" y1="110" x2="360" y2="110"/>
+<line class="curb" x1="20" y1="190" x2="150" y2="190"/><line class="curb" x1="270" y1="190" x2="360" y2="190"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,130 L280,130" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag13)"/>
+<circle cx="258" cy="60" r="7" fill="#16a34a"/><text class="lbl" x="258" y="44">f</text>
+<path d="M258,67 L258,100 L280,100" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag13)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 1 + f</strong></div>
+</div>
+
+<!-- ============ SITUATIE 14 (shared car lane, offset rows) ============ -->
+<div class="situatie">
+<h2>Situatie 14</h2><div class="type">Oefening (Z.R.P.)</div>
+<svg viewBox="0 0 380 300">
+<defs><marker id="ag14" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker></defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="150" y1="210" x2="150" y2="270"/>
+<line class="curb" x1="270" y1="30" x2="270" y2="90"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,170 L140,170" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag14)"/>
+<circle cx="258" cy="60" r="7" fill="#16a34a"/><text class="lbl" x="258" y="44">f</text>
+<path d="M258,67 L258,200 L140,200" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag14)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 1 + f</strong></div>
+</div>
+
+<!-- ============ SITUATIE 15 (separate lanes, no offset needed) ============ -->
+<div class="situatie">
+<h2>Situatie 15</h2><div class="type">Oefening (M.R.P.)</div>
+<svg viewBox="0 0 380 300">
+<defs><marker id="ag15" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker></defs>
+<rect class="bike" x="270" y="90" width="90" height="20"/><rect class="bike" x="270" y="190" width="90" height="20"/>
+<rect class="bike" x="20" y="90" width="130" height="20"/><rect class="bike" x="20" y="190" width="130" height="20"/>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="150" y1="210" x2="150" y2="270"/>
+<line class="curb" x1="270" y1="30" x2="270" y2="90"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="110" x2="150" y2="110"/><line class="curb" x1="270" y1="110" x2="360" y2="110"/>
+<line class="curb" x1="20" y1="190" x2="150" y2="190"/><line class="curb" x1="270" y1="190" x2="360" y2="190"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,170 L140,170" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag15)"/>
+<circle cx="258" cy="60" r="7" fill="#16a34a"/><text class="lbl" x="258" y="44">f</text>
+<path d="M258,67 L258,200 L140,200" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag15)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 1 + f</strong></div>
+</div>
+
+<!-- ============ SITUATIE 16 ============ -->
+<div class="situatie">
+<h2>Situatie 16</h2><div class="type">Oefening</div>
+<svg viewBox="0 0 380 300">
+<defs><marker id="ag16" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker></defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="270" y1="30" x2="270" y2="90"/>
+<line class="curb" x1="150" y1="210" x2="150" y2="270"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="40" y="120" width="34" height="20" rx="3" fill="#16a34a"/><text class="lbl" x="57" y="115">1</text>
+<path d="M78,130 L230,130 L230,215" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag16)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="190" y="270">2</text>
+<path d="M190,222 L190,170 L140,170" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag16)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 1 + 2</strong></div>
+</div>
+
+<!-- ============ SITUATIE 17 (shared car lane, offset rows) ============ -->
+<div class="situatie">
+<h2>Situatie 17</h2><div class="type">Uitgewerkt</div>
+<svg viewBox="0 0 380 300">
+<defs>
+<marker id="ag17" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker>
+<marker id="aa17" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
+</defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="150" y1="210" x2="150" y2="270"/>
+<line class="curb" x1="270" y1="30" x2="270" y2="90"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#d97706"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,170 L140,170" fill="none" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa17)"/>
+<circle cx="258" cy="60" r="7" fill="#d97706"/><text class="lbl" x="258" y="44">f</text>
+<path d="M258,67 L258,200 L140,200" fill="none" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa17)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="190" y="270">2</text>
+<line x1="190" y1="222" x2="190" y2="85" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag17)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 2, dan 1 en f (tegelijk)</strong></div>
+</div>
+
+<!-- ============ SITUATIE 18 (car1+car2 share car lane, f separate in bike lane) ============ -->
+<div class="situatie">
+<h2>Situatie 18</h2><div class="type">Uitgewerkt</div>
+<svg viewBox="0 0 380 300">
+<defs>
+<marker id="ag18" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker>
+<marker id="aa18" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
+</defs>
+<rect class="bike" x="270" y="90" width="90" height="20"/><rect class="bike" x="270" y="190" width="90" height="20"/>
+<rect class="bike" x="20" y="90" width="130" height="20"/><rect class="bike" x="20" y="190" width="130" height="20"/>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="150" y1="210" x2="150" y2="270"/>
+<line class="curb" x1="270" y1="30" x2="270" y2="90"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="110" x2="150" y2="110"/><line class="curb" x1="270" y1="110" x2="360" y2="110"/>
+<line class="curb" x1="20" y1="190" x2="150" y2="190"/><line class="curb" x1="270" y1="190" x2="360" y2="190"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#d97706"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,164 L140,164" fill="none" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa18)"/>
+<circle cx="258" cy="60" r="7" fill="#16a34a"/><text class="lbl" x="258" y="44">f</text>
+<path d="M258,67 L258,200 L140,200" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag18)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="190" y="270">2</text>
+<path d="M190,222 L190,176 L140,176" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag18)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 2, dan 1 en f (tegelijk)</strong></div>
+</div>
+
+<!-- ============ SITUATIE 19 (car1+f2 share car lane at west) ============ -->
+<div class="situatie">
+<h2>Situatie 19</h2><div class="type">Oefening (4 weggebruikers)</div>
+<svg viewBox="0 0 380 300">
+<defs>
+<marker id="ag19" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker>
+<marker id="aa19" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
+</defs>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="150" y1="210" x2="150" y2="270"/>
+<line class="curb" x1="270" y1="30" x2="270" y2="90"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="230" y="34">1</text>
+<path d="M230,78 L230,170 L140,170" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag19)"/>
+<circle cx="258" cy="60" r="7" fill="#16a34a"/><text class="lbl" x="258" y="44">f1</text>
+<line x1="258" y1="67" x2="258" y2="215" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag19)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#d97706"/><text class="lbl" x="190" y="270">2</text>
+<line x1="190" y1="222" x2="190" y2="85" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa19)"/>
+<circle cx="162" cy="240" r="7" fill="#16a34a"/><text class="lbl" x="162" y="256">f2</text>
+<path d="M162,233 L162,200 L140,200" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag19)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 1, dan 2. f1 en f2 mogen altijd rijden.</strong></div>
+</div>
+
+<!-- ============ SITUATIE 20 ============ -->
+<div class="situatie">
+<h2>Situatie 20</h2><div class="type">Oefening (4 weggebruikers)</div>
+<svg viewBox="0 0 380 300">
+<defs>
+<marker id="ag20" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5"/></marker>
+<marker id="aa20" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
+</defs>
+<rect class="bike" x="270" y="90" width="90" height="20"/><rect class="bike" x="270" y="190" width="90" height="20"/>
+<rect class="bike" x="20" y="90" width="130" height="20"/><rect class="bike" x="20" y="190" width="130" height="20"/>
+<line class="curb" x1="150" y1="30" x2="150" y2="90"/><line class="curb" x1="150" y1="210" x2="150" y2="270"/>
+<line class="curb" x1="270" y1="30" x2="270" y2="90"/><line class="curb" x1="270" y1="210" x2="270" y2="270"/>
+<line class="curb" x1="20" y1="90" x2="150" y2="90"/><line class="curb" x1="270" y1="90" x2="360" y2="90"/>
+<line class="curb" x1="20" y1="110" x2="150" y2="110"/><line class="curb" x1="270" y1="110" x2="360" y2="110"/>
+<line class="curb" x1="20" y1="190" x2="150" y2="190"/><line class="curb" x1="270" y1="190" x2="360" y2="190"/>
+<line class="curb" x1="20" y1="210" x2="150" y2="210"/><line class="curb" x1="270" y1="210" x2="360" y2="210"/>
+<line class="center" x1="210" y1="30" x2="210" y2="90"/><line class="center" x1="210" y1="210" x2="210" y2="270"/>
+<line class="center" x1="20" y1="150" x2="150" y2="150"/><line class="center" x1="270" y1="150" x2="360" y2="150"/>
+<text class="sb" x="210" y="150">S/B</text>
+<rect x="220" y="40" width="20" height="34" rx="3" fill="#16a34a"/><text class="lbl" x="230" y="34">1</text>
+<line x1="230" y1="78" x2="230" y2="215" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag20)"/>
+<circle cx="258" cy="60" r="7" fill="#16a34a"/><text class="lbl" x="258" y="44">f1</text>
+<path d="M258,67 L258,100 L280,100" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag20)"/>
+<rect x="180" y="226" width="20" height="34" rx="3" fill="#d97706"/><text class="lbl" x="190" y="270">2</text>
+<path d="M190,222 L190,130 L280,130" fill="none" stroke="#d97706" stroke-width="1.5" marker-end="url(#aa20)"/>
+<circle cx="162" cy="240" r="7" fill="#16a34a"/><text class="lbl" x="162" y="256">f2</text>
+<path d="M162,233 L162,200 L140,200" fill="none" stroke="#16a34a" stroke-width="1.5" marker-end="url(#ag20)"/>
+</svg>
+<div class="answer"><strong>Oplossing: 1, dan 2. f1 en f2 mogen altijd rijden.</strong></div>
+</div>
+
+</body>
+</html>

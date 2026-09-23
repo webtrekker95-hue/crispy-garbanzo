@@ -50,6 +50,10 @@
 .q-dot.pending { background: var(--gray-200); }
 
 /* QUESTION CARD */
+.worked-example { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--gray-100); }
+.situation-title { font-family: var(--font-sora), sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--navy); margin: 0 0 12px; }
+.situation-solution { text-align: center; font-weight: 700; color: var(--navy); background: #fff7ec; border-radius: 8px; padding: 8px 12px; margin: 12px auto 14px; max-width: 460px; }
+.q-situation { margin-bottom: 20px; }
 .question-card { background: var(--white); border-radius: 20px; padding: 36px; border: 1px solid var(--gray-200); box-shadow: var(--shadow); margin-bottom: 20px; }
 .q-number { display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 166, 35, 0.1); color: var(--amber-text); font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 100px; margin-bottom: 16px; }
 .q-text { font-family: var(--font-sora), sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--navy); line-height: 1.4; margin-bottom: 28px; }

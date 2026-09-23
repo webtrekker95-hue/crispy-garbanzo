@@ -3,11 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./lesson.module.css";
+import { MaquetteSituation } from "@/components/maquette-situation";
+import type { Situation } from "@/lib/maquette";
 
 export function TextLessonView({
   lessonId,
   title,
   body,
+  examples,
   isVideo,
   alreadyComplete,
   nextHref,
@@ -16,6 +19,7 @@ export function TextLessonView({
   lessonId: string;
   title: string;
   body: string;
+  examples?: { situation: Situation; solution: string; explanation: string }[];
   isVideo: boolean;
   alreadyComplete: boolean;
   nextHref: string | null;
@@ -39,6 +43,14 @@ export function TextLessonView({
     <div className={styles["text-card"]}>
       <h1 className={styles["text-title"]}>{title}</h1>
       <div className={styles["text-body"]} dangerouslySetInnerHTML={{ __html: body }} />
+      {examples?.map(({ situation, solution, explanation }) => (
+        <div key={situation.number} className={styles["worked-example"]}>
+          <h2 className={styles["situation-title"]}>Situatie {situation.number} — uitgewerkt</h2>
+          <MaquetteSituation situation={situation} colored />
+          <div className={styles["situation-solution"]}>Oplossing: {solution}</div>
+          <p className={styles["text-body"]} dangerouslySetInnerHTML={{ __html: explanation }} />
+        </div>
+      ))}
       {isVideo && (
         <div className={styles["video-placeholder"]}>
           🎬 Video content coming soon — this lesson will include an embedded instructional video.
