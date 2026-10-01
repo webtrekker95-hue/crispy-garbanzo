@@ -98,28 +98,34 @@ export function BookingWizard({ packages, instructors }: { packages: Pkg[]; inst
     setSubmitting(true);
     setError(null);
 
-    const res = await fetch("/api/bookings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        packageId,
-        instructorId,
-        date: dateStr,
-        timeSlot,
-        paymentMethod: payment,
-      }),
-    });
+    try {
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          packageId,
+          instructorId,
+          date: dateStr,
+          timeSlot,
+          paymentMethod: payment,
+        }),
+      });
 
-    const data = await res.json();
-    setSubmitting(false);
+      // A crashed route answers with a non-JSON error page.
+      const data = await res.json().catch(() => null);
 
-    if (!res.ok) {
-      setError(data.error ?? "Something went wrong. Please try again.");
-      return;
+      if (!res.ok || !data?.booking) {
+        setError(data?.error ?? "Something went wrong. Please try again.");
+        return;
+      }
+
+      setConfirmedBooking(data.booking);
+      goStep(6);
+    } catch {
+      setError("We couldn't reach the server. Please check your connection and try again.");
+    } finally {
+      setSubmitting(false);
     }
-
-    setConfirmedBooking(data.booking);
-    goStep(6);
   }
 
   const monthCells = useMemo(() => {

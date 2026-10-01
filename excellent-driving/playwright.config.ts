@@ -1,11 +1,17 @@
+import { existsSync } from "node:fs";
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * This sandbox has no internet access for Playwright's own browser
- * downloads, so tests run against the system Chromium already installed
- * for the maquette-verification skill (.claude/skills/run) instead of a
- * Playwright-managed browser binary.
+ * Some sandboxes have no internet access for Playwright's own browser
+ * downloads, so tests prefer a system Chromium when one is installed
+ * (see .claude/skills/run). Set PLAYWRIGHT_CHROMIUM_PATH to point at a
+ * different binary; with neither, Playwright's managed browser is used
+ * (`npx playwright install chromium`).
  */
+const systemChromium = "/usr/bin/chromium";
+const chromiumPath =
+  process.env.PLAYWRIGHT_CHROMIUM_PATH ?? (existsSync(systemChromium) ? systemChromium : undefined);
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,
@@ -17,7 +23,7 @@ export default defineConfig({
     baseURL: "http://localhost:3000",
     trace: "retain-on-failure",
     launchOptions: {
-      executablePath: "/usr/bin/chromium",
+      executablePath: chromiumPath,
       args: ["--no-sandbox"],
     },
   },
