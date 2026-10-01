@@ -19,9 +19,9 @@ export async function POST(request: Request) {
   const parsed = moduleSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Please check the module details." }, { status: 400 });
 
-  const module = await prisma.module.create({
+  const created = await prisma.module.create({
     data: { ...parsed.data, isPublished: parsed.data.isPublished ?? false },
     include: { lessons: true },
   });
-  return NextResponse.json({ module }, { status: 201 });
+  return NextResponse.json({ module: created }, { status: 201 });
 }

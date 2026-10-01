@@ -459,7 +459,7 @@ async function main() {
   ];
 
   for (const mod of moduleSeeds) {
-    const module = await prisma.module.upsert({
+    const seeded = await prisma.module.upsert({
       where: { id: mod.id },
       // Keep existing rows in step when a module is inserted before them.
       update: { orderIndex: mod.orderIndex },
@@ -475,11 +475,11 @@ async function main() {
     for (let i = 0; i < mod.lessons.length; i++) {
       const lesson = mod.lessons[i];
       await prisma.lesson.upsert({
-        where: { id: `${module.id}-lesson-${i + 1}` },
+        where: { id: `${seeded.id}-lesson-${i + 1}` },
         update: {},
         create: {
-          id: `${module.id}-lesson-${i + 1}`,
-          moduleId: module.id,
+          id: `${seeded.id}-lesson-${i + 1}`,
+          moduleId: seeded.id,
           title: lesson.title,
           type: lesson.type,
           content: lesson.content,

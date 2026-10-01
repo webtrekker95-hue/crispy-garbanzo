@@ -20,6 +20,6 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const parsed = moduleSchema.partial().safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Please check the module details." }, { status: 400 });
 
-  const module = await prisma.module.update({ where: { id }, data: parsed.data, include: { lessons: true } });
-  return NextResponse.json({ module });
+  const updated = await prisma.module.update({ where: { id }, data: parsed.data, include: { lessons: true } });
+  return NextResponse.json({ module: updated });
 }

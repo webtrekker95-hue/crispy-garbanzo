@@ -78,7 +78,6 @@ export function BookingsList({ initial }: { initial: BookingRow[] }) {
     setBookings((list) => list.map((b) => (b.id === id ? { ...b, status: "CANCELLED", canCancel: false } : b)));
   }
 
-  const now = Date.now();
   const upcoming = bookings.filter((b) => b.status !== "CANCELLED" && new Date(b.date).getTime() >= new Date().setUTCHours(0, 0, 0, 0));
   const history = bookings.filter((b) => !upcoming.includes(b));
 

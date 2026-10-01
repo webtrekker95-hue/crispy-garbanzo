@@ -6,6 +6,7 @@ import styles from "./booking.module.css";
 
 type Pkg = { id: string; nameEn: string; price: number };
 type Instructor = { id: string; name: string; yearsExperience: number | null; availableDays: string };
+type ConfirmedBooking = { timeSlot: string; package: { nameEn: string }; instructor: { user: { name: string } } };
 
 const stepLabels = ["Package", "Instructor", "Date", "Time Slot", "Payment"];
 const monthNames = [
@@ -44,7 +45,7 @@ export function BookingWizard({ packages, instructors }: { packages: Pkg[]; inst
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [confirmedBooking, setConfirmedBooking] = useState<any>(null);
+  const [confirmedBooking, setConfirmedBooking] = useState<ConfirmedBooking | null>(null);
 
   const selectedPackage = packages.find((p) => p.id === packageId);
   const selectedInstructor = instructors.find((i) => i.id === instructorId);

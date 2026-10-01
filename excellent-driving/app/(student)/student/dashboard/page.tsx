@@ -16,6 +16,16 @@ function greetingKey(): "goodMorning" | "goodAfternoon" | "goodEvening" {
   return "goodEvening";
 }
 
+function timeAgo(date: Date) {
+  const diffMs = Date.now() - date.getTime();
+  const hours = Math.floor(diffMs / (1000 * 60 * 60));
+  if (hours < 1) return "Just now";
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days === 1) return "Yesterday";
+  return `${days}d ago`;
+}
+
 export default async function StudentDashboardPage() {
   const t = await getTranslations("Dashboard");
   const session = await getServerSession(authOptions);
@@ -70,16 +80,6 @@ export default async function StudentDashboardPage() {
   ]
     .sort((a, b) => b.time.getTime() - a.time.getTime())
     .slice(0, 5);
-
-  function timeAgo(date: Date) {
-    const diffMs = Date.now() - date.getTime();
-    const hours = Math.floor(diffMs / (1000 * 60 * 60));
-    if (hours < 1) return "Just now";
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    if (days === 1) return "Yesterday";
-    return `${days}d ago`;
-  }
 
   return (
     <>
