@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getStudentModuleStates, getStudentDashboardStats } from "@/lib/progress";
 import styles from "./dashboard.module.css";
+import shell from "../../student-shell.module.css";
 
 const moduleIcons = ["📖", "🚦", "🛣️", "🚗", "🏁"];
 
@@ -133,12 +134,12 @@ export default async function StudentDashboardPage() {
       </div>
 
       <div className={styles["grid-3-1"]}>
-        <div className={styles.card}>
-          <div className={styles["card-header"]}>
-            <div className={styles["card-title"]}>{t("courseProgress")}</div>
-            <Link className={styles["card-action"]} href="/student/learn">{t("viewAllModules")} →</Link>
+        <div className={shell.card}>
+          <div className={shell["card-header"]}>
+            <div className={shell["card-title"]}>{t("courseProgress")}</div>
+            <Link className={shell["card-action"]} href="/student/learn">{t("viewAllModules")} →</Link>
           </div>
-          <div className={styles["card-body"]}>
+          <div className={shell["card-body"]}>
             {moduleStates.map((m, i) => {
               const statusLabel = m.complete ? "Done" : !m.unlocked ? "Locked" : m.completedCount > 0 ? "In Progress" : "Not Started";
               const statusClass = m.complete ? styles["status-done"] : !m.unlocked ? styles["status-locked"] : styles["status-progress"];
@@ -170,12 +171,12 @@ export default async function StudentDashboardPage() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          <div className={styles.card}>
-            <div className={styles["card-header"]}>
-              <div className={styles["card-title"]}>{t("nextLesson")}</div>
-              <Link className={styles["card-action"]} href="/student/bookings">{t("viewAll")}</Link>
+          <div className={shell.card}>
+            <div className={shell["card-header"]}>
+              <div className={shell["card-title"]}>{t("nextLesson")}</div>
+              <Link className={shell["card-action"]} href="/student/bookings">{t("viewAll")}</Link>
             </div>
-            <div className={styles["card-body"]} style={{ padding: 16 }}>
+            <div className={shell["card-body"]} style={{ padding: 16 }}>
               {nextBooking ? (
                 <div className={styles["booking-card"]}>
                   <div className={styles["booking-date-box"]}>
@@ -201,11 +202,11 @@ export default async function StudentDashboardPage() {
             </div>
           </div>
 
-          <div className={styles.card}>
-            <div className={styles["card-header"]}>
-              <div className={styles["card-title"]}>{t("quickLinks")}</div>
+          <div className={shell.card}>
+            <div className={shell["card-header"]}>
+              <div className={shell["card-title"]}>{t("quickLinks")}</div>
             </div>
-            <div className={styles["card-body"]} style={{ padding: 16 }}>
+            <div className={shell["card-body"]} style={{ padding: 16 }}>
               <div className={styles["quick-links"]}>
                 <Link className={styles["quick-link"]} href="/student/learn">
                   <span className={styles["quick-link-icon"]} aria-hidden="true">🎓</span> {t("takeAQuiz")}
@@ -225,11 +226,11 @@ export default async function StudentDashboardPage() {
         </div>
       </div>
 
-      <div className={styles.card}>
-        <div className={styles["card-header"]}>
-          <div className={styles["card-title"]}>{t("recentActivity")}</div>
+      <div className={shell.card}>
+        <div className={shell["card-header"]}>
+          <div className={shell["card-title"]}>{t("recentActivity")}</div>
         </div>
-        <div className={styles["card-body"]}>
+        <div className={shell["card-body"]}>
           {activity.length === 0 ? (
             <div className={styles["empty-state"]}>No activity yet — start a lesson or book a driving session to get going.</div>
           ) : (
