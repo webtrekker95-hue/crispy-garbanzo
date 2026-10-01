@@ -6,6 +6,7 @@ import styles from "./booking.module.css";
 
 type Pkg = { id: string; nameEn: string; price: number };
 type Instructor = { id: string; name: string; yearsExperience: number | null; availableDays: string };
+type Slot = { label: string; booked: boolean };
 type ConfirmedBooking = { timeSlot: string; package: { nameEn: string }; instructor: { user: { name: string } } };
 
 const stepLabels = ["Package", "Instructor", "Date", "Time Slot", "Payment"];
@@ -39,8 +40,7 @@ export function BookingWizard({ packages, instructors }: { packages: Pkg[]; inst
   const [calMonth, setCalMonth] = useState(today.getMonth());
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
-  const [slots, setSlots] = useState<{ label: string; booked: boolean }[]>([]);
-  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [slotsResult, setSlotsResult] = useState<{ key: string; slots: Slot[] } | null>(null);
   const [timeSlot, setTimeSlot] = useState<string | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
@@ -54,18 +54,39 @@ export function BookingWizard({ packages, instructors }: { packages: Pkg[]; inst
     ? `${dayNamesFull[new Date(calYear, calMonth, selectedDay).getDay()]}, ${monthNames[calMonth].slice(0, 3)} ${selectedDay}`
     : null;
 
+  // Slots belong to one instructor + date; anything fetched for another
+  // combination is treated as not loaded yet.
+  const slotsKey = instructorId && dateStr ? `${instructorId}|${dateStr}` : null;
+  const slotsLoaded = slotsKey !== null && slotsResult?.key === slotsKey;
+  const slots = slotsLoaded ? slotsResult.slots : [];
+  const slotsLoading = slotsKey !== null && !slotsLoaded;
+
   useEffect(() => {
-    setTimeSlot(null);
-    if (!instructorId || !dateStr) {
-      setSlots([]);
-      return;
-    }
-    setSlotsLoading(true);
+    if (!slotsKey) return;
+    let ignore = false;
     fetch(`/api/bookings/slots?instructorId=${instructorId}&date=${dateStr}`)
       .then((res) => res.json())
-      .then((data) => setSlots(data.slots ?? []))
-      .finally(() => setSlotsLoading(false));
-  }, [instructorId, dateStr]);
+      .then((data) => {
+        if (!ignore) setSlotsResult({ key: slotsKey, slots: data.slots ?? [] });
+      })
+      .catch(() => {
+        if (!ignore) setSlotsResult({ key: slotsKey, slots: [] });
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [slotsKey, instructorId, dateStr]);
+
+  // A chosen time slot is only valid for the instructor and date it was picked for.
+  function selectInstructor(id: string) {
+    if (id !== instructorId) setTimeSlot(null);
+    setInstructorId(id);
+  }
+
+  function selectDay(day: number | null) {
+    if (day !== selectedDay) setTimeSlot(null);
+    setSelectedDay(day);
+  }
 
   function goStep(n: number) {
     setStep(n);
@@ -199,8 +220,8 @@ export function BookingWizard({ packages, instructors }: { packages: Pkg[]; inst
                       role="button"
                       tabIndex={0}
                       className={`${styles["instructor-option"]}${inst.id === instructorId ? ` ${styles.selected}` : ""}`}
-                      onClick={() => setInstructorId(inst.id)}
-                      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setInstructorId(inst.id)}
+                      onClick={() => selectInstructor(inst.id)}
+                      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && selectInstructor(inst.id)}
                     >
                       <div className={styles["inst-avatar"]} aria-hidden="true">👤</div>
                       <div className={styles["inst-name"]}>{inst.name}</div>
@@ -232,7 +253,7 @@ export function BookingWizard({ packages, instructors }: { packages: Pkg[]; inst
                       onClick={() => {
                         setCalMonth((m) => (m === 0 ? 11 : m - 1));
                         if (calMonth === 0) setCalYear((y) => y - 1);
-                        setSelectedDay(null);
+                        selectDay(null);
                       }}
                       aria-label="Previous month"
                     >
@@ -244,7 +265,7 @@ export function BookingWizard({ packages, instructors }: { packages: Pkg[]; inst
                       onClick={() => {
                         setCalMonth((m) => (m === 11 ? 0 : m + 1));
                         if (calMonth === 11) setCalYear((y) => y + 1);
-                        setSelectedDay(null);
+                        selectDay(null);
                       }}
                       aria-label="Next month"
                     >
@@ -272,9 +293,9 @@ export function BookingWizard({ packages, instructors }: { packages: Pkg[]; inst
                           className={`${styles["cal-day"]} ${kindClasses}${isSelected ? ` ${styles.selected}` : ""}`}
                           role={clickable ? "button" : undefined}
                           tabIndex={clickable ? 0 : undefined}
-                          onClick={() => clickable && setSelectedDay(cell.day)}
+                          onClick={() => clickable && selectDay(cell.day)}
                           onKeyDown={(e) =>
-                            clickable && (e.key === "Enter" || e.key === " ") && setSelectedDay(cell.day)
+                            clickable && (e.key === "Enter" || e.key === " ") && selectDay(cell.day)
                           }
                         >
                           {cell.day}

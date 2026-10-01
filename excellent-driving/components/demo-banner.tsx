@@ -11,6 +11,9 @@ export function DemoBanner() {
 
   useEffect(() => {
     try {
+      // localStorage only exists in the browser, so this has to be read after
+      // the first render; starting hidden and syncing here is intentional.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDismissed(localStorage.getItem(DISMISS_KEY) === "1");
     } catch {
       setDismissed(false);
