@@ -15,7 +15,6 @@ const chromiumPath =
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,
-  retries: 0,
   workers: 1,
   timeout: 90_000,
   reporter: [["list"]],
@@ -33,10 +32,13 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
+  // Tests run against a production build: `next dev` restarts itself when it
+  // nears its memory limit ("Server is approaching the used memory threshold,
+  // restarting..."), which drops whatever request a test has in flight.
   webServer: {
-    command: "npm run dev",
+    command: "npm run build && npm run start",
     url: "http://localhost:3000",
     reuseExistingServer: true,
-    timeout: 60_000,
+    timeout: 240_000,
   },
 });

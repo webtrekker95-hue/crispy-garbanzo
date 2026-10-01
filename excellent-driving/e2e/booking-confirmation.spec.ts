@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { registerStudent, uniqueEmail } from "./helpers";
+import { cancelBookingAsAdmin, confirmBooking, pickDayWithFreeSlot, registerStudent, uniqueEmail } from "./helpers";
 
 /**
  * Claude.md AGENT 10 scenario: "Book a lesson -> receive WhatsApp
@@ -17,6 +17,13 @@ import { registerStudent, uniqueEmail } from "./helpers";
  * lib/__tests__/whatsapp.test.ts with a mocked fetch/Resend, since that
  * is where it's actually observable without a live Meta Business account.
  */
+let bookingId: string | undefined;
+
+test.afterEach(async ({ browser }) => {
+  if (bookingId) await cancelBookingAsAdmin(browser, bookingId);
+  bookingId = undefined;
+});
+
 test("booking a lesson shows a correct confirmation (proxy for the server-side notification firing)", async ({ page }) => {
   const email = uniqueEmail("e2e-booking");
   await registerStudent(page, "Booking Confirm Test", email);
@@ -33,22 +40,15 @@ test("booking a lesson shows a correct confirmation (proxy for the server-side n
   await instructorCards.first().click();
   await page.getByRole("button", { name: "Continue →" }).click();
 
-  await page.locator('[class*="cal-day"][class*="available"]').first().click();
-  await page.getByRole("button", { name: "Continue →" }).click();
-  await page.waitForTimeout(500);
-
-  const slotButton = page.locator('button[class*="time-slot"]:not([class*="booked"])').first();
-  const timeSlot = (await slotButton.textContent())?.trim();
-  await slotButton.click();
+  const timeSlot = await pickDayWithFreeSlot(page);
   await page.getByRole("button", { name: "Continue →" }).click();
 
   await page.locator('[class*="pay-name"]', { hasText: "Bank Transfer" }).click();
-  await page.getByRole("button", { name: /Confirm Booking/ }).click();
+  bookingId = await confirmBooking(page);
 
-  await expect(page.getByText("Booking Confirmed!")).toBeVisible({ timeout: 10_000 });
   const details = page.locator('[class*="confirm-details"]');
   await expect(details).toContainText(packageName!);
   await expect(details).toContainText(instructorName!);
-  await expect(details).toContainText(timeSlot!);
+  await expect(details).toContainText(timeSlot);
   await expect(details).toContainText("Pending Payment");
 });

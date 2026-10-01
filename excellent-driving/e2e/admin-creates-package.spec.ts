@@ -64,7 +64,13 @@ test("a package created in the admin panel appears correctly on the public site 
     await loginAsAdmin(cleanupPage);
     await cleanupPage.goto("/admin/packages", { waitUntil: "networkidle" });
     const row = cleanupPage.locator("tr", { hasText: packageName });
-    await row.getByRole("button", { name: "Deactivate" }).click();
+    // Wait for the save: closing the context straight after the click
+    // aborts the request and leaves the test package live on the site.
+    const [deactivateRes] = await Promise.all([
+      cleanupPage.waitForResponse((r) => r.url().includes("/api/admin/packages/") && r.request().method() === "PATCH"),
+      row.getByRole("button", { name: "Deactivate" }).click(),
+    ]);
+    expect(deactivateRes.ok()).toBe(true);
     await cleanupContext.close();
   });
 });
