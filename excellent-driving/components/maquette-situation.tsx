@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { layoutSituation, MAQUETTE_COLORS, VIEWBOX, type Situation } from "@/lib/maquette";
+import { layoutSituation, MAQUETTE_COLORS, VIEWBOX, type RoadUser, type Situation } from "@/lib/maquette";
 
 const CURB = { stroke: "#8b8b83", strokeWidth: 0.5 };
 const CENTER = { stroke: "#b8b6ad", strokeWidth: 0.5, strokeDasharray: "6 5" };
@@ -19,18 +19,24 @@ const BIKE_BANDS: [number, number, number, number][] = [
   [270, 90, 90, 20], [270, 190, 90, 20],
   [20, 90, 130, 20], [20, 190, 130, 20],
 ];
+// Zandweg markers sit in the empty half of the north and south roads.
+const SAND_DOTS: [number, number][] = [[170, 48], [250, 252]];
 
 /**
  * One maquette intersection. With `colored` off every road user is drawn in
  * a single neutral colour, so an exercise doesn't give away its answer; turn
- * it on to show the answer key (green = may go, orange = must wait).
+ * it on to show the answer key (green = may go, orange = must wait,
+ * purple = verkeersfatsoen).
  */
 export function MaquetteSituation({ situation, colored }: { situation: Situation; colored: boolean }) {
   const markerPrefix = useId().replace(/:/g, "");
   const shapes = layoutSituation(situation);
-  const colorOf = (hasPriority: boolean) =>
-    !colored ? MAQUETTE_COLORS.neutral : hasPriority ? MAQUETTE_COLORS.priority : MAQUETTE_COLORS.wait;
-  const usedColors = [...new Set(shapes.map((s) => colorOf(s.user.hasPriority)))];
+  const colorOf = (user: RoadUser) => {
+    if (!colored) return MAQUETTE_COLORS.neutral;
+    if (user.courtesy) return MAQUETTE_COLORS.courtesy;
+    return user.hasPriority ? MAQUETTE_COLORS.priority : MAQUETTE_COLORS.wait;
+  };
+  const usedColors = [...new Set(shapes.map((s) => colorOf(s.user)))];
   const markerId = (color: string) => `${markerPrefix}-arrow-${color.slice(1)}`;
 
   return (
@@ -58,10 +64,18 @@ export function MaquetteSituation({ situation, colored }: { situation: Situation
       {CENTER_LINES.map(([x1, y1, x2, y2]) => (
         <line key={`m${x1}-${y1}-${x2}-${y2}`} x1={x1} y1={y1} x2={x2} y2={y2} {...CENTER} />
       ))}
-      <text x={210} y={150} fill="#6b7280" {...LABEL}>S/B</text>
+      <text x={210} y={150} fill="#6b7280" {...LABEL}>{situation.narrow ? "S" : "S/B"}</text>
+      {situation.sandRoad &&
+        SAND_DOTS.map(([cx, cy]) => <circle key={`z${cx}-${cy}`} cx={cx} cy={cy} r={9} fill="#111827" />)}
+      {situation.noEntry && (
+        <g>
+          <circle cx={290} cy={230} r={10} fill="#dc2626" />
+          <rect x={283} y={228} width={14} height={4} fill="#fff" />
+        </g>
+      )}
 
       {shapes.map(({ user, vehicle, labelPos, path }) => {
-        const color = colorOf(user.hasPriority);
+        const color = colorOf(user);
         return (
           <g key={user.label}>
             {vehicle.type === "rect" ? (

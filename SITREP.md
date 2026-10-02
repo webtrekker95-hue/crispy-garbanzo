@@ -690,3 +690,24 @@ and was never committed, so the owner wrote a build spec
 - Checked on the prod build with a throwaway QA account, deleted afterwards: Les 1a lesson 1 shows both worked-example diagrams, the first quiz shows its diagram, no page errors.
 - Note: prod now runs code that isn't committed yet.
 - Owner went through Les 1a by hand on the prod build and approved it. Next step: waiting for the next lesson from the owner.
+
+## 2026-10-02 — Maquette Les 2: smalle wegen (situaties 21–31)
+
+Owner uploaded `materiaalrijonderricht/Maquette les 2.pdf` and, because every "Opl:" in it is blank, the answer key `ANTWOORDEN MAQUETTES.docx`. Built the same way as Les 1a.
+
+- **Module:** `seed-module-maquette-les-2`, "Maquette — Smalle wegen (Les 2)", at `orderIndex: 2`, directly after Les 1a. The 5 example modules shifted to 3–7. Content in `prisma/content/maquette-les-2.ts`.
+- **Lessons:** 1: the VF rule, the VF/W notation and worked example 21 · 2: quiz on 22, 23a, 23b, 24–27 · 3: quiz on 28–31.
+- **Answers follow the key as written.** VF answers list both possibilities, e.g. `VF 1+2 — (1W2) 2 – 1 of (2W1) 1 – 2`. Cyclists are written with a lower-case f throughout, as in Les 1a.
+- **Renderer (`lib/maquette.ts`, `components/maquette-situation.tsx`):** a third answer colour, purple, for verkeersfatsoen; "S" centre label; zandweg dots; the no-entry sign in 27; road users from the east and cyclists from the west. In the 8-road-user situations 30 and 31 every turning road user is shifted 6px off the standard lane so the full-length paths do not run on top of each other (the owner rejected a first version with short direction-only arrows). Les 1a diagrams are unchanged.
+- **Owner's clarifications:** the symbol in 27 is a no-entry sign; the black dots in 30/31 mean the top–bottom road is a zandweg; the grey circle in 31 is a stray mark.
+
+**Confirmed by the owner (2026-10-02):**
+- The answer key is right as written; it comes from the instructor. That includes 25's first possibility, `2 – F1 + 1`.
+- 24: the key's `2+F-1` means f2.
+- 30 and 31 have a rijwielpad on the left–right road.
+
+**Verification:** tsc, eslint and jest pass (57 tests). On a production build with a local throwaway database, a temporary QA student walked all 3 lessons at 1280px and 400px, choosing the keyed answer for all 11 exercises: every one marked correct, no console errors, no horizontal overflow. QA account and its progress rows deleted afterwards.
+
+**Open:**
+- Not committed yet; waiting for the owner to look at the diagrams (private preview page: https://claude.ai/artifact/XM7LngzSyqAc5eB1nnkJRC).
+- The production database still needs `npm run db:seed` and a rebuild before students see Les 2.
