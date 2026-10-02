@@ -708,6 +708,20 @@ Owner uploaded `materiaalrijonderricht/Maquette les 2.pdf` and, because every "O
 
 **Verification:** tsc, eslint and jest pass (57 tests). On a production build with a local throwaway database, a temporary QA student walked all 3 lessons at 1280px and 400px, choosing the keyed answer for all 11 exercises: every one marked correct, no console errors, no horizontal overflow. QA account and its progress rows deleted afterwards.
 
+**Closed:** owner approved the diagrams on the preview page (https://claude.ai/artifact/XM7LngzSyqAc5eB1nnkJRC); committed as 403af14 and pushed.
+
+### 2026-10-02 — Live site moved to Vercel + Supabase
+
+The earlier live setup (a `next start` server with a local database behind an ngrok tunnel) was on a previous machine and is gone; the tunnel is offline. The owner chose the hosted setup from `Claude.md`'s deployment notes.
+
+- **Database:** Supabase project in us-east-1. All 4 migrations applied and the seed loaded from this machine through the session pooler (port 5432): 8 modules including Les 2, 1 admin, 3 instructors. Student accounts from the old machine were not carried over.
+- **Site:** https://crispy-garbanzo-one.vercel.app, Vercel project with Root Directory `excellent-driving`. `DATABASE_URL` is the transaction pooler (port 6543) with `?pgbouncer=true&connection_limit=1`; `NEXTAUTH_SECRET` and `NEXTAUTH_URL` are set. WhatsApp and email keys are not set, so notifications are skipped.
+- **Code:** added `"postinstall": "prisma generate"` so Vercel builds against a fresh database client (3e8ef4c).
+- **Checked** with a temporary student, deleted afterwards: public pages load, login works, Les 2 is module 3, its first lesson and first quiz question work, no page errors.
+- **Owner's review account:** `webtrekker95@gmail.com` has Les 1, Les 1a and Les 2 unlocked. The owner went through all three as a student on the live site and approved them.
+
 **Open:**
-- Not committed yet; waiting for the owner to look at the diagrams (private preview page: https://claude.ai/artifact/XM7LngzSyqAc5eB1nnkJRC).
-- The production database still needs `npm run db:seed` and a rebuild before students see Les 2.
+- The seeded admin account still has the default password from `prisma/seed.ts` until the owner changes it.
+- Vercel's free plan is for non-commercial use; a paid plan is needed before the school uses the site for real bookings.
+- New lesson content needs `npx prisma db seed` run against the Supabase database; a push alone only redeploys the app.
+- Noticed, not looked into: the lesson list shows English module titles with NL selected, and a not-yet-unlocked lesson address opened directly did not redirect.
