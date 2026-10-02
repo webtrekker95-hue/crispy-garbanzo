@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getStudentModuleStates, getStudentDashboardStats } from "@/lib/progress";
+import { getStudentModuleStates, getStudentDashboardStats, moduleTitle } from "@/lib/progress";
 import styles from "./dashboard.module.css";
 import shell from "../../student-shell.module.css";
 
@@ -28,6 +28,7 @@ function timeAgo(date: Date) {
 
 export default async function StudentDashboardPage() {
   const t = await getTranslations("Dashboard");
+  const locale = await getLocale();
   const session = await getServerSession(authOptions);
   const studentId = session!.user.id;
   const firstName = (session!.user.name ?? "Student").split(" ")[0];
@@ -69,7 +70,7 @@ export default async function StudentDashboardPage() {
       text:
         p.lesson.type === "QUIZ"
           ? `You ${p.status === "PASSED" ? "passed" : "attempted"} Quiz: ${p.lesson.title}${p.score !== null ? ` with a score of ${p.score}%` : ""}`
-          : `You completed ${p.lesson.title} in ${p.module.titleEn}`,
+          : `You completed ${p.lesson.title} in ${moduleTitle(p.module, locale)}`,
     })),
     ...recentBookings.map((b) => ({
       time: b.createdAt,
@@ -150,7 +151,7 @@ export default async function StudentDashboardPage() {
                     {moduleIcons[i] ?? "📘"}
                   </div>
                   <div className={styles["module-info"]}>
-                    <div className={styles["module-name"]}>Module {i + 1}: {m.module.titleEn}</div>
+                    <div className={styles["module-name"]}>Module {i + 1}: {moduleTitle(m.module, locale)}</div>
                     <div className={styles["progress-bar-wrap"]}>
                       <div className={styles["progress-fill"]} style={{ width: `${m.pct}%`, background: fillColor }}></div>
                     </div>

@@ -18,6 +18,11 @@ export type ModuleState = {
   complete: boolean;
 };
 
+/** The module's title in the viewer's language; Dutch only when the locale is "nl". */
+export function moduleTitle(module: Pick<Module, "titleEn" | "titleNl">, locale: string): string {
+  return locale === "nl" ? module.titleNl : module.titleEn;
+}
+
 /**
  * A module unlocks once the previous module is fully complete; a lesson
  * unlocks once its module is unlocked AND the previous lesson in that

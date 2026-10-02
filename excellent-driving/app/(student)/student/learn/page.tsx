@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getStudentModuleStates } from "@/lib/progress";
+import { getLocale } from "next-intl/server";
+import { getStudentModuleStates, moduleTitle } from "@/lib/progress";
 import styles from "./learn.module.css";
 
 const moduleIcons = ["📖", "🚦", "🛣️", "🚗", "🏁"];
@@ -9,6 +10,7 @@ const moduleIcons = ["📖", "🚦", "🛣️", "🚗", "🏁"];
 export default async function LearnPage() {
   const session = await getServerSession(authOptions);
   const moduleStates = await getStudentModuleStates(session!.user.id);
+  const locale = await getLocale();
 
   return (
     <div>
@@ -22,7 +24,7 @@ export default async function LearnPage() {
               {moduleIcons[i] ?? "📘"}
             </div>
             <div className={styles["mod-info"]}>
-              <div className={styles["mod-name"]}>Module {i + 1}: {m.module.titleEn}</div>
+              <div className={styles["mod-name"]}>Module {i + 1}: {moduleTitle(m.module, locale)}</div>
               <div className={styles["mod-progress-wrap"]}>
                 <div className={styles["mod-bar"]}>
                   <div className={styles["mod-fill"]} style={{ width: `${m.pct}%`, background: fillColor }}></div>

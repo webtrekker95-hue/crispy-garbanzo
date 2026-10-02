@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getStudentModuleStates } from "@/lib/progress";
+import { getLocale } from "next-intl/server";
+import { getStudentModuleStates, moduleTitle } from "@/lib/progress";
 import styles from "../learn.module.css";
 
 const typeLabels: Record<string, string> = { TEXT: "Text", QUIZ: "Quiz", VIDEO: "Video" };
@@ -16,6 +17,7 @@ export default async function ModuleLessonsPage({
   const { moduleId } = await params;
   const session = await getServerSession(authOptions);
   const moduleStates = await getStudentModuleStates(session!.user.id);
+  const locale = await getLocale();
   const moduleState = moduleStates.find((m) => m.module.id === moduleId);
 
   if (!moduleState) notFound();
@@ -31,7 +33,7 @@ export default async function ModuleLessonsPage({
     <div>
       <div className={styles["back-bar"]}>
         <Link href="/student/learn" className={styles["back-btn"]}>← My Lessons</Link>
-        <div className={styles["back-title"]}>{moduleState.module.titleEn}</div>
+        <div className={styles["back-title"]}>{moduleTitle(moduleState.module, locale)}</div>
       </div>
 
       <div className={styles["lessons-card"]}>
