@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import styles from "./profile.module.css";
 
 export function ProfileForm({
@@ -14,6 +15,7 @@ export function ProfileForm({
   initialPhone: string;
   initialLanguage: "EN" | "NL";
 }) {
+  const t = useTranslations("Profile");
   const [name, setName] = useState(initialName);
   const [phone, setPhone] = useState(initialPhone);
   const [language, setLanguage] = useState(initialLanguage);
@@ -35,7 +37,7 @@ export function ProfileForm({
     });
     const data = await res.json();
     if (!res.ok) {
-      setError(data.error ?? "Could not save changes.");
+      setError(data.error ?? t("saveError"));
       setStatus("error");
       return;
     }
@@ -52,7 +54,7 @@ export function ProfileForm({
     });
     const data = await res.json();
     if (!res.ok) {
-      setPwError(data.error ?? "Could not change password.");
+      setPwError(data.error ?? t("passwordError"));
       setPwStatus("error");
       return;
     }
@@ -64,41 +66,41 @@ export function ProfileForm({
   return (
     <div className={styles.grid}>
       <form className={styles.card} onSubmit={saveProfile}>
-        <h2>Profile Details</h2>
-        {status === "saved" && <p className={styles["status-success"]}>Profile updated.</p>}
+        <h2>{t("profileDetails")}</h2>
+        {status === "saved" && <p className={styles["status-success"]}>{t("profileUpdated")}</p>}
         {status === "error" && <p className={styles["status-error"]}>{error}</p>}
 
         <div className={styles.field}>
-          <label htmlFor="profile-email">Email</label>
+          <label htmlFor="profile-email">{t("email")}</label>
           <input id="profile-email" value={email} disabled />
         </div>
         <div className={styles.field}>
-          <label htmlFor="profile-name">Full name</label>
+          <label htmlFor="profile-name">{t("fullName")}</label>
           <input id="profile-name" value={name} onChange={(e) => setName(e.target.value)} required />
         </div>
         <div className={styles.field}>
-          <label htmlFor="profile-phone">Phone</label>
+          <label htmlFor="profile-phone">{t("phone")}</label>
           <input id="profile-phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
         </div>
         <div className={styles.field}>
-          <label htmlFor="profile-language">Language</label>
+          <label htmlFor="profile-language">{t("language")}</label>
           <select id="profile-language" value={language} onChange={(e) => setLanguage(e.target.value as "EN" | "NL")}>
             <option value="EN">English</option>
             <option value="NL">Nederlands</option>
           </select>
         </div>
         <button type="submit" className="btn btn-primary" disabled={status === "saving"}>
-          {status === "saving" ? "Saving…" : "Save Changes"}
+          {status === "saving" ? t("saving") : t("saveChanges")}
         </button>
       </form>
 
       <form className={styles.card} onSubmit={changePassword}>
-        <h2>Change Password</h2>
-        {pwStatus === "saved" && <p className={styles["status-success"]}>Password changed.</p>}
+        <h2>{t("changePassword")}</h2>
+        {pwStatus === "saved" && <p className={styles["status-success"]}>{t("passwordChanged")}</p>}
         {pwStatus === "error" && <p className={styles["status-error"]}>{pwError}</p>}
 
         <div className={styles.field}>
-          <label htmlFor="current-password">Current password</label>
+          <label htmlFor="current-password">{t("currentPassword")}</label>
           <input
             id="current-password"
             type="password"
@@ -108,7 +110,7 @@ export function ProfileForm({
           />
         </div>
         <div className={styles.field}>
-          <label htmlFor="new-password">New password</label>
+          <label htmlFor="new-password">{t("newPassword")}</label>
           <input
             id="new-password"
             type="password"
@@ -119,7 +121,7 @@ export function ProfileForm({
           />
         </div>
         <button type="submit" className="btn btn-primary" disabled={pwStatus === "saving"}>
-          {pwStatus === "saving" ? "Updating…" : "Change Password"}
+          {pwStatus === "saving" ? t("updating") : t("changePassword")}
         </button>
       </form>
     </div>

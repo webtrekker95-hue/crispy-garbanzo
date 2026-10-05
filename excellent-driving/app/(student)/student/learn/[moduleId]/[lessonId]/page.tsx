@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getStudentModuleStates, moduleTitle } from "@/lib/progress";
 import { TextLessonView } from "./text-lesson-view";
 import { QuizLessonView } from "./quiz-lesson-view";
@@ -25,6 +25,7 @@ export default async function LessonPage({
   const session = await getServerSession(authOptions);
   const moduleStates = await getStudentModuleStates(session!.user.id);
   const locale = await getLocale();
+  const t = await getTranslations("Learn");
   const moduleState = moduleStates.find((m) => m.module.id === moduleId);
   if (!moduleState) notFound();
 
@@ -41,7 +42,7 @@ export default async function LessonPage({
           <Link href={moduleHref} className={styles["back-btn"]}>← {moduleTitle(moduleState.module, locale)}</Link>
         </div>
         <div className={styles["text-card"]} style={{ textAlign: "center", color: "var(--gray-600)" }}>
-          🔒 This lesson is locked. Complete the previous lesson first.
+          🔒 {t("lessonLocked")}
         </div>
       </div>
     );

@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { getLocale, getTranslations } from "next-intl/server";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getStudentModuleStates, getStudentDashboardStats, moduleTitle } from "@/lib/progress";
+import { getStudentModuleStates, getStudentDashboardStats, moduleTitle, packageName } from "@/lib/progress";
 import styles from "./dashboard.module.css";
 import shell from "../../student-shell.module.css";
 
@@ -16,19 +16,23 @@ function greetingKey(): "goodMorning" | "goodAfternoon" | "goodEvening" {
   return "goodEvening";
 }
 
-function timeAgo(date: Date) {
+type Translate = Awaited<ReturnType<typeof getTranslations<"Dashboard">>>;
+
+function timeAgo(date: Date, t: Translate) {
   const diffMs = Date.now() - date.getTime();
   const hours = Math.floor(diffMs / (1000 * 60 * 60));
-  if (hours < 1) return "Just now";
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 1) return t("timeJustNow");
+  if (hours < 24) return t("timeHoursAgo", { hours });
   const days = Math.floor(hours / 24);
-  if (days === 1) return "Yesterday";
-  return `${days}d ago`;
+  if (days === 1) return t("timeYesterday");
+  return t("timeDaysAgo", { days });
 }
 
 export default async function StudentDashboardPage() {
   const t = await getTranslations("Dashboard");
+  const tLearn = await getTranslations("Learn");
   const locale = await getLocale();
+  const dateLocale = locale === "nl" ? "nl-NL" : "en-US";
   const session = await getServerSession(authOptions);
   const studentId = session!.user.id;
   const firstName = (session!.user.name ?? "Student").split(" ")[0];
@@ -58,9 +62,15 @@ export default async function StudentDashboardPage() {
   const totalLessons = moduleStates.reduce((sum, m) => sum + m.totalLessons, 0);
   const totalCompleted = moduleStates.reduce((sum, m) => sum + m.completedCount, 0);
   const overallPct = totalLessons > 0 ? Math.round((totalCompleted / totalLessons) * 100) : 0;
-  const activePackageName =
-    (await prisma.booking.findFirst({ where: { studentId }, include: { package: true }, orderBy: { createdAt: "desc" } }))
-      ?.package.nameEn ?? null;
+  const activePackage = (
+    await prisma.booking.findFirst({ where: { studentId }, include: { package: true }, orderBy: { createdAt: "desc" } })
+  )?.package;
+  const activePackageName = activePackage ? packageName(activePackage, locale) : null;
+  const bookingStatusLabel = {
+    PENDING: t("bookingStatusPending"),
+    CONFIRMED: t("bookingStatusConfirmed"),
+    CANCELLED: t("bookingStatusCancelled"),
+  };
 
   const activity = [
     ...recentProgress.map((p) => ({
@@ -69,14 +79,21 @@ export default async function StudentDashboardPage() {
       bg: p.status === "PASSED" ? "var(--green-light)" : "rgba(245,166,35,0.12)",
       text:
         p.lesson.type === "QUIZ"
-          ? `You ${p.status === "PASSED" ? "passed" : "attempted"} Quiz: ${p.lesson.title}${p.score !== null ? ` with a score of ${p.score}%` : ""}`
-          : `You completed ${p.lesson.title} in ${moduleTitle(p.module, locale)}`,
+          ? t(
+              `activityQuiz${p.status === "PASSED" ? "Passed" : "Attempted"}${p.score !== null ? "Score" : ""}`,
+              { title: p.lesson.title, score: p.score ?? 0 }
+            )
+          : t("activityLessonCompleted", { lesson: p.lesson.title, module: moduleTitle(p.module, locale) }),
     })),
     ...recentBookings.map((b) => ({
       time: b.createdAt,
       icon: "📅",
       bg: "rgba(59,130,246,0.1)",
-      text: `Lesson with ${b.instructor.user.name} on ${b.date.toLocaleDateString("en-US", { month: "long", day: "numeric" })} was booked (${b.status.toLowerCase()})`,
+      text: t("activityBooked", {
+        instructor: b.instructor.user.name,
+        date: b.date.toLocaleDateString(dateLocale, { month: "long", day: "numeric" }),
+        status: bookingStatusLabel[b.status],
+      }),
     })),
   ]
     .sort((a, b) => b.time.getTime() - a.time.getTime())
@@ -92,8 +109,8 @@ export default async function StudentDashboardPage() {
           </div>
           {totalLessons > 0 && (
             <div className={styles["progress-pill"]}>
-              <div className={styles.dot}></div> {overallPct}% through your course
-              {activePackageName ? ` · ${activePackageName} Package` : ""}
+              <div className={styles.dot}></div> {t("courseProgressPill", { pct: overallPct })}
+              {activePackageName ? ` · ${t("packageSuffix", { name: activePackageName })}` : ""}
             </div>
           )}
         </div>
@@ -142,7 +159,7 @@ export default async function StudentDashboardPage() {
           </div>
           <div className={shell["card-body"]}>
             {moduleStates.map((m, i) => {
-              const statusLabel = m.complete ? "Done" : !m.unlocked ? "Locked" : m.completedCount > 0 ? "In Progress" : "Not Started";
+              const statusLabel = m.complete ? t("statusDone") : !m.unlocked ? tLearn("statusLocked") : m.completedCount > 0 ? tLearn("statusInProgress") : tLearn("statusNotStarted");
               const statusClass = m.complete ? styles["status-done"] : !m.unlocked ? styles["status-locked"] : styles["status-progress"];
               const fillColor = m.complete ? "var(--green)" : !m.unlocked ? "var(--gray-200)" : "var(--amber)";
               return (
@@ -151,13 +168,13 @@ export default async function StudentDashboardPage() {
                     {moduleIcons[i] ?? "📘"}
                   </div>
                   <div className={styles["module-info"]}>
-                    <div className={styles["module-name"]}>Module {i + 1}: {moduleTitle(m.module, locale)}</div>
+                    <div className={styles["module-name"]}>{tLearn("moduleHeading", { number: i + 1, title: moduleTitle(m.module, locale) })}</div>
                     <div className={styles["progress-bar-wrap"]}>
                       <div className={styles["progress-fill"]} style={{ width: `${m.pct}%`, background: fillColor }}></div>
                     </div>
                     <div className={styles["module-meta"]}>
                       <span className={styles["module-pct"]} style={{ color: fillColor === "var(--gray-200)" ? "var(--gray-600)" : fillColor }}>{m.pct}%</span>
-                      <span className={styles["module-lessons"]}>{m.completedCount}/{m.totalLessons} lessons</span>
+                      <span className={styles["module-lessons"]}>{tLearn("lessonsCount", { done: m.completedCount, total: m.totalLessons })}</span>
                     </div>
                   </div>
                   <div className={styles["module-status"]}>
@@ -181,24 +198,24 @@ export default async function StudentDashboardPage() {
               {nextBooking ? (
                 <div className={styles["booking-card"]}>
                   <div className={styles["booking-date-box"]}>
-                    <div className={styles["booking-month"]}>{nextBooking.date.toLocaleDateString("en-US", { month: "short" })}</div>
+                    <div className={styles["booking-month"]}>{nextBooking.date.toLocaleDateString(dateLocale, { month: "short" })}</div>
                     <div className={styles["booking-day"]}>{nextBooking.date.getUTCDate()}</div>
-                    <div className={styles["booking-dow"]}>{nextBooking.date.toLocaleDateString("en-US", { weekday: "short" })}</div>
+                    <div className={styles["booking-dow"]}>{nextBooking.date.toLocaleDateString(dateLocale, { weekday: "short" })}</div>
                   </div>
                   <div className={styles["booking-info"]}>
-                    <div className={styles["booking-title"]}>{nextBooking.package.nameEn} Package Lesson</div>
+                    <div className={styles["booking-title"]}>{t("packageLesson", { name: packageName(nextBooking.package, locale) })}</div>
                     <div className={styles["booking-meta"]}>
                       <div className={styles["booking-meta-item"]}>⏰ {nextBooking.timeSlot}</div>
                       <div className={styles["booking-meta-item"]}>👨‍🏫 {nextBooking.instructor.user.name}</div>
                       <div className={styles["booking-meta-item"]}>📍 Bonistraat 44</div>
                     </div>
                     <div className={nextBooking.status === "CONFIRMED" ? styles["booking-confirmed"] : styles["booking-pending"]}>
-                      {nextBooking.status === "CONFIRMED" ? "✓ Confirmed" : "⏳ Pending Payment"}
+                      {nextBooking.status === "CONFIRMED" ? `✓ ${t("statusConfirmed")}` : `⏳ ${t("statusPendingPayment")}`}
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className={styles["empty-state"]}>No upcoming lessons booked yet.</div>
+                <div className={styles["empty-state"]}>{t("noUpcomingLessons")}</div>
               )}
             </div>
           </div>
@@ -233,13 +250,13 @@ export default async function StudentDashboardPage() {
         </div>
         <div className={shell["card-body"]}>
           {activity.length === 0 ? (
-            <div className={styles["empty-state"]}>No activity yet — start a lesson or book a driving session to get going.</div>
+            <div className={styles["empty-state"]}>{t("noActivity")}</div>
           ) : (
             activity.map((a, i) => (
               <div className={styles["activity-item"]} key={i}>
                 <div className={styles["activity-dot"]} style={{ background: a.bg }}>{a.icon}</div>
                 <div className={styles["activity-text"]}>{a.text}</div>
-                <div className={styles["activity-time"]}>{timeAgo(a.time)}</div>
+                <div className={styles["activity-time"]}>{timeAgo(a.time, t)}</div>
               </div>
             ))
           )}

@@ -44,7 +44,7 @@ export function StudentShell({
     "/student/bookings": t("navMyBookings"),
     "/student/profile": t("navProfile"),
   };
-  const pageTitle = pageTitles[pathname] ?? (pathname.startsWith("/student/learn") ? t("navMyLessons") : "Student Portal");
+  const pageTitle = pageTitles[pathname] ?? (pathname.startsWith("/student/learn") ? t("navMyLessons") : t("portalName"));
 
   const dateLabel = new Date().toLocaleDateString(locale === "nl" ? "nl-NL" : "en-US", {
     weekday: "long",
@@ -63,12 +63,12 @@ export function StudentShell({
             </svg>
           </div>
           <div className={styles["sidebar-logo-text"]}>
-            Excellent Driving <span>Student Portal</span>
+            Excellent Driving <span>{t("portalName")}</span>
           </div>
         </Link>
 
         <div className={styles["nav-section"]}>
-          <div className={styles["nav-section-label"]}>Menu</div>
+          <div className={styles["nav-section-label"]}>{t("navSectionMenu")}</div>
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -83,7 +83,7 @@ export function StudentShell({
         </div>
 
         <div className={styles["nav-section"]}>
-          <div className={styles["nav-section-label"]}>Account</div>
+          <div className={styles["nav-section-label"]}>{t("navSectionAccount")}</div>
           {accountItems.map((item) => (
             <Link
               key={item.href}
@@ -108,7 +108,7 @@ export function StudentShell({
             <div className={styles["user-avatar"]}>{initials(userName)}</div>
             <div>
               <div className={styles["user-name"]}>{userName}</div>
-              <div className={styles["user-role"]}>Student</div>
+              <div className={styles["user-role"]}>{t("roleStudent")}</div>
             </div>
           </button>
         </div>
@@ -123,7 +123,7 @@ export function StudentShell({
           <div className={styles["topbar-left"]}>
             <button
               className={styles["sidebar-toggle"]}
-              aria-label="Toggle sidebar"
+              aria-label={t("toggleSidebar")}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((o) => !o)}
             >
@@ -138,7 +138,7 @@ export function StudentShell({
           </div>
           <div className={styles["topbar-right"]}>
             <LanguageSwitcher />
-            <button className={styles["notif-btn"]} aria-label="Notifications">
+            <button className={styles["notif-btn"]} aria-label={t("notifications")}>
               <span aria-hidden="true">🔔</span>
             </button>
             <div className={styles["user-avatar"]} style={{ width: 38, height: 38, fontSize: "0.85rem" }}>

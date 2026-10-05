@@ -1,6 +1,8 @@
 import { getServerSession } from "next-auth";
+import { getLocale } from "next-intl/server";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { packageName } from "@/lib/progress";
 import { parseSlotLabel } from "@/lib/slots";
 import { BookingsList, type BookingRow } from "./bookings-list";
 
@@ -12,6 +14,7 @@ function hoursUntilLesson(date: Date, timeSlot: string) {
 
 export default async function StudentBookingsPage() {
   const session = await getServerSession(authOptions);
+  const locale = await getLocale();
   const bookings = await prisma.booking.findMany({
     where: { studentId: session!.user.id },
     include: { package: true, instructor: { include: { user: true } } },
@@ -28,7 +31,7 @@ export default async function StudentBookingsPage() {
       status: b.status,
       paymentMethod: b.paymentMethod,
       paymentStatus: b.paymentStatus,
-      packageName: b.package.nameEn,
+      packageName: packageName(b.package, locale),
       instructorName: b.instructor.user.name,
       canCancel: b.status !== "CANCELLED" && hoursUntil >= 24,
     };

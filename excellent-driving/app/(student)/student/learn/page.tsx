@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getStudentModuleStates, moduleTitle } from "@/lib/progress";
 import styles from "./learn.module.css";
 
@@ -11,11 +11,12 @@ export default async function LearnPage() {
   const session = await getServerSession(authOptions);
   const moduleStates = await getStudentModuleStates(session!.user.id);
   const locale = await getLocale();
+  const t = await getTranslations("Learn");
 
   return (
     <div>
       {moduleStates.map((m, i) => {
-        const statusLabel = m.complete ? "✓ Complete" : !m.unlocked ? "🔒 Locked" : m.completedCount > 0 ? "In Progress" : "Not Started";
+        const statusLabel = m.complete ? `✓ ${t("statusComplete")}` : !m.unlocked ? `🔒 ${t("statusLocked")}` : m.completedCount > 0 ? t("statusInProgress") : t("statusNotStarted");
         const statusClass = m.complete ? styles["status-done"] : !m.unlocked ? styles["status-locked"] : styles["status-progress"];
         const fillColor = m.complete ? "var(--green)" : !m.unlocked ? "var(--gray-200)" : "var(--amber)";
         const card = (
@@ -24,7 +25,7 @@ export default async function LearnPage() {
               {moduleIcons[i] ?? "📘"}
             </div>
             <div className={styles["mod-info"]}>
-              <div className={styles["mod-name"]}>Module {i + 1}: {moduleTitle(m.module, locale)}</div>
+              <div className={styles["mod-name"]}>{t("moduleHeading", { number: i + 1, title: moduleTitle(m.module, locale) })}</div>
               <div className={styles["mod-progress-wrap"]}>
                 <div className={styles["mod-bar"]}>
                   <div className={styles["mod-fill"]} style={{ width: `${m.pct}%`, background: fillColor }}></div>
@@ -33,7 +34,7 @@ export default async function LearnPage() {
               </div>
             </div>
             <div className={styles["mod-meta"]}>
-              <div className={styles["mod-lessons-count"]}>{m.completedCount}/{m.totalLessons} lessons</div>
+              <div className={styles["mod-lessons-count"]}>{t("lessonsCount", { done: m.completedCount, total: m.totalLessons })}</div>
               <div className={`${styles["mod-status-pill"]} ${statusClass}`}>{statusLabel}</div>
             </div>
             {m.unlocked && <div className={styles["mod-arrow"]} aria-hidden="true">→</div>}

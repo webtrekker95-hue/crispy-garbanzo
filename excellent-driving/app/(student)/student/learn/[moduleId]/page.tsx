@@ -2,11 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getStudentModuleStates, moduleTitle } from "@/lib/progress";
 import styles from "../learn.module.css";
 
-const typeLabels: Record<string, string> = { TEXT: "Text", QUIZ: "Quiz", VIDEO: "Video" };
+const typeLabelKeys = { TEXT: "typeText", QUIZ: "typeQuiz", VIDEO: "typeVideo" } as const;
 const typeClass: Record<string, string> = { TEXT: "type-text", QUIZ: "type-quiz", VIDEO: "type-video" };
 
 export default async function ModuleLessonsPage({
@@ -18,13 +18,14 @@ export default async function ModuleLessonsPage({
   const session = await getServerSession(authOptions);
   const moduleStates = await getStudentModuleStates(session!.user.id);
   const locale = await getLocale();
+  const t = await getTranslations("Learn");
   const moduleState = moduleStates.find((m) => m.module.id === moduleId);
 
   if (!moduleState) notFound();
   if (!moduleState.unlocked) {
     return (
       <div className={styles["lessons-card"]} style={{ padding: 24, textAlign: "center", color: "var(--gray-600)" }}>
-        🔒 This module is locked. Complete the previous module first.
+        🔒 {t("moduleLocked")}
       </div>
     );
   }
@@ -32,7 +33,7 @@ export default async function ModuleLessonsPage({
   return (
     <div>
       <div className={styles["back-bar"]}>
-        <Link href="/student/learn" className={styles["back-btn"]}>← My Lessons</Link>
+        <Link href="/student/learn" className={styles["back-btn"]}>← {t("myLessons")}</Link>
         <div className={styles["back-title"]}>{moduleTitle(moduleState.module, locale)}</div>
       </div>
 
@@ -45,10 +46,10 @@ export default async function ModuleLessonsPage({
             <>
               <div className={`${styles["lesson-num"]} ${numClass}`}>{isDone ? "✓" : ls.unlocked ? i + 1 : "🔒"}</div>
               <div className={styles["lesson-name"]}>
-                {isNext ? <strong>Lesson {i + 1}: {ls.lesson.title}</strong> : `Lesson ${i + 1}: ${ls.lesson.title}`}
+                {isNext ? <strong>{t("lessonHeading", { number: i + 1, title: ls.lesson.title })}</strong> : t("lessonHeading", { number: i + 1, title: ls.lesson.title })}
               </div>
               <div className={`${styles["lesson-type"]} ${styles[typeClass[ls.lesson.type]]}`}>
-                {typeLabels[ls.lesson.type]}
+                {t(typeLabelKeys[ls.lesson.type])}
               </div>
             </>
           );

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import styles from "./lesson.module.css";
 import { MaquetteSituation } from "@/components/maquette-situation";
 import type { Situation } from "@/lib/maquette";
@@ -26,6 +27,7 @@ export function TextLessonView({
   moduleHref: string;
 }) {
   const router = useRouter();
+  const t = useTranslations("Learn");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(alreadyComplete);
 
@@ -53,17 +55,17 @@ export function TextLessonView({
       ))}
       {isVideo && (
         <div className={styles["video-placeholder"]}>
-          🎬 Video content coming soon — this lesson will include an embedded instructional video.
+          🎬 {t("videoPlaceholder")}
         </div>
       )}
       <div style={{ marginTop: 28 }}>
         {done ? (
           <button className="btn btn-outline" onClick={() => router.push(nextHref ?? moduleHref)}>
-            ✓ Completed — {nextHref ? "Next Lesson →" : "Back to Module"}
+            ✓ {nextHref ? `${t("completedNextLesson")} →` : t("completedBackToModule")}
           </button>
         ) : (
           <button className="btn btn-primary btn-lg" onClick={markComplete} disabled={submitting}>
-            {submitting ? "Saving…" : "Mark as Complete →"}
+            {submitting ? t("saving") : `${t("markComplete")} →`}
           </button>
         )}
       </div>

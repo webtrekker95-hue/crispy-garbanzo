@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import styles from "./lesson.module.css";
 import { MaquetteSituation } from "@/components/maquette-situation";
 import type { Situation } from "@/lib/maquette";
@@ -29,6 +30,7 @@ export function QuizLessonView({
   moduleHref: string;
 }) {
   const router = useRouter();
+  const t = useTranslations("Learn");
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(questions.map(() => null));
   const [revealed, setRevealed] = useState<boolean[]>(questions.map(() => false));
@@ -74,27 +76,27 @@ export function QuizLessonView({
       <div className={styles["score-screen"]}>
         <div className={`${styles["score-badge"]} ${styles[passed ? "pass" : "fail"]}`}>{result.score}%</div>
         <div className={`${styles["score-result"]} ${styles[passed ? "pass" : "fail"]}`}>
-          {passed ? "🎉 PASSED" : "✗ FAILED"}
+          {passed ? `🎉 ${t("resultPassed")}` : `✗ ${t("resultFailed")}`}
         </div>
-        <h2 className={styles["score-title"]}>{passed ? "Excellent Work!" : "Not Quite There Yet"}</h2>
+        <h2 className={styles["score-title"]}>{passed ? t("passTitle") : t("failTitle")}</h2>
         <p className={styles["score-sub"]}>
           {passed
-            ? `You passed ${title} with a score of ${result.score}%. The next lesson is now unlocked.`
-            : `You scored ${result.score}% but need at least 70% to pass. Review the material and try again — you can retry as many times as needed.`}
+            ? t("passText", { title, score: result.score })
+            : t("failText", { score: result.score })}
         </p>
 
         <div className={styles["score-breakdown"]}>
           <div className={styles["breakdown-item"]}>
             <div className={styles["breakdown-num"]} style={{ color: "var(--green)" }}>{result.correctCount}</div>
-            <div className={styles["breakdown-label"]}>Correct</div>
+            <div className={styles["breakdown-label"]}>{t("countCorrect")}</div>
           </div>
           <div className={styles["breakdown-item"]}>
             <div className={styles["breakdown-num"]} style={{ color: "var(--red)" }}>{result.total - result.correctCount}</div>
-            <div className={styles["breakdown-label"]}>Wrong</div>
+            <div className={styles["breakdown-label"]}>{t("countWrong")}</div>
           </div>
           <div className={styles["breakdown-item"]}>
             <div className={styles["breakdown-num"]} style={{ color: "var(--navy)" }}>70%</div>
-            <div className={styles["breakdown-label"]}>Min. to pass</div>
+            <div className={styles["breakdown-label"]}>{t("minToPass")}</div>
           </div>
         </div>
 
@@ -105,14 +107,14 @@ export function QuizLessonView({
                 className="btn btn-primary btn-lg"
                 onClick={() => router.push(nextHref ?? moduleHref)}
               >
-                ✓ {nextHref ? "Continue to Next Lesson" : "Back to Module"}
+                ✓ {nextHref ? t("continueNextLesson") : t("backToModule")}
               </button>
-              <button className="btn btn-outline btn-lg" onClick={retry}>Review Answers</button>
+              <button className="btn btn-outline btn-lg" onClick={retry}>{t("reviewAnswers")}</button>
             </>
           ) : (
             <>
-              <button className="btn btn-primary btn-lg" onClick={retry}>🔄 Retry Quiz</button>
-              <button className="btn btn-outline btn-lg" onClick={() => router.push(moduleHref)}>← Back to Lessons</button>
+              <button className="btn btn-primary btn-lg" onClick={retry}>🔄 {t("retryQuiz")}</button>
+              <button className="btn btn-outline btn-lg" onClick={() => router.push(moduleHref)}>← {t("backToLessons")}</button>
             </>
           )}
         </div>
@@ -124,8 +126,8 @@ export function QuizLessonView({
     <div>
       <div className={styles["q-progress-wrap"]}>
         <div className={styles["q-progress-header"]}>
-          <div className={styles["q-progress-label"]}>Quiz Progress</div>
-          <div className={styles["q-progress-count"]}>Question {currentQ + 1} of {questions.length}</div>
+          <div className={styles["q-progress-label"]}>{t("quizProgress")}</div>
+          <div className={styles["q-progress-count"]}>{t("questionOf", { current: currentQ + 1, total: questions.length })}</div>
         </div>
         <div className={styles["q-progress-dots"]}>
           {questions.map((_, i) => (
@@ -138,7 +140,7 @@ export function QuizLessonView({
       </div>
 
       <div className={styles["question-card"]}>
-        <div className={styles["q-number"]}>❓ Question {currentQ + 1}</div>
+        <div className={styles["q-number"]}>❓ {t("questionNumber", { number: currentQ + 1 })}</div>
         {q.situation && (
           <div className={styles["q-situation"]}>
             <MaquetteSituation key={currentQ} situation={q.situation} colored={revealed[currentQ]} />
@@ -162,8 +164,8 @@ export function QuizLessonView({
               <button key={i} type="button" className={cls} onClick={() => selectOption(i)} disabled={isRevealed}>
                 <div className={styles["opt-letter"]}>{String.fromCharCode(65 + i)}</div>
                 <div className={styles["opt-text"]}>{opt}</div>
-                {isRevealed && isCorrect && <div className={styles["opt-badge"]}>Correct</div>}
-                {isRevealed && isSelected && !isCorrect && <div className={styles["opt-badge"]}>Your answer</div>}
+                {isRevealed && isCorrect && <div className={styles["opt-badge"]}>{t("badgeCorrect")}</div>}
+                {isRevealed && isSelected && !isCorrect && <div className={styles["opt-badge"]}>{t("badgeYourAnswer")}</div>}
               </button>
             );
           })}
@@ -171,7 +173,7 @@ export function QuizLessonView({
 
         {revealed[currentQ] && (
           <div className={`${styles.explanation} ${answers[currentQ] === q.correct ? "" : styles["wrong-explanation"]}`}>
-            <strong>{answers[currentQ] === q.correct ? "✓ Correct!" : "✗ Not quite."}</strong>{" "}
+            <strong>{answers[currentQ] === q.correct ? `✓ ${t("feedbackCorrect")}` : `✗ ${t("feedbackWrong")}`}</strong>{" "}
             <span dangerouslySetInnerHTML={{ __html: q.explanation }} />
           </div>
         )}
@@ -183,22 +185,22 @@ export function QuizLessonView({
           onClick={() => setCurrentQ((c) => c - 1)}
           style={{ visibility: currentQ > 0 ? "visible" : "hidden" }}
         >
-          ← Previous
+          ← {t("previous")}
         </button>
         <span></span>
         {!revealed[currentQ] && (
           <button className="btn btn-primary" onClick={checkAnswer} disabled={answers[currentQ] === null}>
-            Check Answer
+            {t("checkAnswer")}
           </button>
         )}
         {revealed[currentQ] && !isLast && (
           <button className="btn btn-primary" onClick={() => setCurrentQ((c) => c + 1)}>
-            Next Question →
+            {t("nextQuestion")} →
           </button>
         )}
         {revealed[currentQ] && isLast && (
           <button className="btn btn-primary" onClick={submitQuiz} disabled={submitting}>
-            {submitting ? "Submitting…" : "Submit Quiz"}
+            {submitting ? t("submitting") : t("submitQuiz")}
           </button>
         )}
       </div>

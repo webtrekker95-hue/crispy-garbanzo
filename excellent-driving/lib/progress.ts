@@ -23,6 +23,11 @@ export function moduleTitle(module: Pick<Module, "titleEn" | "titleNl">, locale:
   return locale === "nl" ? module.titleNl : module.titleEn;
 }
 
+/** The package's name in the viewer's language; Dutch only when the locale is "nl". */
+export function packageName(pkg: { nameEn: string; nameNl: string }, locale: string): string {
+  return locale === "nl" ? pkg.nameNl : pkg.nameEn;
+}
+
 /**
  * A module unlocks once the previous module is fully complete; a lesson
  * unlocks once its module is unlocked AND the previous lesson in that

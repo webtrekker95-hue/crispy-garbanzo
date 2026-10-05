@@ -1,4 +1,5 @@
 import { getServerSession } from "next-auth";
+import { getTranslations } from "next-intl/server";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -10,6 +11,7 @@ export default async function LearnLayout({ children }: { children: React.ReactN
   });
 
   if (!user?.courseAccess) {
+    const t = await getTranslations("Learn");
     return (
       <div
         style={{
@@ -21,7 +23,7 @@ export default async function LearnLayout({ children }: { children: React.ReactN
           color: "var(--gray-600)",
         }}
       >
-        🔒 Your course access is currently on hold. Please contact the school to resolve this.
+        🔒 {t("accessOnHold")}
       </div>
     );
   }

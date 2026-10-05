@@ -725,3 +725,16 @@ The earlier live setup (a `next start` server with a local database behind an ng
 - Vercel's free plan is for non-commercial use; a paid plan is needed before the school uses the site for real bookings.
 - New lesson content needs `npx prisma db seed` run against the Supabase database; a push alone only redeploys the app.
 - Noticed, not looked into: the lesson list shows English module titles with NL selected, and a not-yet-unlocked lesson address opened directly did not redirect.
+
+### 2026-10-02 — Student area translated to Dutch
+
+- **Module titles:** the dashboard, lesson list, module page and lesson back link always showed the English title; they now follow the language switch (f18a8f9, live).
+- **Interface text:** everything under `/student` now comes from `messages/en.json` and `messages/nl.json` (new `Learn`, `Bookings` and `Profile` sections, plus additions to `Dashboard`): lesson list, module page, lesson and quiz views including the score screen and lock messages, bookings, profile, the side menu, and the dashboard's activity feed, status labels and dates. Package names on the dashboard and bookings page also follow the language. English wording is unchanged.
+- **Checked:** tsc, eslint, jest (57 tests) and the 3 end-to-end tests pass. A temporary student walked every student page in Dutch on a local production build, including a failed quiz: no leftover English found by a text scan, no page errors, no overflow at 400px. Account deleted afterwards.
+- **Lesson locks looked into:** a locked lesson opened by direct link shows only the lock message, and the progress API answers 403. No change needed.
+
+**Still English under NL:**
+- The booking wizard (`/booking`), about 80 texts plus its month and day names.
+- Error messages that come from the server (for example a failed password change).
+- The "Demo build" banner, and time slots, which are stored as "8:00 AM".
+- Not checked: the login and register pages.
