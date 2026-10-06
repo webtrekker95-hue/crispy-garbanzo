@@ -803,7 +803,7 @@ The owner uploaded `materiaalrijonderricht/VERKEERSBORDEN.pdf` (75 signs with mo
   - 5 keep the PDF's embedded image at its own size (53e, 53f, the brigadier's two signs, road-end markings), never shown larger.
   - Suriname's official sign drawings (bijlage of the Rijbesluit 1957, free to use under the Surinamese Auteurswet art. 11) are not online; with a copy from the ministry the remaining signs could be redone.
 - **App:** quiz questions can show an image (`image: { src, alt, width? }`); the alt text never gives the answer away and raster images are never shown wider than they are.
-- **Live database:** the seed only creates missing rows, so `prisma/replace-verkeersborden.ts` replaces the module's titles and lessons (and progress on the old placeholder pages). Not run yet; needs the session-pooler URL.
+- **Live database:** the seed only creates missing rows, so `prisma/replace-verkeersborden.ts` replaces the module's titles and lessons (and progress on the old placeholder pages). Run on 2026-10-06: 3 placeholder lessons replaced by 12; read back from the database, the module is 4th, published, with all six pages and quizzes. The images are served by the live site.
 - **Checked:** tsc, eslint, jest (66 tests; a new test checks every image exists, every quiz answer is the sign's own meaning, and no option repeats). No browser on this machine, so the pages have not been seen rendered.
 
 **Review page:** https://claude.ai/artifact/6snPFETr3zRvq3UtaFGAH9
