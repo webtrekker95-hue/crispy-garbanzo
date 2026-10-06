@@ -777,3 +777,16 @@ The owner uploaded `materiaalrijonderricht/Maquette les 5.pdf`. Its 5 diagrams a
 **Approved:** on the preview page (https://claude.ai/artifact/JArb62RHfx3y6heBXLP4Vv).
 
 **Open:** the instructor's answers. Then: lessons (the rules, the Oplossingsmodel and the "4 soorten verkeersfatsoen" list are the lesson text) and quizzes, seed, live database.
+
+## 2026-10-06 — Maquette Les 6: bevoorrechte weggebruikers, diagrams
+
+The owner uploaded `materiaalrijonderricht/Maquette les 6.pdf`. Its 2 diagrams are examples for rule 1, unnumbered as in Les 4 and 5: `regel-1-vb-1`, `regel-1-vb-2`.
+
+- **Renderer:** no changes.
+- **Content:** situations only, in `prisma/content/maquette-les-6.ts`. PS, BS and AS (politie, brandweer, ambulance met sirene) are drawn as cars with their label. Not in the seed yet; every road user is a placeholder "must wait".
+- **Readings approved by the owner:** car 3 in V.B. 1 turns linksaf (the owner confirmed it; the PDF's drawing is unclear); F2 is written f2; in V.B. 2 BS waits behind 5 and PS behind 4.
+- **Checked:** tsc, eslint, jest (63 tests; the overlap check covers Les 3–6).
+
+**Approved:** on the preview page (https://claude.ai/artifact/6eCqkitWy9zBZnXqSKv7Gs).
+
+**Open:** the instructor's answers for Les 3–6. Then: lessons (for Les 6: the volgorde PS–BS–AS, the solving order, and the Toelichting glossary on page 2) and quizzes, seed, live database. With Les 6, all six maquette PDFs have diagrams.
