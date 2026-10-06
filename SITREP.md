@@ -764,3 +764,16 @@ The owner uploaded `materiaalrijonderricht/Maquette les 4.pdf`. Its 10 diagrams 
 **Approved:** on the preview page (https://claude.ai/artifact/5vaouomABXn4BwnGuWAo2V).
 
 **Open:** the instructor's answers. Then: lessons (the PDF's rules 1–6 and the Oplossingsmodellen A and B are the lesson text) and quizzes, seed, live database.
+
+## 2026-10-06 — Maquette Les 5: wegen van gelijke rangorde, diagrams
+
+The owner uploaded `materiaalrijonderricht/Maquette les 5.pdf`. Its 5 diagrams are examples that go with the rule text, so as in Les 4 they have no number. Keys: `regel-1`, `regel-2`, `regel-3-vb-1`, `regel-3-vb-2`, `oplossingsmodel`.
+
+- **Renderer:** no changes; the Les 4 wide layout covers everything.
+- **Content:** situations only, in `prisma/content/maquette-les-5.ts`. Not in the seed yet; every road user is a placeholder "must wait".
+- **Readings approved by the owner:** in Regel 1 the arrows are drawn as cars; in Regel 3 V.B. 1 the line from the left is linksaffer 2 and the bottom car is 3; in the Oplossingsmodel 1 waits behind 2 and turns linksaf, f3 turns rechtsaf, f8 waits behind f7 and turns rechtsaf.
+- **Checked:** tsc, eslint, jest (63 tests; the overlap check now covers Les 5).
+
+**Approved:** on the preview page (https://claude.ai/artifact/JArb62RHfx3y6heBXLP4Vv).
+
+**Open:** the instructor's answers. Then: lessons (the rules, the Oplossingsmodel and the "4 soorten verkeersfatsoen" list are the lesson text) and quizzes, seed, live database.
