@@ -1,5 +1,5 @@
 /**
- * Geometry for maquette intersection diagrams (Maquette les 1a, les 2 and les 3).
+ * Geometry for maquette intersection diagrams (Maquette les 1a, les 2, les 3 and les 4).
  *
  * Every situation is drawn on the same fixed template (viewBox 0 0 380 300)
  * defined in materiaalrijonderricht/claude_code_build_spec.md. Suriname
@@ -25,11 +25,25 @@ export type RoadUser = {
    * waved through goes first. Drawn in its own colour, overriding hasPriority.
    */
   courtesy?: boolean;
+  /**
+   * Wide template only (les 4): the lane to draw this road user in, instead
+   * of the one the layout would pick. "opposite" is just across the centre
+   * line, on a stretch closed to oncoming traffic (model 14, les 4 regel 6).
+   */
+  lane?: WideLane;
+  /** Wide template only: drawn in the second row, behind the front of the queue. */
+  behind?: boolean;
 };
 
+export type RoadWidth = "B" | "S" | "B/S";
+export type WideLane = "kerb" | "inner" | "opposite";
+
 export type Situation = {
-  /** Number as printed in the course material; les 2 has "23a" and "23b". */
-  number: number | string;
+  /**
+   * Number as printed in the course material; les 2 has "23a" and "23b".
+   * Les 4's diagrams illustrate its rules and have no number.
+   */
+  number?: number | string;
   /** Draws bike-lane bands along both the east and west roads (M.R.P.). */
   bikeLanes: boolean;
   /** Labels the intersection "S" (smalle weg) instead of the generic "S/B". */
@@ -54,6 +68,18 @@ export type Situation = {
   bikeLanesNorthSouth?: boolean;
   /** Wide template only: marks the west–oost road as a zandweg. */
   sandRoadWestOost?: boolean;
+  /** Wide template only (les 4): a T-kruising; this arm is not drawn. */
+  missingArm?: Approach;
+  /** Wide template only: this arm is an inrit, labelled "inrit" and its width. */
+  inrit?: Approach;
+  inritWidth?: RoadWidth;
+  /**
+   * Wide template only: the centre label, "B" by default. The dashed divider
+   * between two lanes is only drawn on a "B" road.
+   */
+  roadWidth?: RoadWidth;
+  /** Wide template only: a model 14 sign (no entry) at the mouth of this arm. */
+  noEntryArm?: Approach;
   users: RoadUser[];
 };
 
@@ -182,7 +208,7 @@ export const WIDE_BOX = { min: 110, max: 290, center: 200 } as const;
 /** Distance of the dashed lane divider from the centre line. */
 export const WIDE_LANE_DIVIDER = 37;
 // Column (x) of each lane for traffic coming from the north.
-const WIDE_LANE = { inner: 222, kerb: 252, fiets: 280 } as const;
+const WIDE_LANE = { opposite: 178, inner: 222, kerb: 252, fiets: 280 } as const;
 // Row (y) a turn runs along: linksaf into the east road's eastbound lanes,
 // rechtsaf (crossing) into the west road's westbound lanes.
 const WIDE_ROW = {
@@ -200,7 +226,8 @@ const CLOCKWISE: Approach[] = ["noord", "oost", "zuid", "west"];
 type Turn = "linksaf" | "rechtdoor" | "rechtsaf";
 type Lane = keyof typeof WIDE_LANE;
 
-const ROTATE: Record<Approach, (x: number, y: number) => { x: number; y: number }> = {
+/** Maps a point laid out for the north arm onto the given arm. */
+export const ROTATE: Record<Approach, (x: number, y: number) => { x: number; y: number }> = {
   noord: (x, y) => ({ x, y }),
   oost: (x, y) => ({ x: 400 - y, y: x }),
   zuid: (x, y) => ({ x: 400 - x, y: 400 - y }),
@@ -214,19 +241,32 @@ function turnOf(user: RoadUser): Turn {
 }
 
 function wideLayout(situation: Situation): UserShape[] {
+  for (const user of situation.users) {
+    if (user.from === situation.missingArm || user.to === situation.missingArm) {
+      throw new Error(`Road user ${user.label} uses the missing arm of a T-kruising`);
+    }
+  }
   // Lanes: cyclists keep to the kerb, a car turning rechtsaf takes the inner
-  // lane, any other car the kerb lane. A second car in the same lane queues.
+  // lane, any other car the kerb lane, unless the situation says otherwise.
+  // A second road user in the same lane queues behind the first.
   const lanes = situation.users.map((user) => {
     const turn = turnOf(user);
-    const lane: Lane = user.kind === "fiets" ? "fiets" : turn === "rechtsaf" ? "inner" : "kerb";
+    const lane: Lane = user.lane ?? (user.kind === "fiets" ? "fiets" : turn === "rechtsaf" ? "inner" : "kerb");
     return { user, turn, lane };
   });
+  const sameLane = (a: (typeof lanes)[number], b: (typeof lanes)[number]) => a.user.from === b.user.from && a.lane === b.lane;
+  const queuedFlags = lanes.map((l, i) => l.user.behind === true || lanes.slice(0, i).some((m) => sameLane(l, m) && !m.user.behind));
   const placed = lanes.map(({ user, turn, lane }, i) => {
-    const queue = lanes.slice(0, i).filter((l) => l.user.from === user.from && l.lane === lane).length;
-    if (queue > 1) throw new Error(`Only two road users can queue in one lane (${user.label})`);
+    const group = lanes.map((l, j) => ({ l, queued: queuedFlags[j] })).filter(({ l }) => sameLane(l, lanes[i]));
+    if (group.filter((g) => g.queued).length > 1 || group.filter((g) => !g.queued).length > 1) {
+      throw new Error(`Only two road users can queue in one lane (${user.label})`);
+    }
+    const queued = queuedFlags[i];
+    // The arrow of a queued road user runs alongside the one in front of it.
+    const shifted = queued && group.some((g) => !g.queued);
     // A car keeps its kind of lane through a turn: linksaf from the kerb lane
     // into the kerb lane, rechtsaf from the inner lane into the inner lane.
-    return { user, turn, lane, queued: queue === 1, dest: `${user.to}:${lane}` };
+    return { user, turn, lane, queued, shifted, dest: `${user.to}:${lane}` };
   });
 
   // Turning road users are pushed off the lane line they turn into, and
@@ -236,9 +276,9 @@ function wideLayout(situation: Situation): UserShape[] {
     placed.filter((p) => p.dest === dest && p.turn !== "rechtdoor").forEach((p, k) => turnIndex.set(p.user, k));
   }
 
-  return placed.map(({ user, turn, lane, queued }) => {
+  return placed.map(({ user, turn, lane, queued, shifted }) => {
     const rotate = ROTATE[user.from];
-    const x = WIDE_LANE[lane] + (queued ? WIDE_QUEUE_SHIFT : 0);
+    const x = WIDE_LANE[lane] + (shifted ? WIDE_QUEUE_SHIFT : 0);
     const startY = queued ? 48 : 104;
     const points =
       turn === "rechtdoor"
@@ -256,9 +296,9 @@ function wideLayout(situation: Situation): UserShape[] {
     let vehicle: VehicleShape;
     let label: { x: number; y: number };
     if (user.kind === "fiets") {
-      const c = rotate(WIDE_LANE.fiets, queued ? 60 : 93);
+      const c = rotate(WIDE_LANE[lane], queued ? 40 : 93);
       vehicle = { type: "circle", cx: c.x, cy: c.y, r: 7 };
-      label = rotate(WIDE_LANE.fiets, queued ? 45 : 77);
+      label = rotate(WIDE_LANE[lane], queued ? 25 : 77);
     } else {
       const top = queued ? 10 : 66;
       const a = rotate(WIDE_LANE[lane] - 10, top);
@@ -270,8 +310,12 @@ function wideLayout(situation: Situation): UserShape[] {
         width: Math.abs(a.x - b.x),
         height: Math.abs(a.y - b.y),
       };
-      // A queued car's label sits beside it, over the empty inner lane.
-      label = queued ? rotate(WIDE_LANE[lane] - 20, top + 17) : rotate(WIDE_LANE[lane], 55);
+      // A queued car's label sits beside it, over the lane towards the centre,
+      // or on the kerb side when another road user waits there.
+      const insideTaken = placed.some(
+        (p) => p.user !== user && p.user.from === user.from && p.queued && WIDE_LANE[p.lane] < WIDE_LANE[lane] && WIDE_LANE[lane] - WIDE_LANE[p.lane] <= 30,
+      );
+      label = queued ? rotate(WIDE_LANE[lane] + (insideTaken ? 20 : -20), top + 17) : rotate(WIDE_LANE[lane], 55);
     }
     // Labels are positioned by their centre; text is drawn from its baseline.
     return { user, vehicle, labelPos: { x: label.x, y: label.y + 4 }, path };

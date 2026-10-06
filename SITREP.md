@@ -751,3 +751,16 @@ The owner uploaded `materiaalrijonderricht/Maquette les 3.pdf`. It has 11 diagra
 **Approved:** the owner approved the diagrams on the preview page (https://claude.ai/artifact/5tmZqg1BSRp6zX5uSDqTK7).
 
 **Open:** the instructor's answers for 32–42. Then: lessons and quizzes, seed, live database.
+
+## 2026-10-06 — Maquette Les 4: T-kruisingen en inritten, diagrams
+
+The owner uploaded `materiaalrijonderricht/Maquette les 4.pdf`. Its 10 diagrams are examples that go with the rule text, so at the owner's request they have **no number**; the student still solves each one ("Opl:"). They are keyed `t-kruising`, `t-kruising-breed-rijwielpad`, `t-kruising-breed`, `regel-1`, `regel-2`, `regel-3-opl-1`, `regel-3-opl-2`, `regel-4`, `regel-5`, `regel-6`.
+
+- **Renderer:** the wide layout gained additive fields: `missingArm` (T-kruising: the arm is left out and the view cropped), `inrit` and `inritWidth` (the whole north arm is the inrit: label in the middle, no centre line), `roadWidth` (centre label; lane dividers only on "B"), `noEntryArm` (model 14, "gesloten in één richting", drawn as the red no-entry sign with its bar across the road it closes). Per road user, `lane` ("kerb", "inner", "opposite") and `behind` place it as the PDF does. `Situation.number` is now optional. Les 1a–3 content is unaffected; Les 3 renders pixel-identical.
+- **Content:** situations only, in `prisma/content/maquette-les-4.ts`. Not in the seed yet; every road user is a placeholder "must wait".
+- **Readings approved by the owner:** the two brede T-kruisingen are one situation with and without rijwielpad (F1 = f1); car 7 waits behind 6 and turns linksaf; car 3 in Regel 3 Opl 2 turns linksaf; cars drawn behind and beside another wait behind, in the lane towards the centre.
+- **Checked:** tsc, eslint, jest (63 tests); diagrams checked by rasterising the SVGs.
+
+**Approved:** on the preview page (https://claude.ai/artifact/5vaouomABXn4BwnGuWAo2V).
+
+**Open:** the instructor's answers. Then: lessons (the PDF's rules 1–6 and the Oplossingsmodellen A and B are the lesson text) and quizzes, seed, live database.

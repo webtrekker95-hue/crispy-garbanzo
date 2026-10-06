@@ -2,10 +2,12 @@ import { useId } from "react";
 import {
   layoutSituation,
   MAQUETTE_COLORS,
+  ROTATE,
   VIEWBOX,
   WIDE_BOX,
   WIDE_LANE_DIVIDER,
   WIDE_VIEWBOX,
+  type Approach,
   type RoadUser,
   type Situation,
 } from "@/lib/maquette";
@@ -32,27 +34,38 @@ const BIKE_BANDS: [number, number, number, number][] = [
 // Zandweg markers sit in the empty half of the north and south roads.
 const SAND_DOTS: [number, number][] = [[170, 48], [250, 252]];
 
-// Brede wegen (les 3): four road arms meeting the square WIDE_BOX.min..max,
-// each with a centre line and a lighter divider between the two lanes.
+// Brede wegen (les 3 and 4): road arms meeting the square WIDE_BOX.min..max,
+// each with a centre line and, on a brede weg, a lighter divider between
+// the two lanes. Every arm is drawn as the north arm and rotated into place.
 const { min: LO, max: HI, center: MID } = WIDE_BOX;
-const WIDE_CURBS: [number, number, number, number][] = [
-  [LO, 0, LO, LO], [HI, 0, HI, LO], [LO, HI, LO, 400], [HI, HI, HI, 400],
-  [0, LO, LO, LO], [0, HI, LO, HI], [HI, LO, 400, LO], [HI, HI, 400, HI],
-];
-const armLines = (offset: number): [number, number, number, number][] => [
-  [MID + offset, 0, MID + offset, LO], [MID + offset, HI, MID + offset, 400],
-  [0, MID + offset, LO, MID + offset], [HI, MID + offset, 400, MID + offset],
-];
-const WIDE_CENTER_LINES = armLines(0);
-const WIDE_LANE_LINES = [...armLines(-WIDE_LANE_DIVIDER), ...armLines(WIDE_LANE_DIVIDER)];
+type Line = [number, number, number, number];
+const ARMS: Approach[] = ["noord", "oost", "zuid", "west"];
+const rotateLine = (arm: Approach, [x1, y1, x2, y2]: Line): Line => {
+  const a = ROTATE[arm](x1, y1);
+  const b = ROTATE[arm](x2, y2);
+  return [a.x, a.y, b.x, b.y];
+};
+const armCurbs = (arm: Approach): Line[] => [rotateLine(arm, [LO, 0, LO, LO]), rotateLine(arm, [HI, 0, HI, LO])];
+const armLine = (arm: Approach, offset: number): Line => rotateLine(arm, [MID + offset, 0, MID + offset, LO]);
+// A T-kruising closes the missing arm's mouth with a straight curb.
+const closedMouth = (arm: Approach): Line => rotateLine(arm, [LO, LO, HI, LO]);
 // Bike-lane bands sit just inside the curbs; [x, y, width, height].
 const WIDE_BANDS_WEST_OOST: [number, number, number, number][] = [
   [0, LO, LO, 20], [0, HI - 20, LO, 20], [HI, LO, 400 - HI, 20], [HI, HI - 20, 400 - HI, 20],
 ];
 const WIDE_BANDS_NOORD_ZUID: [number, number, number, number][] = WIDE_BANDS_WEST_OOST.map(([x, y, w, h]) => [y, x, h, w]);
+// Where a T-kruising has no arm, the band runs on across the mouth.
+const WIDE_BAND_ACROSS: Record<Approach, [number, number, number, number]> = {
+  noord: [LO, LO, HI - LO, 20], zuid: [LO, HI - 20, HI - LO, 20],
+  west: [LO, LO, 20, HI - LO], oost: [HI - 20, LO, 20, HI - LO],
+};
 // Zandweg markers sit near the road ends, on the side no arrow reaches.
 const WIDE_SAND_DOTS_NOORD_ZUID: [number, number][] = [[130, 30], [270, 370]];
 const WIDE_SAND_DOTS_WEST_OOST: [number, number][] = [[30, 270], [370, 130]];
+// A T-kruising leaves out the empty strip where the missing arm would be.
+const WIDE_T_VIEWBOX: Record<Approach, string> = {
+  noord: "0 80 400 320", zuid: "0 0 400 320", west: "80 0 320 400", oost: "0 0 320 400",
+};
 
 /**
  * One maquette intersection. With `colored` off every road user is drawn in
@@ -74,9 +87,9 @@ export function MaquetteSituation({ situation, colored }: { situation: Situation
 
   return (
     <svg
-      viewBox={situation.wide ? WIDE_VIEWBOX : VIEWBOX}
+      viewBox={situation.wide ? (situation.missingArm ? WIDE_T_VIEWBOX[situation.missingArm] : WIDE_VIEWBOX) : VIEWBOX}
       role="img"
-      aria-label={`Situatie ${situation.number}`}
+      aria-label={situation.number === undefined ? "Verkeerssituatie" : `Situatie ${situation.number}`}
       style={{ width: "100%", maxWidth: 460, height: "auto", display: "block", margin: "0 auto", background: "#faf9f7", borderRadius: 12 }}
     >
       <defs>
@@ -132,30 +145,63 @@ export function MaquetteSituation({ situation, colored }: { situation: Situation
 }
 
 function WideTemplate({ situation }: { situation: Situation }) {
+  const arms = ARMS.filter((arm) => arm !== situation.missingArm);
+  const widthOf = (arm: Approach) => (arm === situation.inrit ? situation.inritWidth : situation.roadWidth) ?? "B";
+  const curbs = [...arms.flatMap(armCurbs), ...(situation.missingArm ? [closedMouth(situation.missingArm)] : [])];
+  // The whole inrit arm is one driveway, so it has no centre line.
+  const centerLines = arms.filter((arm) => arm !== situation.inrit).map((arm) => armLine(arm, 0));
+  const laneLines = arms
+    .filter((arm) => widthOf(arm) === "B")
+    .flatMap((arm) => [armLine(arm, -WIDE_LANE_DIVIDER), armLine(arm, WIDE_LANE_DIVIDER)]);
+  const missing = situation.missingArm;
   const bands = [
     ...(situation.bikeLanes ? WIDE_BANDS_WEST_OOST : []),
+    ...(situation.bikeLanes && (missing === "noord" || missing === "zuid") ? [WIDE_BAND_ACROSS[missing]] : []),
     ...(situation.bikeLanesNorthSouth ? WIDE_BANDS_NOORD_ZUID : []),
+    ...(situation.bikeLanesNorthSouth && (missing === "west" || missing === "oost") ? [WIDE_BAND_ACROSS[missing]] : []),
   ];
   const dots = [
     ...(situation.sandRoad ? WIDE_SAND_DOTS_NOORD_ZUID : []),
     ...(situation.sandRoadWestOost ? WIDE_SAND_DOTS_WEST_OOST : []),
   ];
+  // The inrit label sits in the middle of the arm, beyond the road users.
+  const inritLabel = situation.inrit && [ROTATE[situation.inrit](MID, 28), ROTATE[situation.inrit](MID, 46)];
+  // The sign stands outside the curb on the side traffic would enter the arm,
+  // its bar across the road it closes.
+  const sign = situation.noEntryArm && ROTATE[situation.noEntryArm](LO - 16, LO - 18);
+  const signBarAcross = situation.noEntryArm === "noord" || situation.noEntryArm === "zuid";
   return (
     <>
       {bands.map(([x, y, width, height]) => (
         <rect key={`b${x}-${y}`} x={x} y={y} width={width} height={height} fill="#3b82f6" opacity={0.12} />
       ))}
-      {WIDE_CURBS.map(([x1, y1, x2, y2]) => (
+      {curbs.map(([x1, y1, x2, y2]) => (
         <line key={`c${x1}-${y1}-${x2}-${y2}`} x1={x1} y1={y1} x2={x2} y2={y2} {...CURB} />
       ))}
-      {WIDE_CENTER_LINES.map(([x1, y1, x2, y2]) => (
+      {centerLines.map(([x1, y1, x2, y2]) => (
         <line key={`m${x1}-${y1}-${x2}-${y2}`} x1={x1} y1={y1} x2={x2} y2={y2} {...CENTER} />
       ))}
-      {WIDE_LANE_LINES.map(([x1, y1, x2, y2]) => (
+      {laneLines.map(([x1, y1, x2, y2]) => (
         <line key={`l${x1}-${y1}-${x2}-${y2}`} x1={x1} y1={y1} x2={x2} y2={y2} {...LANE} />
       ))}
-      <text x={MID} y={MID + 4} fill="#6b7280" {...LABEL}>B</text>
+      <text x={MID} y={MID + 4} fill="#6b7280" {...LABEL}>{situation.roadWidth ?? "B"}</text>
+      {inritLabel && (
+        <>
+          <text x={inritLabel[0].x} y={inritLabel[0].y + 4} fill="#6b7280" {...LABEL}>inrit</text>
+          <text x={inritLabel[1].x} y={inritLabel[1].y + 4} fill="#6b7280" {...LABEL}>{widthOf(situation.inrit!)}</text>
+        </>
+      )}
       {dots.map(([cx, cy]) => <circle key={`z${cx}-${cy}`} cx={cx} cy={cy} r={9} fill="#111827" />)}
+      {sign && (
+        <g>
+          <circle cx={sign.x} cy={sign.y} r={10} fill="#dc2626" />
+          {signBarAcross ? (
+            <rect x={sign.x - 7} y={sign.y - 2} width={14} height={4} fill="#fff" />
+          ) : (
+            <rect x={sign.x - 2} y={sign.y - 7} width={4} height={14} fill="#fff" />
+          )}
+        </g>
+      )}
     </>
   );
 }

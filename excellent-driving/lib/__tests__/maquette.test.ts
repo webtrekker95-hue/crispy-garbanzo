@@ -1,5 +1,6 @@
 import { layoutSituation, type RoadUser, type Situation } from "../maquette";
 import { S } from "../../prisma/content/maquette-les-3";
+import { S as S4 } from "../../prisma/content/maquette-les-4";
 
 const user = (label: string, kind: RoadUser["kind"], from: RoadUser["from"], to: RoadUser["to"]): RoadUser => ({
   label, kind, from, to, hasPriority: true,
@@ -113,8 +114,25 @@ describe("layoutSituation on a wide road", () => {
     expect(queued.path).toBe("M134,352 L134,258 L104,258");
   });
 
-  it("never draws two road users' paths on top of each other in les 3", () => {
-    for (const situation of Object.values(S)) {
+  it("draws a road user in the lane and row the situation asks for", () => {
+    const [kerb, inner, opposite] = layoutSituation(wide(
+      { ...user("2", "auto", "oost", "noord"), lane: "kerb" },
+      { ...user("3", "auto", "west", "oost"), lane: "inner", behind: true },
+      { ...user("4", "auto", "west", "zuid"), lane: "opposite" },
+    ));
+    expect(kerb.path).toBe("M296,252 L184,252 L184,104");
+    // Nobody waits in front of 3 in its lane, so its arrow is not shifted.
+    expect(inner.path).toBe("M48,178 L296,178");
+    // Just across the centre line, in the half westbound traffic would use.
+    expect(opposite.vehicle).toEqual({ type: "rect", x: 66, y: 212, width: 34, height: 20 });
+  });
+
+  it("rejects a road user on the missing arm of a T-kruising", () => {
+    expect(() => layoutSituation({ ...wide(user("1", "auto", "zuid", "noord")), missingArm: "noord" })).toThrow(/missing arm/);
+  });
+
+  it("never draws two road users' paths on top of each other in les 3 and 4", () => {
+    for (const [key, situation] of [...Object.entries(S), ...Object.entries(S4)]) {
       const segments = layoutSituation(situation).flatMap(({ user, path }) => {
         const pts = path.split(" ").map((p) => p.slice(1).split(",").map(Number));
         return pts.slice(1).map((b, i) => ({ who: user.label, a: pts[i], b }));
@@ -127,7 +145,7 @@ describe("layoutSituation on a wide road", () => {
             if (s.a[axis] !== s.b[axis] || t.a[axis] !== t.b[axis] || s.a[axis] !== t.a[axis]) continue;
             const lo = Math.max(Math.min(s.a[along], s.b[along]), Math.min(t.a[along], t.b[along]));
             const hi = Math.min(Math.max(s.a[along], s.b[along]), Math.max(t.a[along], t.b[along]));
-            expect({ situation: situation.number, users: [s.who, t.who], overlap: hi - lo > 0 }).toMatchObject({ overlap: false });
+            expect({ situation: key, users: [s.who, t.who], overlap: hi - lo > 0 }).toMatchObject({ overlap: false });
           }
         }
       }
