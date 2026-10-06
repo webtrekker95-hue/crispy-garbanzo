@@ -1,5 +1,5 @@
 /**
- * Geometry for maquette intersection diagrams (Maquette les 1a and les 2).
+ * Geometry for maquette intersection diagrams (Maquette les 1a, les 2 and les 3).
  *
  * Every situation is drawn on the same fixed template (viewBox 0 0 380 300)
  * defined in materiaalrijonderricht/claude_code_build_spec.md. Suriname
@@ -44,6 +44,16 @@ export type Situation = {
    * standard lane so that no two paths run on top of each other.
    */
   fourWay?: boolean;
+  /**
+   * Brede weg (les 3): drawn on its own, larger template with two car lanes
+   * in each direction and a "B" centre label. `bikeLanes` still means the
+   * west–oost road; `sandRoad` still means the noord–zuid road.
+   */
+  wide?: boolean;
+  /** Wide template only: bike-lane bands along the noord–zuid road. */
+  bikeLanesNorthSouth?: boolean;
+  /** Wide template only: marks the west–oost road as a zandweg. */
+  sandRoadWestOost?: boolean;
   users: RoadUser[];
 };
 
@@ -163,7 +173,113 @@ function sharedLaneOffset(user: RoadUser, users: RoadUser[]): number {
   return 0;
 }
 
+// Brede wegen (les 3). Everything is laid out for a road user coming from
+// the north and then rotated into place around the centre (200,200), so the
+// four approaches share one geometry. The intersection square runs from 110
+// to 290; traffic heading south keeps to the east half (driving on the left).
+export const WIDE_VIEWBOX = "0 0 400 400";
+export const WIDE_BOX = { min: 110, max: 290, center: 200 } as const;
+/** Distance of the dashed lane divider from the centre line. */
+export const WIDE_LANE_DIVIDER = 37;
+// Column (x) of each lane for traffic coming from the north.
+const WIDE_LANE = { inner: 222, kerb: 252, fiets: 280 } as const;
+// Row (y) a turn runs along: linksaf into the east road's eastbound lanes,
+// rechtsaf (crossing) into the west road's westbound lanes.
+const WIDE_ROW = {
+  linksaf: { auto: 148, fiets: 120 },
+  rechtsaf: { auto: 222, fiets: 280 },
+} as const;
+// A car queued behind another runs its arrow alongside the car in front.
+const WIDE_QUEUE_SHIFT = 14;
+// Distance a turning road user's last stretch is pushed off the lane line,
+// towards the centre line first. Approach lines and straight-through paths
+// run exactly on the lane lines, so a turn never lands on top of them.
+const WIDE_TURN_OFFSETS = [6, -6, 12, -12];
+
+const CLOCKWISE: Approach[] = ["noord", "oost", "zuid", "west"];
+type Turn = "linksaf" | "rechtdoor" | "rechtsaf";
+type Lane = keyof typeof WIDE_LANE;
+
+const ROTATE: Record<Approach, (x: number, y: number) => { x: number; y: number }> = {
+  noord: (x, y) => ({ x, y }),
+  oost: (x, y) => ({ x: 400 - y, y: x }),
+  zuid: (x, y) => ({ x: 400 - x, y: 400 - y }),
+  west: (x, y) => ({ x: y, y: 400 - x }),
+};
+
+function turnOf(user: RoadUser): Turn {
+  const r = (CLOCKWISE.indexOf(user.to) - CLOCKWISE.indexOf(user.from) + 4) % 4;
+  if (r === 0) throw new Error("A road user cannot exit the way it came in");
+  return r === 1 ? "linksaf" : r === 2 ? "rechtdoor" : "rechtsaf";
+}
+
+function wideLayout(situation: Situation): UserShape[] {
+  // Lanes: cyclists keep to the kerb, a car turning rechtsaf takes the inner
+  // lane, any other car the kerb lane. A second car in the same lane queues.
+  const lanes = situation.users.map((user) => {
+    const turn = turnOf(user);
+    const lane: Lane = user.kind === "fiets" ? "fiets" : turn === "rechtsaf" ? "inner" : "kerb";
+    return { user, turn, lane };
+  });
+  const placed = lanes.map(({ user, turn, lane }, i) => {
+    const queue = lanes.slice(0, i).filter((l) => l.user.from === user.from && l.lane === lane).length;
+    if (queue > 1) throw new Error(`Only two road users can queue in one lane (${user.label})`);
+    // A car keeps its kind of lane through a turn: linksaf from the kerb lane
+    // into the kerb lane, rechtsaf from the inner lane into the inner lane.
+    return { user, turn, lane, queued: queue === 1, dest: `${user.to}:${lane}` };
+  });
+
+  // Turning road users are pushed off the lane line they turn into, and
+  // apart from each other when several turn into the same lane.
+  const turnIndex = new Map<RoadUser, number>();
+  for (const dest of new Set(placed.map((p) => p.dest))) {
+    placed.filter((p) => p.dest === dest && p.turn !== "rechtdoor").forEach((p, k) => turnIndex.set(p.user, k));
+  }
+
+  return placed.map(({ user, turn, lane, queued }) => {
+    const rotate = ROTATE[user.from];
+    const x = WIDE_LANE[lane] + (queued ? WIDE_QUEUE_SHIFT : 0);
+    const startY = queued ? 48 : 104;
+    const points =
+      turn === "rechtdoor"
+        ? [{ x, y: startY }, { x, y: 296 }]
+        : (() => {
+            const base = WIDE_ROW[turn][user.kind];
+            const row = base + WIDE_TURN_OFFSETS[turnIndex.get(user)!] * (base < WIDE_BOX.center ? 1 : -1);
+            return [{ x, y: startY }, { x, y: row }, { x: turn === "linksaf" ? 296 : 104, y: row }];
+          })();
+    const path = points.map((p, i) => {
+      const r = rotate(p.x, p.y);
+      return `${i === 0 ? "M" : "L"}${r.x},${r.y}`;
+    }).join(" ");
+
+    let vehicle: VehicleShape;
+    let label: { x: number; y: number };
+    if (user.kind === "fiets") {
+      const c = rotate(WIDE_LANE.fiets, queued ? 60 : 93);
+      vehicle = { type: "circle", cx: c.x, cy: c.y, r: 7 };
+      label = rotate(WIDE_LANE.fiets, queued ? 45 : 77);
+    } else {
+      const top = queued ? 10 : 66;
+      const a = rotate(WIDE_LANE[lane] - 10, top);
+      const b = rotate(WIDE_LANE[lane] + 10, top + 34);
+      vehicle = {
+        type: "rect",
+        x: Math.min(a.x, b.x),
+        y: Math.min(a.y, b.y),
+        width: Math.abs(a.x - b.x),
+        height: Math.abs(a.y - b.y),
+      };
+      // A queued car's label sits beside it, over the empty inner lane.
+      label = queued ? rotate(WIDE_LANE[lane] - 20, top + 17) : rotate(WIDE_LANE[lane], 55);
+    }
+    // Labels are positioned by their centre; text is drawn from its baseline.
+    return { user, vehicle, labelPos: { x: label.x, y: label.y + 4 }, path };
+  });
+}
+
 export function layoutSituation(situation: Situation): UserShape[] {
+  if (situation.wide) return wideLayout(situation);
   return situation.users.map((user) => ({
     user,
     ...vehicleFor(user),

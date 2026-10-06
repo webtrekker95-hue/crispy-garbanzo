@@ -738,3 +738,16 @@ The earlier live setup (a `next start` server with a local database behind an ng
 - Error messages that come from the server (for example a failed password change).
 - The "Demo build" banner, and time slots, which are stored as "8:00 AM".
 - Not checked: the login and register pages.
+
+## 2026-10-06 — Maquette Les 3: brede wegen, diagrams (situaties 32–42)
+
+The owner uploaded `materiaalrijonderricht/Maquette les 3.pdf`. It has 11 diagrams numbered 32–38 with repeats; at the owner's request they are numbered in page order, **32–42** (page 1: 32–36, page 2: 37–40, page 3: 41–42). Every "Opl:" is blank and `ANTWOORDEN MAQUETTES.docx` stops at 31.
+
+- **Renderer:** new wide-road layout (`wide: true` in `lib/maquette.ts`, `WideTemplate` in `components/maquette-situation.tsx`): two car lanes each way, "B" centre label, rijwielpad bands on either road, zandweg circles on either road, and a second car queuing behind the first (13 in 41). Laid out for an approach from the north and rotated for the other three. Every turning road user's last stretch is pushed 6px off the lane line so no two paths overlap; a test checks this for all 11 situations. New `Situation` fields are additive, so Les 1a and Les 2 content already in the database is unaffected.
+- **Content:** situations only, in `prisma/content/maquette-les-3.ts`. Not in the seed yet; every road user is a placeholder "must wait" until the answers arrive.
+- **Readings the owner was asked to check:** the unnumbered top car in 32 is labelled 1; cyclists from the top turn rechtsaf except in 39–40 (linksaf); black circles are a zandweg (as in Les 2); car 13 in 41 waits behind 11; stray marks in 35, 36 and on page 2 are left out. Arrows run full length into the correct lane, as in Les 1a and 2, so opposing rechtsaffers cross (the PDF's short arrows don't).
+- **Checked:** tsc, eslint, jest (61 tests). No browser on this machine; the diagrams were checked by rasterising the SVGs.
+
+**Approved:** the owner approved the diagrams on the preview page (https://claude.ai/artifact/5tmZqg1BSRp6zX5uSDqTK7).
+
+**Open:** the instructor's answers for 32–42. Then: lessons and quizzes, seed, live database.

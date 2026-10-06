@@ -1,4 +1,5 @@
 import { layoutSituation, type RoadUser, type Situation } from "../maquette";
+import { S } from "../../prisma/content/maquette-les-3";
 
 const user = (label: string, kind: RoadUser["kind"], from: RoadUser["from"], to: RoadUser["to"]): RoadUser => ({
   label, kind, from, to, hasPriority: true,
@@ -83,5 +84,53 @@ describe("layoutSituation", () => {
     expect(() => layoutSituation({ number: 0, bikeLanes: false, users: [user("1", "auto", "noord", "noord")] })).toThrow();
     expect(() => layoutSituation({ number: 0, bikeLanes: false, users: [user("5", "auto", "oost", "west")] })).toThrow();
     expect(() => layoutSituation({ number: 0, bikeLanes: false, fourWay: true, users: [user("5", "auto", "oost", "oost")] })).toThrow();
+  });
+});
+
+// Les 3, brede wegen: two car lanes each way, laid out for an approach from
+// the north and rotated into place.
+describe("layoutSituation on a wide road", () => {
+  const wide = (...users: RoadUser[]): Situation => ({ number: 0, wide: true, bikeLanes: false, users });
+
+  it("puts a rechtsaffer in the inner lane and a linksaffer in the kerb lane", () => {
+    expect(paths(wide(user("1", "auto", "noord", "west"), user("2", "auto", "noord", "oost"))))
+      .toEqual({ "1": "M222,104 L222,216 L104,216", "2": "M252,104 L252,154 L296,154" });
+  });
+
+  it("rotates the same geometry for the other approaches", () => {
+    expect(paths(wide(user("3", "auto", "zuid", "west"), user("5", "auto", "west", "noord"), user("7", "auto", "oost", "noord"))))
+      .toEqual({
+        "3": "M148,296 L148,246 L104,246",
+        "5": "M104,148 L154,148 L154,104",
+        "7": "M296,222 L184,222 L184,104",
+      });
+  });
+
+  it("queues a second car in the same lane and runs its arrow alongside", () => {
+    const [front, queued] = layoutSituation(wide(user("11", "auto", "zuid", "west"), user("13", "auto", "zuid", "west")));
+    expect(front.vehicle).toEqual({ type: "rect", x: 138, y: 300, width: 20, height: 34 });
+    expect(queued.vehicle).toEqual({ type: "rect", x: 138, y: 356, width: 20, height: 34 });
+    expect(queued.path).toBe("M134,352 L134,258 L104,258");
+  });
+
+  it("never draws two road users' paths on top of each other in les 3", () => {
+    for (const situation of Object.values(S)) {
+      const segments = layoutSituation(situation).flatMap(({ user, path }) => {
+        const pts = path.split(" ").map((p) => p.slice(1).split(",").map(Number));
+        return pts.slice(1).map((b, i) => ({ who: user.label, a: pts[i], b }));
+      });
+      for (const s of segments) {
+        for (const t of segments) {
+          if (s.who >= t.who) continue;
+          for (const axis of [0, 1]) {
+            const along = 1 - axis;
+            if (s.a[axis] !== s.b[axis] || t.a[axis] !== t.b[axis] || s.a[axis] !== t.a[axis]) continue;
+            const lo = Math.max(Math.min(s.a[along], s.b[along]), Math.min(t.a[along], t.b[along]));
+            const hi = Math.min(Math.max(s.a[along], s.b[along]), Math.max(t.a[along], t.b[along]));
+            expect({ situation: situation.number, users: [s.who, t.who], overlap: hi - lo > 0 }).toMatchObject({ overlap: false });
+          }
+        }
+      }
+    }
   });
 });
