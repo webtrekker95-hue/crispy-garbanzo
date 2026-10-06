@@ -14,6 +14,12 @@ type Question = {
   explanation: string;
   /** Maquette diagram; drawn neutral until the answer is checked, then colour-coded. */
   situation?: Situation;
+  /**
+   * Picture shown above the question, e.g. a traffic sign. Its alt text must
+   * not give the answer away. `width` is a raster image's own width, so it is
+   * never shown larger than that.
+   */
+  image?: { src: string; alt: string; width?: number };
 };
 
 export function QuizLessonView({
@@ -145,6 +151,16 @@ export function QuizLessonView({
           <div className={styles["q-situation"]}>
             <MaquetteSituation key={currentQ} situation={q.situation} colored={revealed[currentQ]} />
           </div>
+        )}
+        {q.image && (
+          // eslint-disable-next-line @next/next/no-img-element -- small static file; next/image adds nothing here
+          <img
+            key={currentQ}
+            src={q.image.src}
+            alt={q.image.alt}
+            className={styles["q-image"]}
+            style={{ width: Math.min(160, q.image.width ?? 160) }}
+          />
         )}
         <div className={styles["q-text"]}>{q.text}</div>
 

@@ -790,3 +790,20 @@ The owner uploaded `materiaalrijonderricht/Maquette les 6.pdf`. Its 2 diagrams a
 **Approved:** on the preview page (https://claude.ai/artifact/6eCqkitWy9zBZnXqSKv7Gs).
 
 **Open:** the instructor's answers for Les 3–6. Then: lessons (for Les 6: the volgorde PS–BS–AS, the solving order, and the Toelichting glossary on page 2) and quizzes, seed, live database. With Les 6, all six maquette PDFs have diagrams.
+
+## 2026-10-06 — Verkeersborden module (replaces the placeholder "Verkeersregels & Borden")
+
+The owner uploaded `materiaalrijonderricht/VERKEERSBORDEN.pdf` (75 signs with model number and meaning) and chose to replace the placeholder module `seed-module-1`, whose 3 generic pages wrongly said traffic from the right has priority.
+
+- **Content:** `prisma/content/verkeersborden.ts`. The signs are grouped by type into six lessons (Voorrangsborden 10, Gesloten- en verbodsborden 13, Stilstaan/parkeren/snelheid 6, Gebodsborden 8, Waarschuwingsborden 25, Aanwijzingsborden en overige 13), each a page showing every sign and a quiz with one question per sign ("Wat betekent dit bord?", three answers from the same group, pass at 70%). Meanings are the PDF's text with small spelling fixes; Model 20, 21, 23, 23a and 44 are put more simply.
+- **Suggested meanings:** the PDF leaves 6 blank (rechts of links aanhouden, bocht naar rechts met zijweg links, stopverbod, rechtdoor of rechtsaf, voetgangersoversteekplaats, the brigadier's hand-held sign). They are filled in and marked `suggested`; the owner keeps them until the instructor corrects them.
+- **Images** (`public/verkeersborden/`, listed with their source in `prisma/content/verkeersborden-images.ts`). The owner asked for no upscaled crops and exact online matches:
+  - 61 public-domain SVGs from Wikimedia Commons (Belgian and historic Dutch signs): 46 exact, 6 mirrored for left-hand traffic, 9 "closest" drawings the owner picked (Model 15, 16, 19, 21 (reads 2,5 m, PDF 3,5 m), 27a, 52b, 54, 55, bromfiets 30).
+  - 9 SVGs drawn here after the PDF in the style of the Commons signs: the H sign (styled like Model 43), Model 44, 44a, 48, 50, 51, the curve with a side road, rechts of links aanhouden, nadering rotonde.
+  - 5 keep the PDF's embedded image at its own size (53e, 53f, the brigadier's two signs, road-end markings), never shown larger.
+  - Suriname's official sign drawings (bijlage of the Rijbesluit 1957, free to use under the Surinamese Auteurswet art. 11) are not online; with a copy from the ministry the remaining signs could be redone.
+- **App:** quiz questions can show an image (`image: { src, alt, width? }`); the alt text never gives the answer away and raster images are never shown wider than they are.
+- **Live database:** the seed only creates missing rows, so `prisma/replace-verkeersborden.ts` replaces the module's titles and lessons (and progress on the old placeholder pages). Not run yet; needs the session-pooler URL.
+- **Checked:** tsc, eslint, jest (66 tests; a new test checks every image exists, every quiz answer is the sign's own meaning, and no option repeats). No browser on this machine, so the pages have not been seen rendered.
+
+**Review page:** https://claude.ai/artifact/6snPFETr3zRvq3UtaFGAH9

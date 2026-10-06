@@ -13,7 +13,14 @@ type WorkedExample = { situation: Situation; solution: string; explanation: stri
 type TextContent = { type: "TEXT" | "VIDEO"; body?: string; description?: string; examples?: WorkedExample[] };
 type QuizContent = {
   type: "QUIZ";
-  questions: { text: string; options: string[]; correct: number; explanation: string; situation?: Situation }[];
+  questions: {
+    text: string;
+    options: string[];
+    correct: number;
+    explanation: string;
+    situation?: Situation;
+    image?: { src: string; alt: string; width?: number };
+  }[];
 };
 
 export default async function LessonPage({

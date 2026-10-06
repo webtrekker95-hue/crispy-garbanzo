@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { maquetteLes1aLessons } from "./content/maquette-les-1a";
 import { maquetteLes2Lessons } from "./content/maquette-les-2";
+import { verkeersbordenLessons } from "./content/verkeersborden";
 
 const prisma = new PrismaClient();
 
@@ -408,15 +409,13 @@ async function main() {
       lessons: maquetteLes2Lessons,
     },
     {
-      titleEn: "Road Rules & Signs",
-      titleNl: "Verkeersregels & Borden",
+      // Was a placeholder "Road Rules & Signs" module; replaced on the live
+      // database by prisma/replace-verkeersborden.ts.
+      titleEn: "Traffic Signs",
+      titleNl: "Verkeersborden",
       id: "seed-module-1",
       orderIndex: 3,
-      lessons: [
-        { title: "Introduction to Suriname Road Signs", type: "TEXT" as const, content: { type: "TEXT", body: "Suriname uses road signs based on international conventions: warning signs (triangular, red border), regulatory signs (circular), and information signs (rectangular, blue). Learning to recognize these at a glance is the foundation of safe driving." } },
-        { title: "Right of Way Basics", type: "TEXT" as const, content: { type: "TEXT", body: "Right of way determines who goes first when two vehicles' paths cross. At uncontrolled intersections, traffic from the right generally has priority. Roundabouts give priority to traffic already circulating." } },
-        { title: "Pedestrian Crossings & Priority", type: "TEXT" as const, content: { type: "TEXT", body: "Pedestrians have the right of way at marked crossings once they have stepped onto the crossing. Always slow down when approaching a crossing, even if it looks empty." } },
-      ],
+      lessons: verkeersbordenLessons,
     },
     {
       titleEn: "Traffic Regulations",
